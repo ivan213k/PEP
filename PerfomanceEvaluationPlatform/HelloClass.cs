@@ -7,5 +7,6 @@ namespace PerfomanceEvaluationPlatform
 {
     public class HelloClass
     {
+        public int MyProperty { get; set; }
     }
 }
