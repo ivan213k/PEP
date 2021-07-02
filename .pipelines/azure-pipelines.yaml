@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include:
+    - master
+
+pr:
+  branches:
+    include:
+    - master
+
+stages:
+  - stage: build_and_test
+    displayName: Build and Test
+
+    jobs:
+      - job: Build
+        displayName: Build
+        pool: Default
+
+        steps:
+          - checkout: self
+
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: "restore"
+              projects: "**/*.sln"
+
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: "publish"
+              projects: |
+               $(System.DefaultWorkingDirectory)/PerfomanceEvaluationPlatform/PerfomanceEvaluationPlatform.csproj
+              versioningScheme: byEnvVar
+              versionEnvVar: GitVersion.SemVer
+              arguments: --output $(System.DefaultWorkingDirectory)/bin --configuration Release
+              modifyOutputPath: false
+              zipAfterPublish: false
+              publishWebProjects: true
