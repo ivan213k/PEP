@@ -33,7 +33,7 @@ stages:
             inputs:
               command: "publish"
               projects: |
-               $(System.DefaultWorkingDirectory)/PerfomanceEvaluationPlatform/PerfomanceEvaluationPlatform.csproj
+               $(System.DefaultWorkingDirectory)/PerformanceEvaluationPlatform/PerformanceEvaluationPlatform.csproj
               versioningScheme: byEnvVar
               versionEnvVar: GitVersion.SemVer
               arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
