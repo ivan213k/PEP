@@ -16,6 +16,8 @@ stages:
       - job: Build
         displayName: Build
         pool: Default
+        variables:
+        - group: telegram
 
         steps:
           - checkout: self
@@ -50,6 +52,17 @@ stages:
 
           - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
             artifact: drop
+
+          - task: SendTelegramNotification@0.1.0
+            displayName: Send notification
+            condition: failed()
+            inputs:
+              botToken: $(botToken)
+              chats: $(chatsToNotify)
+              message: Failed on branch <b>$(Build.SourceBranchName)</b> and commit <i>$(Build.SourceVersionMessage)</i>
+              buildNumber: true
+              buildQueuedBy: true
+              releaseName: true
 
   - stage: deploy_to_qassss
     displayName: Deploy to QA
