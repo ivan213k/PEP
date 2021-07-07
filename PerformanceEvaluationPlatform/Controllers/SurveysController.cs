@@ -16,7 +16,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
         {
             var surveys = GetSurveyListItemViewModels();
-            surveys = GetSortedItems(surveys, filter);
             surveys = GetFilteredItems(surveys, filter);
             return Ok(surveys);
         }
@@ -126,6 +125,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items.
                     Where(t => filter.StateIds.Contains(t.StateId));
             }
+
+            items = GetSortedItems(items, filter);
 
             items = items
                .Skip(filter.Skip.Value)
