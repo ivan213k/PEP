@@ -33,10 +33,46 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         //GET api/users
         [HttpGet]
-        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting)
+        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting,[FromQuery] UserFilterRequestModel userFilter)
         {
-            var items =SortingUsers(userSorting,users); 
+           var items=  SortingUsers(userSorting,users);
+            items = FilterUsers(userFilter, items);
             return Ok(items);
+        }
+
+        private IEnumerable<UserViewModel> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<UserViewModel> items)
+        {
+            if(userFilter.EmailFilter != null)
+            {
+                items = items.Where(s => s.Email.Contains(userFilter.EmailFilter));
+            }
+
+            if (userFilter.FullNameFilter != null)
+            {
+                items = items.Where(s => $"{s.FirstName} {s.LastName}".Contains(userFilter.FullNameFilter));
+            }
+
+            if (userFilter.NextPEDateFilter != null)
+            {
+                items = items.Where(s => s.NextPEDate == userFilter.NextPEDateFilter);
+            }
+
+            if (userFilter.PreviousPEDateFilter != null)
+            {
+                items = items.Where(s => s.PreviousPEDate == userFilter.PreviousPEDateFilter);
+            }
+
+            if (userFilter.RoleIdFilter != null)
+            {
+                items = items.Where(s => s.RoleId == userFilter.RoleIdFilter);
+            }
+
+            if (userFilter.StateIdFilter != null)
+            {
+                items = items.Where(s => s.StateId == userFilter.StateIdFilter);
+            }
+
+            return items;
         }
 
         private IEnumerable<UserViewModel> SortingUsers(UserSortingRequestModel userSorting,IEnumerable<UserViewModel> items)
