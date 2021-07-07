@@ -17,15 +17,15 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             users = new List<UserViewModel>()
             {
-                new UserViewModel(){Email = "userExample@gor.com",FirstName ="Artur",LastName = "Grugon",Level = "Junior",
+                new UserViewModel(){Id = 1,Email = "userExample@gor.com",FirstName ="Artur",LastName = "Grugon",Level = "Junior",
                 LevelId =1,PreviousPEDate = new DateTime(2021,05,03),State = "Active",StateId=1,TeamName = "Sharks",
                 Role = "Dev", RoleId = 1
                 },
-                    new UserViewModel(){Email = "GodKiller@gmail.com",FirstName ="Kiril",LastName = "Krigan",Level = "Senior",
+                    new UserViewModel(){Id =2,Email = "GodKiller@gmail.com",FirstName ="Kiril",LastName = "Krigan",Level = "Senior",
                 LevelId =3,PreviousPEDate = new DateTime(2021,04,10),State = "Active",StateId=1,TeamName = "Gnomes",
                 Role = "Architector", RoleId = 2
                 },
-                        new UserViewModel(){Email = "bestmanager@ukr.net",FirstName ="Kristina",LastName = "Lavruk",Level = "Junior",
+                        new UserViewModel(){Id=3,Email = "bestmanager@ukr.net",FirstName ="Kristina",LastName = "Lavruk",Level = "Junior",
                 LevelId =1,PreviousPEDate = new DateTime(2021,03,07),State = "Active",StateId=1,TeamName = "Sharks",
                 Role = "Dev", RoleId = 1}
             };
