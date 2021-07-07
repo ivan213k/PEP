@@ -33,11 +33,11 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         //GET api/users
         [HttpGet]
-        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting,[FromQuery] UserFilterRequestModel userFilter)
+        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting,[FromQuery] UserFilterRequestModel userFilter,[FromQuery] PaginationFilterRequestModel userPagination)
         {
            var items=  SortingUsers(userSorting,users);
             items = FilterUsers(userFilter, items);
-            return Ok(items);
+            return Ok(items.Skip((userPagination.CurrentPage - 1) * userPagination.PageSize).Take(userPagination.PageSize));
         }
 
         private IEnumerable<UserViewModel> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<UserViewModel> items)
