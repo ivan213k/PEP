@@ -4,6 +4,7 @@ using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -136,19 +137,14 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             if (!string.IsNullOrEmpty(filter.SortBy))
             {
-                if (filter.SortBy.ToLower() == "FormName".ToLower())
+                var orderByProperty = typeof(SurveyListItemViewModel).GetProperties().
+                    Where(p => p.Name.ToLower() == filter.SortBy.ToLower()).SingleOrDefault();
+                if (orderByProperty != null)
                 {
                     if (filter.SortType == "desc")
-                        surveys = surveys.OrderByDescending(s => s.FormName);
+                        surveys = surveys.OrderByDescending(r => orderByProperty.GetValue(r, null));
                     else
-                        surveys = surveys.OrderBy(s => s.FormName);
-                }
-                if (filter.SortBy.ToLower() == "Assignee".ToLower())
-                {
-                    if (filter.SortType == "desc")
-                        surveys = surveys.OrderByDescending(s => s.Assignee);
-                    else
-                        surveys = surveys.OrderBy(s => s.Assignee);
+                        surveys = surveys.OrderBy(r => orderByProperty.GetValue(r, null));
                 }
             }
             return surveys;
