@@ -39,6 +39,29 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = FilterUsers(userFilter, items);
             return Ok(items.Skip((userPagination.CurrentPage - 1) * userPagination.PageSize).Take(userPagination.PageSize));
         }
+        [HttpGet("roles")]
+        public IActionResult GetRoles()
+        {
+            var roles = new List<RolesViewModel>()
+            {
+            new RolesViewModel(){Id= 1,Name="Dev"},
+            new RolesViewModel(){Id= 2,Name="Architector"}
+            };
+            return Ok(roles);
+        }
+
+        [HttpGet("levels")]
+        public IActionResult GetLeveles()
+        {
+            var roles = new List<LevelesViewModel>()
+            {
+            new LevelesViewModel(){Id= 1,Name="Junior"},
+            new LevelesViewModel(){Id= 2,Name="Middle"},
+            new LevelesViewModel(){Id= 3,Name="Senior"}
+            };
+            return Ok(roles);
+        }
+
 
         private IEnumerable<UserViewModel> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<UserViewModel> items)
         {
