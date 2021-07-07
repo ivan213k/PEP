@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -32,9 +33,54 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         //GET api/users
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting)
         {
-            return Ok(users);
+            var items =SortingUsers(userSorting,users); 
+            return Ok(items);
+        }
+
+        private IEnumerable<UserViewModel> SortingUsers(UserSortingRequestModel userSorting,IEnumerable<UserViewModel> items)
+        {
+            if(userSorting != null)
+            {
+                switch (userSorting.UserNameSorting)
+                {
+                    case 0:
+                            break;
+                    case 1:
+                       items = items.OrderBy(s => s.FirstName).ToList();
+                            break;
+                    case 2:
+                        items =users.OrderByDescending(s => s.FirstName).ToList();
+                        break;
+                }
+
+                switch (userSorting.UserNextPESorting)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        items = users.OrderBy(s => s.NextPEDate).ToList();
+                        break;
+                    case 2:
+                       items =  users.OrderByDescending(s => s.NextPEDate).ToList();
+                        break;
+                }
+
+                switch (userSorting.UserPreviousPESorting)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        items = users.OrderBy(s => s.PreviousPEDate).ToList();
+                        break;
+                    case 2:
+                        items = users.OrderByDescending(s => s.PreviousPEDate).ToList() ;
+                        break;
+                }
+            }
+            return items;
+
         }
     }
 }
