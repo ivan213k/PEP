@@ -39,6 +39,19 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = FilterUsers(userFilter, items);
             return Ok(items.Skip((userPagination.CurrentPage - 1) * userPagination.PageSize).Take(userPagination.PageSize));
         }
+
+        [HttpGet("{id}")]
+        public IActionResult GetUser(int id)
+        {
+            var user = users.FirstOrDefault(s => s.Id == id);
+
+            if(user is null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
         [HttpGet("roles")]
         public IActionResult GetRoles()
         {
