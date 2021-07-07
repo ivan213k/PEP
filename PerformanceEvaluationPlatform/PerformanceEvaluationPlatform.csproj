@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\User\ViewModels\" />
     <Folder Include="Models\User\RequestModels\" />
   </ItemGroup>
 
