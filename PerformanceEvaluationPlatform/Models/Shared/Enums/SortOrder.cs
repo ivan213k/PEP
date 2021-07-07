@@ -1,4 +1,4 @@
-﻿namespace PerformanceEvaluationPlatform.Models.Survey.Enums
+﻿namespace PerformanceEvaluationPlatform.Models.Shared.Enums
 {
     public enum SortOrder
     {

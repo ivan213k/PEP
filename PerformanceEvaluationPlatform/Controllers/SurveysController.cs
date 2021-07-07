@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Survey.Enums;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;

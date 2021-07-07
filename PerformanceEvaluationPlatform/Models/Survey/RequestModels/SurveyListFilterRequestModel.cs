@@ -1,4 +1,4 @@
-﻿using PerformanceEvaluationPlatform.Models.Survey.Enums;
+﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 
