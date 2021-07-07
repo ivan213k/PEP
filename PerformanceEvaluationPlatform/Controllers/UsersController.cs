@@ -12,10 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private static List<UserViewModel> users;
-        public UsersController()
-        {
-            users = new List<UserViewModel>()
+        private static List<UserViewModel> users = new List<UserViewModel>()
             {
                 new UserViewModel(){Id = 1,Email = "userExample@gor.com",FirstName ="Artur",LastName = "Grugon",Level = "Junior",
                 LevelId =1,PreviousPEDate = new DateTime(2021,05,03),State = "Active",StateId=1,TeamName = "Sharks",
@@ -29,28 +26,43 @@ namespace PerformanceEvaluationPlatform.Controllers
                 LevelId =1,PreviousPEDate = new DateTime(2021,03,07),State = "Active",StateId=1,TeamName = "Sharks",
                 Role = "Dev", RoleId = 1}
             };
-        }
-
         //GET api/users
         [HttpGet]
-        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting,[FromQuery] UserFilterRequestModel userFilter,[FromQuery] PaginationFilterRequestModel userPagination)
+        public IActionResult GetUsers([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter, [FromQuery] PaginationFilterRequestModel userPagination)
         {
-           var items=  SortingUsers(userSorting,users);
+            var items = SortingUsers(userSorting, users);
             items = FilterUsers(userFilter, items);
             return Ok(items.Skip((userPagination.CurrentPage - 1) * userPagination.PageSize).Take(userPagination.PageSize));
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {
             var user = users.FirstOrDefault(s => s.Id == id);
 
-            if(user is null)
+            if (user is null)
             {
                 return NotFound();
             }
             return Ok(user);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult EditUser(int id, [FromBody]EditUserRequestModel editedUser)
+        {
+            var user = users.FirstOrDefault(s => s.Id == id);
+            users.Remove(user);
+            if(user is null)
+            {
+                return NotFound();
+            }
+            user = MappUser(user,editedUser);
+            users.Add(user);
+            return RedirectToAction("GetUser",new { id = user.Id});
+        }
+
+        
 
         [HttpGet("roles")]
         public IActionResult GetRoles()
@@ -75,6 +87,22 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(roles);
         }
 
+
+        private UserViewModel MappUser(UserViewModel user, EditUserRequestModel editedUser)
+        {
+            // З  використанням бази даних я би поновлював тільки айді елементів інших табилць.
+            user.LastName = editedUser.LastName;
+            user.FirstName = editedUser.FirstName;
+            user.Level = editedUser.Level;
+            user.LevelId = editedUser.LevelId;
+            user.PreviousPEDate = editedUser.PreviousPEDate;
+            user.Role = editedUser.Role;
+            user.RoleId = editedUser.RoleId;  
+            user.State = editedUser.State;
+            user.StateId = editedUser.StateId;
+            user.TeamName = editedUser.TeamName;
+            return user;
+        }
 
         private IEnumerable<UserViewModel> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<UserViewModel> items)
         {
