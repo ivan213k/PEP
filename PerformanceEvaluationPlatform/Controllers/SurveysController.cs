@@ -16,6 +16,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             var surveys = GetSurveyListItemViewModels();
             surveys = GetFilteredItems(surveys, filter);
+            surveys = GetSortedItems(surveys, filter);
             return Ok(surveys);
         }
 
@@ -130,6 +131,29 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
             return items;
         }
+
+        private IEnumerable<SurveyListItemViewModel> GetSortedItems(IEnumerable<SurveyListItemViewModel> surveys, SurveyListFilterRequestModel filter)
+        {
+            if (!string.IsNullOrEmpty(filter.SortBy))
+            {
+                if (filter.SortBy.ToLower() == "FormName".ToLower())
+                {
+                    if (filter.SortType == "desc")
+                        surveys = surveys.OrderByDescending(s => s.FormName);
+                    else
+                        surveys = surveys.OrderBy(s => s.FormName);
+                }
+                if (filter.SortBy.ToLower() == "Assignee".ToLower())
+                {
+                    if (filter.SortType == "desc")
+                        surveys = surveys.OrderByDescending(s => s.Assignee);
+                    else
+                        surveys = surveys.OrderBy(s => s.Assignee);
+                }
+            }
+            return surveys;
+        }
+
         private void InitFilter(SurveyListFilterRequestModel filter)
         {
             if (filter.Skip is null)

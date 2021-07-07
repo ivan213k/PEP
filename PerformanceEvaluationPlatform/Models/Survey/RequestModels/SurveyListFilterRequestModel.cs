@@ -16,5 +16,8 @@ namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
         public ICollection<int> StateIds { get; set; }
         public ICollection<int> AssigneeIds { get; set; }
         public ICollection<int> SupervisorIds { get; set; }
+
+        public string SortBy { get; set; }
+        public string SortType { get; set; }
     }
 }
