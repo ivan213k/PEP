@@ -11,11 +11,33 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class SurveysController : ControllerBase
     {
         [Route("surveys")]
+        [HttpGet]
         public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
         {
             var surveys = GetSurveyListItemViewModels();
             surveys = GetFilteredItems(surveys, filter);
             return Ok(surveys);
+        }
+
+        [Route("surveys/states")]
+        [HttpGet]
+        public IActionResult GetStates()
+        {
+            var items = new List<SurveyStateListItemViewModel>
+            {
+                new SurveyStateListItemViewModel
+                {
+                    Id = 1,
+                    Name = "Active"
+                },
+                new SurveyStateListItemViewModel
+                {
+                    Id = 2,
+                    Name = "Blocked"
+                }
+            };
+
+            return Ok(items);
         }
 
         private IEnumerable<SurveyListItemViewModel> GetSurveyListItemViewModels() 
