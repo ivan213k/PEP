@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Models.Survey.Enums;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -16,8 +16,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
         {
             var surveys = GetSurveyListItemViewModels();
-            surveys = GetFilteredItems(surveys, filter);
             surveys = GetSortedItems(surveys, filter);
+            surveys = GetFilteredItems(surveys, filter);
             return Ok(surveys);
         }
 
@@ -91,10 +91,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             InitFilter(filter);
 
-            items = items
-               .Skip(filter.Skip.Value)
-               .Take(filter.Take.Value);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -130,22 +126,29 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items.
                     Where(t => filter.StateIds.Contains(t.StateId));
             }
+
+            items = items
+               .Skip(filter.Skip.Value)
+               .Take(filter.Take.Value);
+
             return items;
         }
 
         private IEnumerable<SurveyListItemViewModel> GetSortedItems(IEnumerable<SurveyListItemViewModel> surveys, SurveyListFilterRequestModel filter)
         {
-            if (!string.IsNullOrEmpty(filter.SortBy))
+            if (filter.FormNameSortOrder != SortOrder.Undefined)
             {
-                var orderByProperty = typeof(SurveyListItemViewModel).GetProperties().
-                    Where(p => p.Name.ToLower() == filter.SortBy.ToLower()).SingleOrDefault();
-                if (orderByProperty != null)
-                {
-                    if (filter.SortType == "desc")
-                        surveys = surveys.OrderByDescending(r => orderByProperty.GetValue(r, null));
-                    else
-                        surveys = surveys.OrderBy(r => orderByProperty.GetValue(r, null));
-                }
+                if (filter.FormNameSortOrder == SortOrder.Ascending)
+                    surveys = surveys.OrderBy(r => r.FormName);
+                else
+                    surveys = surveys.OrderByDescending(r => r.FormName);
+            }
+            if (filter.AssigneeNameSortOrder != SortOrder.Undefined)
+            {
+                if (filter.AssigneeNameSortOrder == SortOrder.Ascending)
+                    surveys = surveys.OrderBy(r => r.Assignee);
+                else
+                    surveys = surveys.OrderByDescending(r => r.Assignee);
             }
             return surveys;
         }

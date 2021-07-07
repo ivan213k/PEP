@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Models.Survey.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
@@ -17,7 +18,7 @@ namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
         public ICollection<int> AssigneeIds { get; set; }
         public ICollection<int> SupervisorIds { get; set; }
 
-        public string SortBy { get; set; }
-        public string SortType { get; set; }
+        public SortOrder FormNameSortOrder { get; set; }
+        public SortOrder AssigneeNameSortOrder { get; set; }
     }
 }
