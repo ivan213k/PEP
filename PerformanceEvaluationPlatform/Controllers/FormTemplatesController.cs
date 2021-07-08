@@ -26,13 +26,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [Route("formtemplates/assesmentgroups")]
-        public IActionResult GetAssesmentGroups()
-        {
-            var items = GetFormTemplatesAssesmentGroupsListItemViewModel();
-            return Ok(items);
-        }
-
         private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items , FormTemplateListFilterOrderRequestModel filter)
         {
             if(!string.IsNullOrWhiteSpace(filter.Search))
@@ -76,24 +69,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 {
                     Id = 2,
                     Name = "Draft"
-                }
-            };
-            return items;
-        }
-
-        private IEnumerable<FormTemplateAssesmentGroupListItemViewModel> GetFormTemplatesAssesmentGroupsListItemViewModel()
-        {
-            var items = new List<FormTemplateAssesmentGroupListItemViewModel>
-            {
-                new FormTemplateAssesmentGroupListItemViewModel
-                {
-                    Id = 1,
-                    Name = "A-F Marks"
-                },
-                new FormTemplateAssesmentGroupListItemViewModel
-                {
-                    Id = 2,
-                    Name = "5 points"
                 }
             };
             return items;
