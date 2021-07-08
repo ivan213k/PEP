@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
+using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.Models.Example.RequestModels
 {
@@ -9,5 +10,6 @@ namespace PerformanceEvaluationPlatform.Models.Example.RequestModels
         public string Search { get; set; }
         public ICollection<int> AssesmentGroupIds { get; set; }
         public ICollection<int> TypeIds { get; set; }
+        public SortOrder? FieldNameSortOrder { get; set; }
     }
 }

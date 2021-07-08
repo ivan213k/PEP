@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.Example.RequestModels;
 using PerformanceEvaluationPlatform.Models.Example.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -13,7 +14,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [Route("fields")]
         public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
         {
-            var items = GetFieldListItemViewModels();
+            var items = GetFieldListItemViewModels();         
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
@@ -38,7 +39,22 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        private IEnumerable<FieldListItemViewModel> GetFilteredItems(IEnumerable<FieldListItemViewModel> items,
+        private IEnumerable<FieldListItemViewModel> GetOrderedItems(IEnumerable<FieldListItemViewModel> items,
+            FieldListFilterRequestModel filter)
+        {
+            if (filter.FieldNameSortOrder != null)
+            {
+                if (filter.FieldNameSortOrder == SortOrder.Ascending)
+                    items = items.OrderBy(t => t.Name);
+                else if (filter.FieldNameSortOrder == SortOrder.Descending)
+                    items = items.OrderByDescending(t => t.Name);
+            }
+            else items = items.OrderBy(t => t.Name);
+
+            return items;
+        }
+
+            private IEnumerable<FieldListItemViewModel> GetFilteredItems(IEnumerable<FieldListItemViewModel> items,
             FieldListFilterRequestModel filter)
         {
             InitFilter(filter);
@@ -60,6 +76,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(t => filter.TypeIds.Contains(t.TypeId));
             }
+
+            items = GetOrderedItems(items, filter);
 
             items = items
                 .Skip(filter.Skip.Value)
