@@ -5,15 +5,19 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
 {
-    public class FormTemplatesListItemViewModel
+    public class FormTemplateListItemViewModel
     {
         public string Name { get; set; }
 
-        public string Version { get; set; }
+        public int Version { get; set; }
         // can be enum
         public string Status { get; set; }
+
+        public int StatusId { get; set; }
         // change to class
         public string AssesmentGroup { get; set; }
+
+        public int AssesmentGroupId { get; set; } 
 
         public DateTime CreatedAt { get; set; }
     }

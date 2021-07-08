@@ -17,21 +17,84 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        private IEnumerable<FormTemplatesListItemViewModel> GetFormTemplatesListItemViewModel()
+        [Route("formtemplates/statuses")]
+        public IActionResult GetStatuses()
         {
-            var items = new List<FormTemplatesListItemViewModel> { 
-                new FormTemplatesListItemViewModel{
+            var items = GetFormTemplatesStatusesListItemViewModel();
+            return Ok(items);
+        }
+
+        [Route("formtemplates/assesmentgroups")]
+        public IActionResult GetAssesmentGroups()
+        {
+            var items = GetFormTemplatesAssesmentGroupsListItemViewModel();
+            return Ok(items);
+        }
+
+        private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
+        {
+            var items = new List<FormTemplateStatusListItemViewModel>
+            {
+                new FormTemplateStatusListItemViewModel
+                {
+                    Id = 1,
+                    Name = "Active"
+                },
+                new FormTemplateStatusListItemViewModel
+                {
+                    Id = 2,
+                    Name = "Draft"
+                }
+            };
+            return items;
+        }
+
+        private IEnumerable<FormTemplateAssesmentGroupListItemViewModel> GetFormTemplatesAssesmentGroupsListItemViewModel()
+        {
+            var items = new List<FormTemplateAssesmentGroupListItemViewModel>
+            {
+                new FormTemplateAssesmentGroupListItemViewModel
+                {
+                    Id = 1,
+                    Name = "A-F Marks"
+                },
+                new FormTemplateAssesmentGroupListItemViewModel
+                {
+                    Id = 2,
+                    Name = "5 points"
+                }
+            };
+            return items;
+        }
+
+        private IEnumerable<FormTemplateListItemViewModel> GetFormTemplatesListItemViewModel()
+        {
+            var items = new List<FormTemplateListItemViewModel> { 
+                new FormTemplateListItemViewModel{
                     Name = "Middle Back-End Dev",
-                    Version = "12",
+                    Version = 12,
                     Status = "Draft",
+                    StatusId = 2,
                     AssesmentGroup = "A-F Marks",
+                    AssesmentGroupId = 1,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
-                new FormTemplatesListItemViewModel{
+                new FormTemplateListItemViewModel{
                     Name = "Middle Front-End Dev",
-                    Version = "1",
+                    Version = 1,
                     Status = "Active",
+                    StatusId = 1,
                     AssesmentGroup = "A-F Marks",
+                    AssesmentGroupId = 1,
+                    CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
+                },
+                new FormTemplateListItemViewModel{
+                    Name = "Junior Front-End Dev",
+                    Version = 1,
+                    Status = "Active",
+                    StatusId = 1,
+                    AssesmentGroup = "5 points",
+                    AssesmentGroupId = 2,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
             };
