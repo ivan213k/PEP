@@ -114,6 +114,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                     .Where(fd => fd.AppointmentDate <= filter.AppointmentDateTo);
             }
 
+            items = GetOrderedItems(items, filter);
+
             items = items
                 .Skip(filter.Skip.Value)
                 .Take(filter.Take.Value);
@@ -139,6 +141,25 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
 
             return Ok(items);
+        }
+
+        private IEnumerable<FormDataListItemViewModel> GetOrderedItems(IEnumerable<FormDataListItemViewModel> items, FormDataListFilterRequestModel filter)
+        {
+            if (filter.FormNameOrderBy != OrderBy.Undefined)
+            {
+                if (filter.FormNameOrderBy == OrderBy.Ascending)
+                    items = items.OrderBy(fd => fd.FormName);
+                else
+                    items = items.OrderByDescending(fd => fd.FormName);
+            }
+            if (filter.AssigneeNameOrderBy != OrderBy.Undefined)
+            {
+                if (filter.AssigneeNameOrderBy == OrderBy.Ascending)
+                    items = items.OrderBy(fd => fd.Assignee);
+                else
+                    items = items.OrderByDescending(fd => fd.Assignee);
+            }
+            return items;
         }
     }
 }
