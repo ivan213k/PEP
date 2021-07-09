@@ -62,10 +62,31 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
-            return Ok(user);
+            return Ok(MapToUserDeailViewModel(user));
         }
 
 
+        private UserDetailViewModel MapToUserDeailViewModel(User user)
+        {
+            return new UserDetailViewModel()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                LevelName = user.LevelName,
+                PreviousPEDate = user.PreviousPEDate,
+                NextPEDate = user.NextPEDate,
+                StateName = user.StateName,
+                TeamName = user.TeamName,
+                RoleName = user.RoleName,
+                PreviousPEs = user.PreviousPEs,
+                EnglishLevelName = user.EnglishLevelName,
+                FirstDayInCompany = user.FirstDayInCompany,
+                ProjectName = user.ProjectName,
+                YearsInCompany = user.YearsInCompany,
+                YearsOfExpirience = user.YearsOfExpirience
+            };
+        }
         private IEnumerable<UserViewModel> MapToUserViewModel(IEnumerable<User> items)
         {
             List<UserViewModel> users = new List<UserViewModel>();
