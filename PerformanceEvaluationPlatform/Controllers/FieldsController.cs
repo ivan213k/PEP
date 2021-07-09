@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Example.RequestModels;
-using PerformanceEvaluationPlatform.Models.Example.ViewModels;
+using PerformanceEvaluationPlatform.Models.Field.RequestModels;
+using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
@@ -10,15 +10,66 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class FieldsController : ControllerBase
     {
+        private static IEnumerable<FieldListItemViewModel> items = GetFieldListItemViewModels();
+
+        [HttpPost("fields")]
+        public IActionResult Create([FromBody] CreateFieldRequestModel field)
+        {
+            if (field == null)
+            {
+                return BadRequest();
+            }
+
+            bool fieldAlreadyExists = items.Any(t => t.Name.Trim().ToLower() == field.Name.ToLower().Trim());
+
+            if (fieldAlreadyExists)
+            {
+                ModelState.AddModelError("", "This field already exists");
+                return Conflict(ModelState);
+            }
+
+            var newField = new FieldListItemViewModel
+            {
+                //in FieldListItemViewModel we dont use "Id", "FieldGroupName", "FieldGroupId", "Description"
+                Name = field.Name,
+                Type = field.Type,
+                TypeId = field.TypeId,
+                AssesmentGroupName = field.AssesmentGroupName,
+                AssesmentGroupId = field.AssesmentGroupId,
+                IsRequired = field.IsRequired
+            };
+
+            items = items.Append(newField);
+
+            return Ok(newField);
+        }
 
         [Route("fields")]
         public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
-        {
-            var items = GetFieldListItemViewModels();         
+        {      
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
+        [Route("fields/groups")]
+        public IActionResult GetFieldGroups()
+        {
+            var items = new List<FieldGroupListItemViewModel>
+            {
+                new FieldGroupListItemViewModel
+                {
+                    Id = 1,
+                    Name = "Field group 1"
+                },
+                new FieldGroupListItemViewModel
+                {
+                    Id = 2,
+                    Name = "Field group 2"
+                }
+            };
+
+            return Ok(items);
+        }
         [Route("fields/types")]
         public IActionResult GetTypes()
         {

@@ -1,7 +1,7 @@
 ﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.Models.Example.RequestModels
+namespace PerformanceEvaluationPlatform.Models.Field.RequestModels
 {
     public class FieldListFilterRequestModel
     {

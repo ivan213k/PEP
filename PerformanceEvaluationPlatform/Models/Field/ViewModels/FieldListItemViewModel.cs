@@ -1,4 +1,4 @@
-﻿namespace PerformanceEvaluationPlatform.Models.Example.ViewModels
+﻿namespace PerformanceEvaluationPlatform.Models.Field.ViewModels
 {
     public class FieldListItemViewModel
     { 
