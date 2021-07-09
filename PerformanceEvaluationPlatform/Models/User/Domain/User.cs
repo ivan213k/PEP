@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Models.User.ViewModels
+namespace PerformanceEvaluationPlatform.Models.User.Domain
 {
-    public class UserViewModel
+    public class User
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -23,9 +23,23 @@ namespace PerformanceEvaluationPlatform.Models.User.ViewModels
         public int RoleId { get; set; }
         public string RoleName { get; set; }
 
+        public int ProjectId { get; set; }
+        public string ProjectName { get; set; }
+
+        public int EnglishLevelId { get; set; }
+        public string EnglishLevelName { get; set; }
+
+        public int YearsInCompany { get { return
+                (PreviousPEDate.Year - FirstDayInCompany.Year) == 0?1: PreviousPEDate.Year - FirstDayInCompany.Year;
+            } }
+
+        public int YearsOfExpirience { get; set; }
+
+
         public DateTime PreviousPEDate { get; set; }
         public DateTime NextPEDate { get; set; }
-           
+        public DateTime FirstDayInCompany { get; set; }
 
+        public ICollection<DateTime> PreviousPEs { get; set; }
     }
 }

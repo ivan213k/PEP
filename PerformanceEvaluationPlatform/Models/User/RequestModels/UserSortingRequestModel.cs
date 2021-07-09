@@ -7,9 +7,9 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
     public class UserSortingRequestModel
     {
-        public byte UserNameSorting { get; set; }
-        public byte  UserPreviousPESorting { get; set; }
-        public byte  UserNextPESorting { get; set; }
+        public byte UserName { get; set; }
+        public byte  UserPreviousPE { get; set; }
+        public byte  UserNextPE { get; set; }
 
     }
 }
