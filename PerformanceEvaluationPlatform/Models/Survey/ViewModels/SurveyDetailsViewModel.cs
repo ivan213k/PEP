@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
 {
-    public class SurveyListItemViewModel
+    public class SurveyDetailsViewModel
     {
-        public int Id { get; set; }
         public string FormName { get; set; }
         public int FormId { get; set; }
         public string Assignee { get; set; }
@@ -14,5 +14,9 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
         public DateTime AppointmentDate { get; set; }
         public string State { get; set; }
         public int StateId { get; set; }
+        public string RecommendedLevel { get; set; }
+        public int RecommendedLevelId { get; set; }
+        public ICollection<int> AssignedUserIds { get; set; }
+        public string Summary { get; set; }
     }
 }
