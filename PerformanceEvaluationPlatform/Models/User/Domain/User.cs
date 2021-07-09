@@ -12,6 +12,7 @@ namespace PerformanceEvaluationPlatform.Models.User.Domain
         public string LastName { get; set; }
         public string Email { get; set; }
         //Повиннен получати доступ до імені команди з змінної типу Team, поки що так 
+        public int TeamId { get; set; }
         public string TeamName { get; set; }
 
         public int StateId { get; set; }

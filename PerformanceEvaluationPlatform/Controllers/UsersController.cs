@@ -83,6 +83,49 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok($"{user.Id} user with this Id was updated success");
         }
 
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
+        {
+            if(createUserRequest == null)
+            {
+                ModelState.AddModelError("", "You didnt create user");
+                return BadRequest(ModelState);
+            }
+
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest();
+            }
+
+            var validation = users.Any(s => string.Equals(s.Email, createUserRequest.Email, StringComparison.InvariantCultureIgnoreCase));
+            if(validation is  true)
+            {
+                ModelState.AddModelError("", "User with the same email is already exists");
+                return Conflict(ModelState);
+            }
+
+            var user = new User()
+            {
+                Id = users.Count + 1,
+                Email = createUserRequest.Email,
+                FirstName = createUserRequest.FirstName,
+                LastName = createUserRequest.LastName,
+                NextPEDate = createUserRequest.NextPEDate,
+                FirstDayInCompany = createUserRequest.FirstDayInCompany,
+                YearsOfExpirience = createUserRequest.YearsOfExpirience,
+                EnglishLevelId = createUserRequest.EnglishLevelId,
+                LevelId = createUserRequest.LevelId,
+                ProjectId = createUserRequest.ProjectId,
+                RoleId = createUserRequest.RoleId,
+                StateId = createUserRequest.StateId,
+                TeamId = createUserRequest.TeamId
+            };
+            users.Add(user);
+            var absoluteUri = string.Concat(HttpContext.Request.Scheme,"://",HttpContext.Request.Host.ToUriComponent());
+            string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
+            return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+        }
+
         private void UpdateUser(User user, EditUserRequestModel editedUser)
         {
             user.Email = editedUser.Email;
