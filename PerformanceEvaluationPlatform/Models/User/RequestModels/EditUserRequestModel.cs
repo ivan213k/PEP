@@ -1,6 +1,6 @@
-﻿using DataAnnotationsExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,22 +8,24 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
     public class EditUserRequestModel
     {
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
-        [Email]
+        [EmailAddress]
         public string Email { get; set; }
-        //Повиннен получати доступ до імені команди з змінної типу Team, поки що так 
+        [Required]
         public string TeamName { get; set; }
-
-        public int StateId { get; set; }
-        public string State { get; set; }
-
-        public int LevelId { get; set; }
-        public string Level { get; set; }
-
-        public int RoleId { get; set; }
-        public string Role { get; set; }
-
-        public DateTime PreviousPEDate { get; set; }
+        [Required]
+        public string LevelName { get; set; }
+        [Required]
+        public string RoleName { get; set; }
+        [Required]
+        public string ProjectName { get; set; }
+        public string EnglishLevelName { get; set; }
+        [Required]
+        public DateTime NextPEDate { get; set; }
+        [Required]
+        public DateTime FirstDayInCompany { get; set; }
     }
 }

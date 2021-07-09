@@ -42,10 +42,10 @@ namespace PerformanceEvaluationPlatform.Controllers
                             new DateTime(2021,03,07)
                         } }
             };
-        
+
 
         [HttpGet]
-        public IActionResult Get([FromQuery] UserSortingRequestModel userSorting,[FromQuery] UserFilterRequestModel userFilter)
+        public IActionResult Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
         {
             var items = SortingUsers(userSorting, users);
             items = FilterUsers(userFilter, items);
@@ -63,25 +63,40 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
-        return Ok(MapToUserDeailViewModel(user));
-    }
+            return Ok(MapToUserDeailViewModel(user));
+        }
 
         [HttpPut("{id}")]
-        public IActionResult EditUser(int id, [FromBody]EditUserRequestModel editedUser)
+        public IActionResult EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
+            if(ModelState.IsValid == false)
+            {
+                return BadRequest();
+            }
+
             var user = users.FirstOrDefault(s => s.Id == id);
-            users.Remove(user);
-            if(user is null)
+            if (user is null)
             {
                 return NotFound();
             }
-            return Ok(MapToUserDeailViewModel(user));
-            user = MappUser(user,editedUser);
-            users.Add(user);
-            return RedirectToAction("GetUser",new { id = user.Id});
+            UpdateUser(user, editedUser);
+            return Ok($"{user.Id} user with this Id was updated success");
         }
 
-
+        private void UpdateUser(User user, EditUserRequestModel editedUser)
+        {
+            user.Email = editedUser.Email;
+            user.FirstName = editedUser.FirstName;
+            user.LastName = editedUser.LastName;
+            user.LevelName = editedUser.LevelName;
+            user.NextPEDate = editedUser.NextPEDate;
+            user.TeamName = editedUser.TeamName;
+            user.RoleName = editedUser.RoleName;
+            user.EnglishLevelName = editedUser.EnglishLevelName;
+            user.FirstDayInCompany = editedUser.FirstDayInCompany;
+            user.ProjectName = editedUser.ProjectName;
+            
+        }
         private UserDetailViewModel MapToUserDeailViewModel(User user)
         {
             return new UserDetailViewModel()
@@ -106,7 +121,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<UserViewModel> MapToUserViewModel(IEnumerable<User> items)
         {
             List<UserViewModel> users = new List<UserViewModel>();
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 users.Add(new UserViewModel()
                 {
@@ -130,7 +145,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<User> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<User> items)
         {
-            if(userFilter.EmailOrName != null)
+            if (userFilter.EmailOrName != null)
             {
                 items = items.Where(s => s.Email.ToLower().Contains(userFilter.EmailOrName.ToLower()) || $"{s.FirstName} {s.LastName}".ToLower().Contains(userFilter.EmailOrName.ToLower()));
             }
@@ -158,19 +173,19 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        private IEnumerable<User> SortingUsers(UserSortingRequestModel userSorting,IEnumerable<User> items)
+        private IEnumerable<User> SortingUsers(UserSortingRequestModel userSorting, IEnumerable<User> items)
         {
-            if(userSorting != null)
+            if (userSorting != null)
             {
                 switch (userSorting.UserName)
                 {
                     case 0:
-                            break;
+                        break;
                     case 1:
-                       items = items.OrderBy(s => s.FirstName).ToList();
-                            break;
+                        items = items.OrderBy(s => s.FirstName).ToList();
+                        break;
                     case 2:
-                        items =users.OrderByDescending(s => s.FirstName).ToList();
+                        items = users.OrderByDescending(s => s.FirstName).ToList();
                         break;
                 }
 
@@ -182,7 +197,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                         items = users.OrderBy(s => s.NextPEDate).ToList();
                         break;
                     case 2:
-                       items =  users.OrderByDescending(s => s.NextPEDate).ToList();
+                        items = users.OrderByDescending(s => s.NextPEDate).ToList();
                         break;
                 }
 
@@ -194,7 +209,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                         items = users.OrderBy(s => s.PreviousPEDate).ToList();
                         break;
                     case 2:
-                        items = users.OrderByDescending(s => s.PreviousPEDate).ToList() ;
+                        items = users.OrderByDescending(s => s.PreviousPEDate).ToList();
                         break;
                 }
             }
