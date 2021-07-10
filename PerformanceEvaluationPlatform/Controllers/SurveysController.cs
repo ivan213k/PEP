@@ -11,8 +11,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class SurveysController : ControllerBase
     {
-        [Route("surveys")]
-        [HttpGet]
+        [HttpGet("surveys")]
         public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
         {
             var surveys = GetSurveyListItemViewModels();
@@ -21,8 +20,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        [Route("surveys/{id}")]
-        [HttpGet]
+        [HttpGet("surveys/{id}")]
         public IActionResult GetSurveyDetails([FromRoute] int id)
         {
             var surveyDetails = new SurveyDetailsViewModel 
@@ -45,8 +43,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(surveyDetails);
         }
 
-        [Route("surveys")]
-        [HttpPost]
+        [HttpPost("surveys")]
         public IActionResult CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel) 
         {
             if (surveyRequestModel is null)
@@ -56,8 +53,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Created("surveys", surveyRequestModel);
         }
 
-        [Route("surveys/{id}")]
-        [HttpPut]
+        [HttpPut("surveys/{id}")]
         public IActionResult EditSurvey(int id, [FromBody] EditSurveyRequestModel surveyRequestModel)
         {
             if (surveyRequestModel is null)
@@ -74,8 +70,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok();
         }
 
-        [Route("surveys/states")]
-        [HttpGet]
+        [HttpGet("surveys/states")]
         public IActionResult GetStates()
         {
             var items = new List<SurveyStateListItemViewModel>

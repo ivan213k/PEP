@@ -44,14 +44,14 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(newField);
         }
 
-        [Route("fields")]
+        [HttpGet("fields")]
         public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
         {      
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
-        [Route("fields/groups")]
+        [HttpGet("fields/groups")]
         public IActionResult GetFieldGroups()
         {
             var items = new List<FieldGroupListItemViewModel>
@@ -70,7 +70,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok(items);
         }
-        [Route("fields/types")]
+        [HttpGet("fields/types")]
         public IActionResult GetTypes()
         {
             var items = new List<FieldTypeListItemViewModel>

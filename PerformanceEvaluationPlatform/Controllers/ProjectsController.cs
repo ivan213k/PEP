@@ -11,7 +11,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class ProjectsController : ControllerBase
     {
 
-        [Route("projects")]
+        [HttpGet("projects")]
         public IActionResult Get([FromQuery] ProjectListFilterRequestModel filter)
         {
             var items = GetProjectListItemViewModels();

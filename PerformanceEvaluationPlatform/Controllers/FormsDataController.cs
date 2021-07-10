@@ -12,7 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class FormsDataController : ControllerBase
     {
 
-        [Route("forms")]
+        [HttpGet("forms")]
         public IActionResult Get([FromQuery] FormDataListFilterRequestModel filter)
         {
             var items = GetExampleListItemViewModels();
@@ -123,7 +123,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        [Route("forms/states")]
+        [HttpGet("forms/states")]
         public IActionResult GetStates()
         {
             var items = new List<FormDataStateListItemViewModel>

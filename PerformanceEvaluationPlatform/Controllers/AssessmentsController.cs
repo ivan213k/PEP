@@ -10,7 +10,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class AssessmentsController : ControllerBase
     {
 
-        [Route("assessments/groups")]
+        [HttpGet("assessments/groups")]
         public IActionResult GetAssesmentGroup()
         {
             var items = new List<FieldAssesmentGroupListItemViewModel>

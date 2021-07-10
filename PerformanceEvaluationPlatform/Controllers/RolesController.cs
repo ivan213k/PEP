@@ -12,7 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private static IEnumerable<RoleListItemViewModel> items = GetRoleListItemViewModels();
 
-        [Route("roles")]
+        [HttpGet("roles")]
         public IActionResult Get([FromQuery] RoleListFilterRequestModel filter)
         {
             items = GetFilteredItems(items, filter);
