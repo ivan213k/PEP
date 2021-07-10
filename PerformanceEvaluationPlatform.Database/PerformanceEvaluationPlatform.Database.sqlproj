@@ -59,15 +59,25 @@
     <Folder Include="Example" />
     <Folder Include="Example\Tables" />
     <Folder Include="Example\PostDeployment" />
+    <Folder Include="Survey" />
+    <Folder Include="Survey\Tables" />
+    <Folder Include="Survey\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
     <None Include="Example\PostDeployment\02.ExampleStates.sql" />
     <None Include="Example\PostDeployment\03.Examples.sql" />
+    <Build Include="Survey\Tables\SurveyState.sql" />
+    <Build Include="Survey\Tables\Level.sql" />
+    <Build Include="Survey\Tables\Survey.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
     <None Include="Example\PostDeployment\01.ExampleTypes.sql" />
+    <None Include="PerformanceEvaluationPlatform.Database.publish.xml" />
+    <None Include="Survey\PostDeployment\01.SurveyStates.sql" />
+    <None Include="Survey\PostDeployment\02.Levels.sql" />
+    <None Include="Survey\PostDeployment\03.Surveys.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
