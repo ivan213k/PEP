@@ -11,7 +11,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class DeeeplinksController : ControllerBase
     {
 
-        [Route("Deeplink")]
+        [HttpGet("Deeplink")]
         public IActionResult Get([FromQuery] DeeplinkListFilterRequestModel filter)
         {
             var items = GetDeeplinkListItemViewModels();
