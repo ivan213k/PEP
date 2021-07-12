@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +13,10 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class FormTemplatesController: ControllerBase
     {
         [Route("formtemplates")]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery]FormTemplateListFilterOrderRequestModel filter)
         {
             var items = GetFormTemplatesListItemViewModel();
+            items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
@@ -22,6 +25,33 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             var items = GetFormTemplatesStatusesListItemViewModel();
             return Ok(items);
+        }
+
+        private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
+        {
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                items = items.Where(i => i.Name.Contains(filter.Search));
+            }
+            if (filter.Sort == SortOrder.Ascending)
+            {
+                items = items.OrderBy(i => i.Name);
+            }
+            if (filter.Sort == SortOrder.Descending)
+            {
+                items = items.OrderByDescending(i => i.Name);
+            }
+            if (filter.StatusIds != null)
+            {
+                items = items
+                    .Where(i => filter.StatusIds.Contains(i.StatusId));
+            }
+            if (filter.AssesmentGroupIds != null)
+            {
+                items = items
+                    .Where(i => filter.AssesmentGroupIds.Contains(i.AssesmentGroupId));
+            }
+            return items;
         }
 
         private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
@@ -44,7 +74,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<FormTemplateListItemViewModel> GetFormTemplatesListItemViewModel()
         {
-            var items = new List<FormTemplateListItemViewModel> { 
+            var items = new List<FormTemplateListItemViewModel> {
                 new FormTemplateListItemViewModel{
                     Name = "Middle Back-End Dev",
                     Version = 12,
