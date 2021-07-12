@@ -12,7 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class FormsDataController : ControllerBase
     {
 
-        [Route("forms")]
+        [HttpGet("forms")]
         public IActionResult Get([FromQuery] FormDataListFilterRequestModel filter)
         {
             var items = GetExampleListItemViewModels();
@@ -46,8 +46,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new FormDataListItemViewModel
                 {
-                    FormName = "Form 3",
-                    Assignee = "User 3",
+                    FormName = "Form 1",
+                    Assignee = "User 1",
                     AssigneeId = 3,
                     Reviewer = "Admin 3",
                     ReviewerId = 3,
@@ -114,6 +114,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                     .Where(fd => fd.AppointmentDate <= filter.AppointmentDateTo);
             }
 
+            items = GetOrderedItems(items, filter);
+
             items = items
                 .Skip(filter.Skip.Value)
                 .Take(filter.Take.Value);
@@ -121,7 +123,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        [Route("forms/states")]
+        [HttpGet("forms/states")]
         public IActionResult GetStates()
         {
             var items = new List<FormDataStateListItemViewModel>
@@ -139,6 +141,25 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
 
             return Ok(items);
+        }
+
+        private IEnumerable<FormDataListItemViewModel> GetOrderedItems(IEnumerable<FormDataListItemViewModel> items, FormDataListFilterRequestModel filter)
+        {
+            if (filter.FormNameOrderBy != null)
+            {
+                if (filter.FormNameOrderBy == OrderBy.Ascending)
+                    items = items.OrderBy(fd => fd.FormName);
+                else
+                    items = items.OrderByDescending(fd => fd.FormName);
+            }
+            if (filter.AssigneeNameOrderBy != null)
+            {
+                if (filter.AssigneeNameOrderBy == OrderBy.Ascending)
+                    items = items.OrderBy(fd => fd.Assignee);
+                else
+                    items = items.OrderByDescending(fd => fd.Assignee);
+            }
+            return items;
         }
     }
 }

@@ -11,8 +11,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class SurveysController : ControllerBase
     {
-        [Route("surveys")]
-        [HttpGet]
+        [HttpGet("surveys")]
         public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
         {
             var surveys = GetSurveyListItemViewModels();
@@ -20,8 +19,58 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(surveys);
         }
 
-        [Route("surveys/states")]
-        [HttpGet]
+
+        [HttpGet("surveys/{id}")]
+        public IActionResult GetSurveyDetails([FromRoute] int id)
+        {
+            var surveyDetails = new SurveyDetailsViewModel 
+            {
+                AppointmentDate = new DateTime(2021, 7, 10),
+                AssignedUserIds = new List<int>{1,2},
+                Assignee = "Test User",
+                AssigneeId = 1,
+                FormId = 1,
+                FormName = "Manual QA",
+                RecommendedLevel = "Middle",
+                RecommendedLevelId = 2,
+                State = "Active",
+                StateId = 1,
+                Summary = "summary text",
+                Supervisor = "Admin User",
+                SupervisorId = 1
+            };
+    
+            return Ok(surveyDetails);
+        }
+
+        [HttpPost("surveys")]
+        public IActionResult CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel) 
+        {
+            if (surveyRequestModel is null)
+            {
+                return BadRequest();
+            }
+            return Created("surveys", surveyRequestModel);
+        }
+
+        [HttpPut("surveys/{id}")]
+        public IActionResult EditSurvey(int id, [FromBody] EditSurveyRequestModel surveyRequestModel)
+        {
+            if (surveyRequestModel is null)
+            {
+                return BadRequest();
+            }
+            var surveys = GetSurveyListItemViewModels();
+            var survey = surveys.Where(r => r.Id == id).SingleOrDefault();
+            if (survey is null)
+            {
+                return NotFound();
+            }
+           
+            return Ok();
+        }
+
+        [HttpGet("surveys/states")]
         public IActionResult GetStates()
         {
             var items = new List<SurveyStateListItemViewModel>
@@ -47,6 +96,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 new SurveyListItemViewModel
                 {
+                    Id = 1,
                     AppointmentDate = new DateTime(2021,7,10),
                     Assignee = "Test User",
                     AssigneeId = 1,
@@ -59,6 +109,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new SurveyListItemViewModel
                 {
+                    Id = 2,
                     AppointmentDate = new DateTime(2021,7,11),
                     Assignee = "Test User 1",
                     AssigneeId = 2,
@@ -71,6 +122,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new SurveyListItemViewModel
                 {
+                    Id = 3,
                     AppointmentDate = new DateTime(2021,7,12),
                     Assignee = "Test User 2",
                     AssigneeId = 3,
@@ -137,14 +189,14 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<SurveyListItemViewModel> GetSortedItems(IEnumerable<SurveyListItemViewModel> surveys, SurveyListFilterRequestModel filter)
         {
-            if (filter.FormNameSortOrder != SortOrder.Undefined)
+            if (filter.FormNameSortOrder != null)
             {
                 if (filter.FormNameSortOrder == SortOrder.Ascending)
                     surveys = surveys.OrderBy(r => r.FormName);
                 else
                     surveys = surveys.OrderByDescending(r => r.FormName);
             }
-            if (filter.AssigneeNameSortOrder != SortOrder.Undefined)
+            if (filter.AssigneeNameSortOrder != null)
             {
                 if (filter.AssigneeNameSortOrder == SortOrder.Ascending)
                     surveys = surveys.OrderBy(r => r.Assignee);

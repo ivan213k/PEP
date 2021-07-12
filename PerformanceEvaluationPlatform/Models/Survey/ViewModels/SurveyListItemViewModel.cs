@@ -4,6 +4,7 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
 {
     public class SurveyListItemViewModel
     {
+        public int Id { get; set; }
         public string FormName { get; set; }
         public int FormId { get; set; }
         public string Assignee { get; set; }

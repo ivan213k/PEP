@@ -271,3 +271,6 @@ __pycache__/
 
 # Local log files.
 /src/Ieso.Nucleus.Api/log*
+
+# MacOS
+.DS_Store

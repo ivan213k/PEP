@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Example.RequestModels;
-using PerformanceEvaluationPlatform.Models.Example.ViewModels;
+using PerformanceEvaluationPlatform.Models.Field.RequestModels;
+using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -10,7 +10,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class AssessmentsController : ControllerBase
     {
 
-        [Route("assessments/groups")]
+        [HttpGet("assessments/groups")]
         public IActionResult GetAssesmentGroup()
         {
             var items = new List<FieldAssesmentGroupListItemViewModel>
