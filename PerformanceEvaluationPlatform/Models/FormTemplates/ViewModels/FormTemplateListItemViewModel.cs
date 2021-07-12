@@ -10,11 +10,11 @@ namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
         public string Name { get; set; }
 
         public int Version { get; set; }
-        // can be enum
+        
         public string Status { get; set; }
 
         public int StatusId { get; set; }
-        // change to class
+        
         public string AssesmentGroup { get; set; }
 
         public int AssesmentGroupId { get; set; } 
