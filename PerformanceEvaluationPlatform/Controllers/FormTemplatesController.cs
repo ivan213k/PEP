@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,16 +33,13 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 items = items.Where(i => i.Name.Contains(filter.Search));
             }
-            if(!string.IsNullOrWhiteSpace(filter.Sort))
+            if (filter.Sort == SortOrder.Ascending)
             {
-                if(filter.Sort=="asc")
-                {
-                    items = items.OrderBy(i => i.Name);
-                }
-                if (filter.Sort == "desc")
-                {
-                    items = items.OrderByDescending(i => i.Name);
-                }
+                items = items.OrderBy(i => i.Name);
+            }
+            if (filter.Sort == SortOrder.Descending)
+            {
+                items = items.OrderByDescending(i => i.Name);
             }
             if (filter.StatusIds != null)
             {
