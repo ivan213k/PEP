@@ -12,7 +12,8 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private static IEnumerable<RoleListItemViewModel> items = GetRoleListItemViewModels();
 
-        [HttpGet("roles")]
+        [Route("roles")]
+        [HttpGet]
         public IActionResult Get([FromQuery] RoleListFilterRequestModel filter)
         {
             items = GetFilteredItems(items, filter);
@@ -21,7 +22,22 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [HttpPost("roles")]
+        [Route("roles/{id}")]
+        [HttpGet]
+        public IActionResult GetRoleDetails([FromRoute] int id)
+        {
+            var role = items.FirstOrDefault(t => t.Id == id);
+
+            if (role is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(role);
+        }
+
+        [Route("roles")]
+        [HttpPost]
         public IActionResult Create([FromBody] CreateRoleRequestModel role)
         {
             if (role == null)
@@ -49,6 +65,29 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = items.Append(newRole);
 
             return Ok(newRole);
+        }
+
+        [Route("roles/{id}")]
+        [HttpPut]
+        public IActionResult EditUser(int id, [FromBody] EditRoleRequestModel role)
+        {
+            if (role is null)
+            {
+                return BadRequest();
+            }
+
+            var currentRole = items.FirstOrDefault(t => t.Id == role.Id);
+            if (currentRole is null)
+            {
+                return NotFound();
+            }
+
+            currentRole.Title = role.Title;
+            currentRole.IsPrimary = role.IsPrimary;
+
+            items = items.Where(t => t.Id != currentRole.Id).Append(currentRole);
+
+            return Ok();
         }
 
         private IEnumerable<RoleListItemViewModel> GetFilteredItems(IEnumerable<RoleListItemViewModel> items,
