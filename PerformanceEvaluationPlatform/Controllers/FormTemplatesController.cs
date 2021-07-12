@@ -27,9 +27,17 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
+        private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
         {
-            var items = new List<FormTemplateStatusListItemViewModel>
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                items = items.Where(i => i.Name.Contains(filter.Search));
+            }
+            if (filter.Sort == SortOrder.Ascending)
+            {
+                items = items.OrderBy(i => i.Name);
+            }
+            if (filter.Sort == SortOrder.Descending)
             {
                 items = items.OrderByDescending(i => i.Name);
             }
@@ -46,9 +54,27 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
+        private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
+        {
+            var items = new List<FormTemplateStatusListItemViewModel>
+            {
+                new FormTemplateStatusListItemViewModel
+                {
+                    Id = 1,
+                    Name = "Active"
+                },
+                new FormTemplateStatusListItemViewModel
+                {
+                    Id = 2,
+                    Name = "Draft"
+                }
+            };
+            return items;
+        }
+
         private IEnumerable<FormTemplateListItemViewModel> GetFormTemplatesListItemViewModel()
         {
-            var items = new List<FormTemplateListItemViewModel> { 
+            var items = new List<FormTemplateListItemViewModel> {
                 new FormTemplateListItemViewModel{
                     Name = "Middle Back-End Dev",
                     Version = 12,
