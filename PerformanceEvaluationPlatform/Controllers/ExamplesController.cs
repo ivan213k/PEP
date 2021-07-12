@@ -10,7 +10,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class ExamplesController : ControllerBase
     {
 
-        [Route("examples")]
+        [HttpGet("examples")]
         public IActionResult Get([FromQuery]ExampleListFilterRequestModel filter)
         {
             var items = GetExampleListItemViewModels();
@@ -18,7 +18,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [Route("examples/types")]
+        [HttpGet("examples/types")]
         public IActionResult GetTypes()
         {
             var items = new List<ExampleTypeListItemViewModel>
@@ -38,7 +38,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [Route("examples/states")]
+        [HttpGet("examples/states")]
         public IActionResult GetStates()
         {
             var items = new List<ExampleStateListItemViewModel>
