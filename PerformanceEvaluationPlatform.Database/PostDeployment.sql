@@ -17,3 +17,6 @@ Post-Deployment Script Template
 :r .\Survey\PostDeployment\01.SurveyStates.sql
 :r .\Survey\PostDeployment\02.Levels.sql
 :r .\Survey\PostDeployment\03.Surveys.sql
+
+:r .\FormData\PostDeployment\01.FormDataStates.sql
+:r .\FormData\PostDeployment\02.FormData.sql

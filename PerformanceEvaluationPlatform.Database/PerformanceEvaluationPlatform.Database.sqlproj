@@ -62,6 +62,9 @@
     <Folder Include="Survey" />
     <Folder Include="Survey\Tables" />
     <Folder Include="Survey\PostDeployment" />
+    <Folder Include="FormData" />
+    <Folder Include="FormData\Tables" />
+    <Folder Include="FormData\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -70,6 +73,10 @@
     <Build Include="Survey\Tables\SurveyState.sql" />
     <Build Include="Survey\Tables\Level.sql" />
     <Build Include="Survey\Tables\Survey.sql" />
+    <Build Include="FormData\Tables\FormData.sql" />
+    <Build Include="FormData\Tables\FormDataState.sql" />
+    <None Include="FormData\PostDeployment\01.FormDataStates.sql" />
+    <None Include="FormData\PostDeployment\02.FormData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
