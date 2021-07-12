@@ -14,8 +14,8 @@ namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
         public DateTime? AppointmentDateTo { get; set; }
         public ICollection<int> AssigneeIds { get; set; }
         public ICollection<int> ReviewersIds { get; set; }
-        public OrderBy FormNameOrderBy { get; set; }
-        public OrderBy AssigneeNameOrderBy { get; set; }
+        public OrderBy? FormNameOrderBy { get; set; }
+        public OrderBy? AssigneeNameOrderBy { get; set; }
 
     }
 }

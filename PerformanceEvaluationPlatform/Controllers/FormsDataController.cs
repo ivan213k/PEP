@@ -46,8 +46,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new FormDataListItemViewModel
                 {
-                    FormName = "Form 3",
-                    Assignee = "User 3",
+                    FormName = "Form 1",
+                    Assignee = "User 1",
                     AssigneeId = 3,
                     Reviewer = "Admin 3",
                     ReviewerId = 3,
@@ -145,14 +145,14 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<FormDataListItemViewModel> GetOrderedItems(IEnumerable<FormDataListItemViewModel> items, FormDataListFilterRequestModel filter)
         {
-            if (filter.FormNameOrderBy != OrderBy.Undefined)
+            if (filter.FormNameOrderBy != null)
             {
                 if (filter.FormNameOrderBy == OrderBy.Ascending)
                     items = items.OrderBy(fd => fd.FormName);
                 else
                     items = items.OrderByDescending(fd => fd.FormName);
             }
-            if (filter.AssigneeNameOrderBy != OrderBy.Undefined)
+            if (filter.AssigneeNameOrderBy != null)
             {
                 if (filter.AssigneeNameOrderBy == OrderBy.Ascending)
                     items = items.OrderBy(fd => fd.Assignee);
