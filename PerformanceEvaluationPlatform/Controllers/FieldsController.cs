@@ -44,6 +44,34 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok(newField);
         }
+
+        [HttpPost("fields/{id}")]
+        public IActionResult Copy(int id)
+        {
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            var MaxId = items.Max(t => t.Id);
+            var newField = new FieldListItemViewModel
+            {
+                Id = MaxId + 1,
+                Name = item.Name,
+                Type = item.Type,
+                TypeId = item.TypeId,
+                AssesmentGroupName = item.AssesmentGroupName,
+                AssesmentGroupId = item.AssesmentGroupId,
+                IsRequired = item.IsRequired
+            };
+
+            items = items.Append(newField);
+
+            return Ok(newField);
+        }
+
         [HttpPut("fields/{id}")]
         public IActionResult EditField(int id, [FromBody] EditFieldRequestModel fieldRequestModel)
         {
@@ -80,12 +108,27 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("fields")]
         public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
         {
+            var items = GetFieldListItemViewModels(); //add this for integration tests
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
+
+        [HttpGet("fields/{id}")]
+        public IActionResult GetFieldDetails(int id)
+        {
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
+            {
+                return NotFound();               
+            }
+
+            return Ok(item);
+        }
+
         //delete FieldGroupListItemViewModel because Olexandr Melnychuk maked this part 
-        
-        [Route("fields/types")]
+
+        [HttpGet("fields/types")]
         public IActionResult GetTypes()
         {
             var items = new List<FieldTypeListItemViewModel>
