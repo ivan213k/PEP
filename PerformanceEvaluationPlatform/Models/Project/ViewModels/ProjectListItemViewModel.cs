@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerformanceEvaluationPlatform.Models.Projects.ViewModels
+namespace PerformanceEvaluationPlatform.Models.Project.ViewModels
 {
     public class ProjectListItemViewModel
     {

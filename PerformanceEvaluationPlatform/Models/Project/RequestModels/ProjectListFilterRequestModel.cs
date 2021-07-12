@@ -1,7 +1,7 @@
 ﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.Models.Projects.RequestModels
+namespace PerformanceEvaluationPlatform.Models.Project.RequestModels
 {
     public class ProjectListFilterRequestModel
     {

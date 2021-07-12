@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Projects.RequestModels;
-using PerformanceEvaluationPlatform.Models.Projects.ViewModels;
+using PerformanceEvaluationPlatform.Models.Project.RequestModels;
+using PerformanceEvaluationPlatform.Models.Project.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
