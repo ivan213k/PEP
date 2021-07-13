@@ -71,6 +71,9 @@
     <Folder Include="Team" />
     <Folder Include="Team\PostDeployment" />
     <Folder Include="Team\Tables" />
+    <Folder Include="FormTemplate" />
+    <Folder Include="FormTemplate\Tables" />
+    <Folder Include="FormTemplate\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -92,6 +95,9 @@
     <Build Include="Field\Tables\AssesmentGroup.sql" />
     <None Include="Field\PostDeployment\02.AssesmentGroups.sql" />
     <None Include="Field\PostDeployment\04.Assesments.sql" />
+    <Build Include="FormTemplate\Tables\FormTemplateStatus.sql" />
+    <Build Include="FormTemplate\Tables\FormTemplate.sql" />
+    <Build Include="FormTemplate\Tables\FormTemplateFieldMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -101,6 +107,8 @@
     <None Include="Survey\PostDeployment\02.Levels.sql" />
     <None Include="Survey\PostDeployment\03.Surveys.sql" />
     <None Include="Team\PostDeployment\01.Teams.sql" />
+    <None Include="FormTemplate\PostDeployment\01.FormTemplateStatus.sql" />
+    <None Include="FormTemplate\PostDeployment\02.FormTemplate.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />

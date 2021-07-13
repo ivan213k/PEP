@@ -22,3 +22,6 @@ Post-Deployment Script Template
 :r .\FormData\PostDeployment\02.FormData.sql
 
 :r .\Team\PostDeployment\01.Teams.sql
+
+:r .\FormTemplate\PostDeployment\01.FormTemplateStatus.sql
+:r .\FormTemplate\PostDeployment\02.FormTemplate.sql

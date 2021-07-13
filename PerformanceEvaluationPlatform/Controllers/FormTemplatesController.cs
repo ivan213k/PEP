@@ -12,7 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class FormTemplatesController: ControllerBase
     {
-        [Route("formtemplates")]
+        [HttpGet("formtemplates")]
         public IActionResult Get([FromQuery]FormTemplateListFilterOrderRequestModel filter)
         {
             var items = GetFormTemplatesListItemViewModel();
@@ -20,7 +20,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [Route("formtemplates/statuses")]
+        [HttpGet("formtemplates/statuses")]
         public IActionResult GetStatuses()
         {
             var items = GetFormTemplatesStatusesListItemViewModel();
@@ -29,6 +29,8 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
         {
+            InitFilter(filter);
+
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items.Where(i => i.Name.Contains(filter.Search));
@@ -51,7 +53,23 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(i => filter.AssesmentGroupIds.Contains(i.AssesmentGroupId));
             }
+
+            items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
+
             return items;
+        }
+
+        private void InitFilter(FormTemplateListFilterOrderRequestModel filter)
+        {
+            if (filter.Skip == null)
+            {
+                filter.Skip = 0;
+            }
+
+            if (filter.Take == null)
+            {
+                filter.Take = 30;
+            }
         }
 
         private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
