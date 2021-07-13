@@ -74,6 +74,9 @@
     <Folder Include="FormTemplate" />
     <Folder Include="FormTemplate\Tables" />
     <Folder Include="FormTemplate\PostDeployment" />
+    <Folder Include="Deeplink" />
+    <Folder Include="Deeplink\PostDeployment" />
+    <Folder Include="Deeplink\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -98,6 +101,7 @@
     <Build Include="FormTemplate\Tables\FormTemplateStatus.sql" />
     <Build Include="FormTemplate\Tables\FormTemplate.sql" />
     <Build Include="FormTemplate\Tables\FormTemplateFieldMap.sql" />
+    <Build Include="Deeplink\Tables\Table1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
