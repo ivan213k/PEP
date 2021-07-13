@@ -20,3 +20,5 @@ Post-Deployment Script Template
 
 :r .\FormData\PostDeployment\01.FormDataStates.sql
 :r .\FormData\PostDeployment\02.FormData.sql
+
+:r .\Team\PostDeployment\01.Teams.sql
