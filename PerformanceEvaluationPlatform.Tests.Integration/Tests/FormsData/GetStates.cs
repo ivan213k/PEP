@@ -31,13 +31,13 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             CustomAssert.IsSuccess(response);
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
 
             Assert.AreEqual(1, (int)StateEnum.Active);
             Assert.AreEqual("Active", content[0].Name);
 
-            Assert.AreEqual(2, (int)StateEnum.Blocked);
-            Assert.AreEqual("Blocked", content[1].Name);
+            Assert.AreEqual(2, (int)StateEnum.Draft);
+            Assert.AreEqual("Draft", content[1].Name);
         }
     }
 }

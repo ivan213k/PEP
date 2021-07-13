@@ -5,6 +5,7 @@ using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Models.FormData.RequestModels;
 using System.Linq;
 using PerformanceEvaluationPlatform.Models.FormData.Enums;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -15,12 +16,23 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("forms")]
         public IActionResult Get([FromQuery] FormDataListFilterRequestModel filter)
         {
-            var items = GetExampleListItemViewModels();
+            var items = GetFormDataListItemViewModels();
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
-        private static IEnumerable<FormDataListItemViewModel> GetExampleListItemViewModels()
+        [HttpGet("forms/{id}")]
+        public IActionResult GetDetailsPage([FromRoute] int id)
+        {
+            var items = new FormDataDetailsViewModel
+            {
+                Detail = GetFormDataDetailViewModels(),
+                Answers = GetFormDataAnswersItemViewModels(),
+            };
+            return Ok(items);
+        }
+
+        private static IEnumerable<FormDataListItemViewModel> GetFormDataListItemViewModels()
         {
             var items = new List<FormDataListItemViewModel>
             {
@@ -41,7 +53,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     AssigneeId = 2,
                     Reviewer = "Admin 2",
                     ReviewerId = 2,
-                    State = StateEnum.Blocked,
+                    State = StateEnum.Draft,
                     AppointmentDate = DateTime.Today.AddDays(-8),
                 },
                 new FormDataListItemViewModel
@@ -53,7 +65,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     ReviewerId = 3,
                     State = StateEnum.Active,
                     AppointmentDate = DateTime.Now,
-        }
+                }
             };
             return items;
         }
@@ -75,7 +87,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             FormDataListFilterRequestModel filter)
         {
             InitFilter(filter);
-                        
+
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -135,8 +147,14 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new FormDataStateListItemViewModel
                 {
-                    State = StateEnum.Blocked,
-                    Name = "Blocked"
+                    State = StateEnum.Draft,
+                    Name = "Draft"
+                },
+
+                new FormDataStateListItemViewModel
+                {
+                    State = StateEnum.Submitted,
+                    Name = "Submitted"
                 }
             };
 
@@ -147,18 +165,79 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             if (filter.FormNameOrderBy != null)
             {
-                if (filter.FormNameOrderBy == OrderBy.Ascending)
+                if (filter.FormNameOrderBy == SortOrder.Ascending)
                     items = items.OrderBy(fd => fd.FormName);
                 else
                     items = items.OrderByDescending(fd => fd.FormName);
             }
             if (filter.AssigneeNameOrderBy != null)
             {
-                if (filter.AssigneeNameOrderBy == OrderBy.Ascending)
+                if (filter.AssigneeNameOrderBy == SortOrder.Ascending)
                     items = items.OrderBy(fd => fd.Assignee);
                 else
                     items = items.OrderByDescending(fd => fd.Assignee);
             }
+            return items;
+        }
+
+        private static FormDataDetailViewModel GetFormDataDetailViewModels()
+        {
+            var items = new FormDataDetailViewModel
+            {
+                FormName = "ManualQA",
+                FormId = 1,
+                Assignee = "Test User 1",
+                AssigneeId = 1,
+                Reviewer = "Admin User 1",
+                ReviewerId = 1,
+                State = StateEnum.Active,
+                AppointmentDate = DateTime.Today.AddDays(-4),
+                RecommendedLevel = "Middle",
+                RecommendedLevelId = 1,
+                Project = "Hello Flex",
+                ProjectId = 1,
+                Team = "Platform",
+                TeamId = 1,
+                Period = "01.02.2021-01.08.2021",
+                ExperienceInCompany = "1 year",
+                EnglishLevel = EnglishLevelEnum.B1,
+                CurrentPosition = "Junior",
+            };
+            return items;
+        }
+
+        private static ICollection<FormDataAnswersItemViewModel> GetFormDataAnswersItemViewModels()
+        {
+            var items = new List<FormDataAnswersItemViewModel>
+            {
+                new FormDataAnswersItemViewModel
+                {
+                    Skills = "Communication skills",
+                    Assessment = "B",
+                    Comment = "Any comment",
+                    TypeId = 1,
+                    TypeName = "Header",
+                    Order = 1,
+                },
+                new FormDataAnswersItemViewModel
+                {
+                    Skills = "Written communication",
+                    Assessment = "C",
+                    Comment = "Test comment",
+                    TypeId = 2,
+                    TypeName = "Row",
+                    Order = 2,
+                },
+                new FormDataAnswersItemViewModel
+                {
+                    Skills = "Soft skills",
+                    Assessment = "B",
+                    Comment = "My comment",
+                    TypeId = 2,
+                    TypeName = "Row",
+                    Order = 3,
+                }
+            };
             return items;
         }
     }
