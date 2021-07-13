@@ -1,5 +1,4 @@
-﻿
-:r .\Example\PostDeployment\01.ExampleTypes.sql
+﻿:r .\Example\PostDeployment\01.ExampleTypes.sql
 :r .\Example\PostDeployment\02.ExampleStates.sql
 :r .\Example\PostDeployment\03.Examples.sql
 

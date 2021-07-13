@@ -1,4 +1,4 @@
 ﻿INSERT INTO [dbo].[Project] ([Startdate],[CoordinatorId])
 VALUES
-('20/07/2020',1),
-('17/09/2019',2)
+('2020-07-20',1),
+('2019-09-17',2)
