@@ -75,9 +75,6 @@
     <Build Include="Survey\Tables\Survey.sql" />
     <Build Include="Users\Tablse\User.sql" />
     <Build Include="Users\Tablse\UserState.sql" />
-    <Build Include="Users\Tablse\Project.sql" />
-    <Build Include="Users\Tablse\Team.sql" />
-    <None Include="Users\PostDeployment\03.Project.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -87,7 +84,6 @@
     <None Include="Survey\PostDeployment\02.Levels.sql" />
     <None Include="Survey\PostDeployment\03.Surveys.sql" />
     <None Include="Users\PostDeployment\01.UserState.sql" />
-    <None Include="Users\PostDeployment\04.Team.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
@@ -96,5 +92,8 @@
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />
     <Build Include="Example\Tables\ExampleType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="PerformanceEvaluationPlatform.Database.refactorlog" />
   </ItemGroup>
 </Project>

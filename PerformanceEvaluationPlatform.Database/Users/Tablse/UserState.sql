@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[UserState]
 (
 	[Id] INT NOT NULL,
-	[Name] nvarchar(60) Not Null,
-	Constraint [Pk_UserState] Primary key([Id])
+	[Name] NVARCHAR(60) NOT NULL,
+	CONSTRAINT [Pk_UserState] PRIMARY KEY([Id])
 )
