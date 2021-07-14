@@ -126,6 +126,7 @@
     <None Include="FormTemplate\PostDeployment\01.FormTemplateStatus.sql" />
     <None Include="FormTemplate\PostDeployment\02.FormTemplate.sql" />
     <None Include="Users\PostDeployment\01.UserState.sql" />
+    <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />

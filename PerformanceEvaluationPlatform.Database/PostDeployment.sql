@@ -26,3 +26,4 @@
 :r .\Field\PostDeployment\04.Assesments.sql
 :r .\Field\PostDeployment\05.FieldsData.sql
 
+:r .\FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql
