@@ -20,7 +20,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return BadRequest();
             }
 
-            bool fieldAlreadyExists = items.Any(t => t.Name.Trim().ToLower() == field.Name.ToLower().Trim());
+            bool fieldAlreadyExists = items.Any(t => t.Id == field.Id);
 
             if (fieldAlreadyExists)
             {
@@ -30,7 +30,8 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             var newField = new FieldListItemViewModel
             {
-                //in FieldListItemViewModel we dont use "Id", "FieldGroupName", "FieldGroupId", "Description"
+                //in FieldListItemViewModel we dont use "FieldGroupName", "FieldGroupId", "Description"
+                Id = field.Id,
                 Name = field.Name,
                 Type = field.Type,
                 TypeId = field.TypeId,
@@ -44,33 +45,90 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(newField);
         }
 
-        [Route("fields")]
+        [HttpPost("fields/{id}")]
+        public IActionResult Copy(int id)
+        {
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            var MaxId = items.Max(t => t.Id);
+            var newField = new FieldListItemViewModel
+            {
+                Id = MaxId + 1,
+                Name = item.Name,
+                Type = item.Type,
+                TypeId = item.TypeId,
+                AssesmentGroupName = item.AssesmentGroupName,
+                AssesmentGroupId = item.AssesmentGroupId,
+                IsRequired = item.IsRequired
+            };
+
+            items = items.Append(newField);
+
+            return Ok(newField);
+        }
+
+        [HttpPut("fields/{id}")]
+        public IActionResult EditField(int id, [FromBody] EditFieldRequestModel fieldRequestModel)
+        {
+            if (fieldRequestModel == null)
+            {
+                return BadRequest();
+            }
+
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
+            {
+                return NotFound();              
+            }
+            item.Name = fieldRequestModel.Name;
+            item.IsRequired = fieldRequestModel.IsRequired;
+
+            return Ok();
+        }
+        [HttpDelete("fields/{id}")]
+        public IActionResult DeleteField(int id)
+        {
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
+            {
+                return NotFound();               
+            }
+            items = items.Where(t => t.Id != item.Id).ToList();
+
+            return NoContent();
+        }
+
+        [HttpGet("fields")]
         public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
-        {      
+        {
+            var items = GetFieldListItemViewModels(); //add this for integration tests
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
-        [Route("fields/groups")]
-        public IActionResult GetFieldGroups()
+        [HttpGet("fields/{id}")]
+        public IActionResult GetFieldDetails(int id)
         {
-            var items = new List<FieldGroupListItemViewModel>
+            var items = GetFieldListItemViewModels();
+            var item = items.SingleOrDefault(t => t.Id == id);
+            if (item == null)
             {
-                new FieldGroupListItemViewModel
-                {
-                    Id = 1,
-                    Name = "Field group 1"
-                },
-                new FieldGroupListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Field group 2"
-                }
-            };
+                return NotFound();               
+            }
 
-            return Ok(items);
+            return Ok(item);
         }
-        [Route("fields/types")]
+
+        //delete FieldGroupListItemViewModel because Olexandr Melnychuk maked this part 
+
+        [HttpGet("fields/types")]
         public IActionResult GetTypes()
         {
             var items = new List<FieldTypeListItemViewModel>
@@ -155,6 +213,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 new FieldListItemViewModel
                 {
+                    Id = 1,
                     Name = "Communication skills",
                     Type = "Dropdown with comment",
                     TypeId = 2,
@@ -164,6 +223,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new FieldListItemViewModel
                 {
+                    Id = 2,
                     Name = "Written communication",
                     Type = "Dropdown with comment",
                     TypeId = 2,
@@ -173,6 +233,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new FieldListItemViewModel
                 {
+                    Id = 3,
                     Name = "Full-bleed divider",
                     Type = "Divider",
                     TypeId = 1,

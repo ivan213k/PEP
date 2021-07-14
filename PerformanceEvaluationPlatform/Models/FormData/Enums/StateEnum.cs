@@ -3,6 +3,7 @@
     public enum StateEnum
     {
         Active = 1,
-        Blocked = 2,
+        Draft = 2,
+        Submitted = 3
     }
 }

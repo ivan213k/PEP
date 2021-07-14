@@ -10,20 +10,39 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private static IEnumerable<RoleListItemViewModel> items = GetRoleListItemViewModels();
-
         [Route("roles")]
+        [HttpGet]
         public IActionResult Get([FromQuery] RoleListFilterRequestModel filter)
         {
+            var items = GetRoleListItemViewModels();
             items = GetFilteredItems(items, filter);
             items = SortItems(items, filter);
 
             return Ok(items);
         }
 
-        [HttpPost("roles")]
+        [Route("roles/{id}")]
+        [HttpGet]
+        public IActionResult GetRoleDetails([FromRoute] int id)
+        {
+            var items = GetRoleListItemViewModels();
+
+            var role = items.FirstOrDefault(t => t.Id == id);
+
+            if (role is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(role);
+        }
+
+        [Route("roles")]
+        [HttpPost]
         public IActionResult Create([FromBody] CreateRoleRequestModel role)
         {
+            var items = GetRoleListItemViewModels();
+
             if (role == null)
             {
                 return BadRequest();
@@ -49,6 +68,31 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = items.Append(newRole);
 
             return Ok(newRole);
+        }
+
+        [Route("roles/{id}")]
+        [HttpPut]
+        public IActionResult EditUser(int id, [FromBody] EditRoleRequestModel role)
+        {
+            var items = GetRoleListItemViewModels();
+
+            if (role is null)
+            {
+                return BadRequest();
+            }
+
+            var currentRole = items.FirstOrDefault(t => t.Id == role.Id);
+            if (currentRole is null)
+            {
+                return NotFound();
+            }
+
+            currentRole.Title = role.Title;
+            currentRole.IsPrimary = role.IsPrimary;
+
+            items = items.Where(t => t.Id != currentRole.Id).Append(currentRole);
+
+            return Ok();
         }
 
         private IEnumerable<RoleListItemViewModel> GetFilteredItems(IEnumerable<RoleListItemViewModel> items,

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Projects.RequestModels;
-using PerformanceEvaluationPlatform.Models.Projects.ViewModels;
+using PerformanceEvaluationPlatform.Models.Project.RequestModels;
+using PerformanceEvaluationPlatform.Models.Project.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -11,7 +12,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class ProjectsController : ControllerBase
     {
 
-        [Route("projects")]
+        [HttpGet("projects")]
         public IActionResult Get([FromQuery] ProjectListFilterRequestModel filter)
         {
             var items = GetProjectListItemViewModels();
@@ -41,6 +42,32 @@ namespace PerformanceEvaluationPlatform.Controllers
                 .Take(filter.Take.Value);
 
             return items;
+        }
+
+        private IEnumerable<ProjectListItemViewModel> GetSortedItems(IEnumerable<ProjectListItemViewModel> projects, ProjectListFilterRequestModel filter)
+        {
+            if (filter.TitleSortOrder != null)
+            {
+                if (filter.TitleSortOrder == SortOrder.Ascending)
+                    projects = projects.OrderBy(r => r.Title);
+                else
+                    projects = projects.OrderByDescending(r => r.Title);
+            }
+            if (filter.StartDateSortOrder != null)
+            {
+                if (filter.StartDateSortOrder == SortOrder.Ascending)
+                    projects = projects.OrderBy(r => r.StartDate);
+                else
+                    projects = projects.OrderByDescending(r => r.StartDate);
+            }
+            if (filter.CoordinatorSortOrder != null)
+            {
+                if (filter.StartDateSortOrder == SortOrder.Ascending)
+                    projects = projects.OrderBy(r => r.Coordinator);
+                else
+                    projects = projects.OrderByDescending(r => r.Coordinator);
+            }
+            return projects;
         }
 
         private void InitFilter(ProjectListFilterRequestModel filter)

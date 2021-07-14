@@ -11,7 +11,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class FieldGroupsController : ControllerBase
     {
-        [Route("fields/groups")]
+        [HttpGet("fieldgroups")]
         public IActionResult Get([FromQuery]FieldGroupsListFilterRequestModel filter)
         {
             var items = GetFieldGroupsListItemViewModel();

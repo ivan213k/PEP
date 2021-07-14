@@ -41,6 +41,18 @@ stages:
               zipAfterPublish: false
               publishWebProjects: true
 
+          - script: |
+              dotnet test PerformanceEvaluationPlatform.Tests.Integration/PerformanceEvaluationPlatform.Tests.Integration.csproj --logger trx --configuration Release
+            displayName: Run Integration tests
+
+          - task: PublishTestResults@2
+            displayName: Publish test results
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '**/*.trx'
+              failTaskOnFailedTests: true
+              publishRunAttachments: true
+
           - task: ArchiveFiles@2
             displayName: 'Archive files'
             inputs:
