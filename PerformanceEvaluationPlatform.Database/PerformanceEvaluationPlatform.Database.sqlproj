@@ -106,6 +106,8 @@
     <Build Include="FormTemplate\Tables\FormTemplateFieldMap.sql" />
     <Build Include="Deeplink\Tables\Table1.sql" />
     <Build Include="Role\Tables\Role.sql" />
+    <Build Include="Field\Tables\FieldData.sql" />
+    <None Include="Field\PostDeployment\05.FieldsData.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />

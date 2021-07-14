@@ -23,6 +23,12 @@ Post-Deployment Script Template
 
 :r .\Team\PostDeployment\01.Teams.sql
 
+:r .\Field\PostDeployment\01.FieldTypes.sql
+:r .\Field\PostDeployment\02.AssesmentGroups.sql
+:r .\Field\PostDeployment\03.Fields.sql
+:r .\Field\PostDeployment\04.Assesments.sql
+:r .\Field\PostDeployment\05.FieldsData.sql
+
 :r .\FormTemplate\PostDeployment\01.FormTemplateStatus.sql
 :r .\FormTemplate\PostDeployment\02.FormTemplate.sql
 
