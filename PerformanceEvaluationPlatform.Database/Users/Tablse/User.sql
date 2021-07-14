@@ -9,4 +9,5 @@
 
 	CONSTRAINT [Pk_User] PRIMARY KEY(Id),
 	CONSTRAINT [Fk_User_UserState] FOREIGN KEY ([StateId]) REFERENCES [dbo].[UserState](Id),
+	CONSTRAINT [Fk_User_Team] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Team]([Id])
 )

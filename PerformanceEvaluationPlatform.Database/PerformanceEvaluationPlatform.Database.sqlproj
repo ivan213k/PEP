@@ -113,6 +113,7 @@
     <None Include="Field\PostDeployment\05.FieldsData.sql" />
     <Build Include="Users\Tablse\User.sql" />
     <Build Include="Users\Tablse\UserState.sql" />
+    <Build Include="Users\Tablse\UserRoleMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -130,6 +131,7 @@
     <PostDeploy Include="PostDeployment.sql" />
     <None Include="Role\PostDeployment\01.Role.sql" />
     <None Include="Users\PostDeployment\02.User.sql" />
+    <None Include="Users\PostDeployment\03.UserRoleMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />
