@@ -10,12 +10,11 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private static IEnumerable<RoleListItemViewModel> items = GetRoleListItemViewModels();
-
         [Route("roles")]
         [HttpGet]
         public IActionResult Get([FromQuery] RoleListFilterRequestModel filter)
         {
+            var items = GetRoleListItemViewModels();
             items = GetFilteredItems(items, filter);
             items = SortItems(items, filter);
 
@@ -26,6 +25,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet]
         public IActionResult GetRoleDetails([FromRoute] int id)
         {
+            var items = GetRoleListItemViewModels();
+
             var role = items.FirstOrDefault(t => t.Id == id);
 
             if (role is null)
@@ -40,6 +41,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] CreateRoleRequestModel role)
         {
+            var items = GetRoleListItemViewModels();
+
             if (role == null)
             {
                 return BadRequest();
@@ -71,6 +74,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPut]
         public IActionResult EditUser(int id, [FromBody] EditRoleRequestModel role)
         {
+            var items = GetRoleListItemViewModels();
+
             if (role is null)
             {
                 return BadRequest();
