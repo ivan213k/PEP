@@ -43,7 +43,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     AssigneeId = 1,
                     Reviewer = "Admin 1",
                     ReviewerId = 1,
-                    State = StateEnum.Active,
+                    State = StateEnum.Draft,
                     AppointmentDate = DateTime.Today.AddDays(-4),
                 },
                 new FormDataListItemViewModel
@@ -53,7 +53,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     AssigneeId = 2,
                     Reviewer = "Admin 2",
                     ReviewerId = 2,
-                    State = StateEnum.Draft,
+                    State = StateEnum.Submitted,
                     AppointmentDate = DateTime.Today.AddDays(-8),
                 },
                 new FormDataListItemViewModel
@@ -63,7 +63,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     AssigneeId = 3,
                     Reviewer = "Admin 3",
                     ReviewerId = 3,
-                    State = StateEnum.Active,
+                    State = StateEnum.Draft,
                     AppointmentDate = DateTime.Now,
                 }
             };
@@ -142,11 +142,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 new FormDataStateListItemViewModel
                 {
-                    State = StateEnum.Active,
-                    Name = "Active"
-                },
-                new FormDataStateListItemViewModel
-                {
                     State = StateEnum.Draft,
                     Name = "Draft"
                 },
@@ -190,7 +185,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 AssigneeId = 1,
                 Reviewer = "Admin User 1",
                 ReviewerId = 1,
-                State = StateEnum.Active,
+                State = StateEnum.Draft,
                 AppointmentDate = DateTime.Today.AddDays(-4),
                 RecommendedLevel = "Middle",
                 RecommendedLevelId = 1,

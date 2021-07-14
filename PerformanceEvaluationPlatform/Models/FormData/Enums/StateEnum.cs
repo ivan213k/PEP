@@ -2,8 +2,7 @@
 {
     public enum StateEnum
     {
-        Active = 1,
-        Draft = 2,
-        Submitted = 3
+        Draft = 1,
+        Submitted = 2,
     }
 }

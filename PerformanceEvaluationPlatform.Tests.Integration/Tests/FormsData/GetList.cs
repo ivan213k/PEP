@@ -43,7 +43,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    State = new List<StateEnum> {StateEnum.Active }
+                    State = new List<StateEnum> {StateEnum.Draft }
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
