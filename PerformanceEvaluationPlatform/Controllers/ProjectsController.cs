@@ -82,6 +82,24 @@ namespace PerformanceEvaluationPlatform.Controllers
                 filter.Take = 30;
             }
         }
+
+        [HttpPut("project/{id}")]
+        public IActionResult EditProject(int id, [FromBody] EditProjectRequestModel projectRequestModel)
+        {
+            if (projectRequestModel is null)
+            {
+                return BadRequest();
+            }
+            var projects = GetProjectListItemViewModels();
+            var projectExists = projects.Any(t => t.Id == id);
+            if (!projectExists)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
         private IEnumerable<ProjectListItemViewModel> GetProjectListItemViewModels()
         {
             var items = new List<ProjectListItemViewModel>
