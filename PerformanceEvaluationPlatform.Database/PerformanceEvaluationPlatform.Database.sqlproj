@@ -80,6 +80,9 @@
     <Folder Include="Role" />
     <Folder Include="Role\Tables" />
     <Folder Include="Role\PostDeployment" />
+    <Folder Include="Users" />
+    <Folder Include="Users\Tablse" />
+    <Folder Include="Users\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -108,6 +111,9 @@
     <Build Include="Role\Tables\Role.sql" />
     <Build Include="Field\Tables\FieldData.sql" />
     <None Include="Field\PostDeployment\05.FieldsData.sql" />
+    <Build Include="Users\Tablse\User.sql" />
+    <Build Include="Users\Tablse\UserState.sql" />
+    <Build Include="Users\Tablse\UserRoleMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -119,13 +125,19 @@
     <None Include="Team\PostDeployment\01.Teams.sql" />
     <None Include="FormTemplate\PostDeployment\01.FormTemplateStatus.sql" />
     <None Include="FormTemplate\PostDeployment\02.FormTemplate.sql" />
+    <None Include="Users\PostDeployment\01.UserState.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
     <None Include="Role\PostDeployment\01.Role.sql" />
+    <None Include="Users\PostDeployment\02.User.sql" />
+    <None Include="Users\PostDeployment\03.UserRoleMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />
     <Build Include="Example\Tables\ExampleType.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="PerformanceEvaluationPlatform.Database.refactorlog" />
   </ItemGroup>
 </Project>
