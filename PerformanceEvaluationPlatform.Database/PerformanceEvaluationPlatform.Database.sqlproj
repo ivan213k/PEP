@@ -83,6 +83,9 @@
     <Folder Include="Users" />
     <Folder Include="Users\Tablse" />
     <Folder Include="Users\PostDeployment" />
+    <Folder Include="Document" />
+    <Folder Include="Document\Tables" />
+    <Folder Include="Document\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -114,6 +117,11 @@
     <Build Include="Users\Tablse\User.sql" />
     <Build Include="Users\Tablse\UserState.sql" />
     <Build Include="Users\Tablse\UserRoleMap.sql" />
+    <Build Include="Document\Tables\Document.sql" />
+    <Build Include="Document\Tables\DocumentType.sql" />
+    <None Include="Document\PostDeployment\01.DocumentType.sql" />
+    <None Include="Document\PostDeployment\02.Document.sql" />
+    <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />

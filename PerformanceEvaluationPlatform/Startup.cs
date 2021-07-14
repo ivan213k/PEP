@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PerformanceEvaluationPlatform.Models.Document.BaseModels;
+using PerformanceEvaluationPlatform.Repositories.Document;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -18,6 +20,7 @@ namespace PerformanceEvaluationPlatform
         {
             services.AddControllers();
             services.AddSwaggerGen();
+            services.AddSingleton<IDocumentReposotory, MockDataRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
