@@ -5,21 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.FieldGroups.ViewModels;
 using PerformanceEvaluationPlatform.Models.FieldGroups.RequestModels;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class FieldGroupsController : ControllerBase
     {
-        [HttpGet("fieldgroups")]
+        [HttpGet("fields/groups")]
         public IActionResult Get([FromQuery]FieldGroupsListFilterRequestModel filter)
+
         {
             var items = GetFieldGroupsListItemViewModel();
             items = GetFilteredItems(items, filter);
             return Ok(items);
         }
 
-        private IEnumerable<FieldGroupsListItemViewModel> GetFilteredItems (IEnumerable<FieldGroupsListItemViewModel> items, 
+        private IEnumerable<FieldGroupsListItemViewModel> GetFilteredItems (IEnumerable<FieldGroupsListItemViewModel> items,
             FieldGroupsListFilterRequestModel filter)
         {
             InitFilter(filter);
@@ -30,13 +32,13 @@ namespace PerformanceEvaluationPlatform.Controllers
                     .Where(t => t.Title.Contains(filter.Search));
             }
 
-            if(filter.CountFrom != null)
+            if (filter.CountFrom != null)
             {
                 items = items
                     .Where(t => t.FieldCount >= filter.CountFrom);
             }
-            
-            if(filter.CountTo != null)
+
+            if (filter.CountTo != null)
             {
                 items = items
                     .Where(t => t.FieldCount <= filter.CountTo);
@@ -46,6 +48,39 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 items = items
                     .Where(t => t.FieldCount > 0);
+            };
+
+            if (filter.TitleSetOrder != null)
+            {
+                if (filter.TitleSetOrder == SortOrder.Ascending)
+                {
+                    items = items
+                        .OrderBy(t => t.Title);
+                }
+                else if (filter.TitleSetOrder == SortOrder.Descending)
+                {
+                    items = items
+                        .OrderByDescending(t => t.Title);
+                }
+            }
+            else
+            {
+                items = items
+                    .OrderBy(t => t.Title);
+            }
+
+            if(filter.FieldCountSetOrder != null)
+            {
+                if (filter.FieldCountSetOrder == SortOrder.Ascending)
+                {
+                    items = items
+                        .OrderBy(t => t.FieldCount);
+                }
+                else if (filter.FieldCountSetOrder == SortOrder.Descending)
+                {
+                    items = items
+                        .OrderByDescending(t => t.FieldCount);
+                }
             }
 
             items = items
@@ -54,6 +89,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return items;
         }
+
 
         private void InitFilter (FieldGroupsListFilterRequestModel filter)
         {
