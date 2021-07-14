@@ -77,6 +77,9 @@
     <Folder Include="Deeplink" />
     <Folder Include="Deeplink\PostDeployment" />
     <Folder Include="Deeplink\Tables" />
+    <Folder Include="Role" />
+    <Folder Include="Role\Tables" />
+    <Folder Include="Role\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -102,6 +105,7 @@
     <Build Include="FormTemplate\Tables\FormTemplate.sql" />
     <Build Include="FormTemplate\Tables\FormTemplateFieldMap.sql" />
     <Build Include="Deeplink\Tables\Table1.sql" />
+    <Build Include="Role\Tables\Role.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -116,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
+    <None Include="Role\PostDeployment\01.Role.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />

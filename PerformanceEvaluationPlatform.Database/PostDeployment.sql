@@ -25,3 +25,5 @@ Post-Deployment Script Template
 
 :r .\FormTemplate\PostDeployment\01.FormTemplateStatus.sql
 :r .\FormTemplate\PostDeployment\02.FormTemplate.sql
+
+:r .\Role\PostDeployment\01.Role.sql
