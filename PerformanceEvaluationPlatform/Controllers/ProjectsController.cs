@@ -36,6 +36,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(t => filter.CoordinatorIds.Contains(t.CoordinatorId));
             }
+            items = GetSortedItems(items, filter);
 
             items = items
                 .Skip(filter.Skip.Value)
@@ -81,6 +82,16 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 filter.Take = 30;
             }
+        }
+
+        [HttpPost("projects")]
+        public IActionResult CreateProject([FromBody] CreateProjectRequestModel projectRequestModel)
+        {
+            if (projectRequestModel is null)
+            {
+                return BadRequest();
+            }
+            return Created("projects", projectRequestModel);
         }
 
         [HttpPut("project/{id}")]
