@@ -5,4 +5,4 @@ VALUES
 (2,2,2,'2021-10-28','Deu.crf',2,'2021-04-27','some metadate2'),
 (3,3,3,'2021-07-01','Fren.crf',3,'2022-02-25','some metadate3')
 
-SET IDENTITY_INSERT [dbo].[User] OFF
+SET IDENTITY_INSERT [dbo].[Document] OFF
