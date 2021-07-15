@@ -20,6 +20,19 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
+        [HttpGet("teams/{id}")]
+        public IActionResult GetTeamDetails(int id)
+        {
+            var items = GetTeamsListItemViewModels();
+            var item = items.FirstOrDefault(t => t.TeamId == id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(item);
+        }
+
         private IEnumerable<TeamListViewModel> GetFilteredItems(IEnumerable<TeamListViewModel> items, TeamListFilterRequestModel filter)
         {
             InitFilter(filter);
