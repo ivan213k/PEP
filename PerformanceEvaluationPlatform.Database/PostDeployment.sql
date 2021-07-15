@@ -28,5 +28,4 @@
 
 :r .\FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql
 
-:r .\Document\PostDeployment\01.DocumentType.sql
-:r .\Document\PostDeployment\02.Document.sql
+:r .\Project\PostDeployment\01.Project.sql
