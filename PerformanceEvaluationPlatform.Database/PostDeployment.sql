@@ -20,6 +20,8 @@
 :r .\FormData\PostDeployment\01.FormDataStates.sql
 :r .\FormData\PostDeployment\02.FormData.sql
 
+:r .\FieldsGroups\PostDeployment\01.FieldGroups.sql
+
 :r .\Field\PostDeployment\01.FieldTypes.sql
 :r .\Field\PostDeployment\02.AssesmentGroups.sql
 :r .\Field\PostDeployment\03.Fields.sql

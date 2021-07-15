@@ -89,6 +89,9 @@
     <Folder Include="Project" />
     <Folder Include="Project\PostDeployment" />
     <Folder Include="Project\Tables" />
+    <Folder Include="FieldsGroups" />
+    <Folder Include="FieldsGroups\Tables" />
+    <Folder Include="FieldsGroups\PostDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -128,6 +131,7 @@
     <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
     <None Include="Project\PostDeployment\01.Project.sql" />
     <Build Include="Project\Tables\Project.sql" />
+    <Build Include="FieldsGroups\Tables\FieldGroup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -149,6 +153,7 @@
     <None Include="Role\PostDeployment\01.Role.sql" />
     <None Include="Users\PostDeployment\02.User.sql" />
     <None Include="Users\PostDeployment\03.UserRoleMap.sql" />
+    <None Include="FieldsGroups\PostDeployment\01.FieldGroups.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />
