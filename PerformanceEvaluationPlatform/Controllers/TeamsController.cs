@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using PerformanceEvaluationPlatform.Models.Team.RequestModels;
 using PerformanceEvaluationPlatform.Models.Team.ViewModels;
 using System;
@@ -33,13 +34,43 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(item);
         }
 
+        private IEnumerable<TeamListViewModel> GetOrderedItems(IEnumerable<TeamListViewModel> items, TeamListFilterRequestModel filter)
+        {
+            if (filter.OrderByTeamTitle != null)
+            {
+                if (filter.OrderByTeamTitle == SortOrder.Ascending)
+                    items = items.OrderBy(t => t.TeamTitle);
+                else
+                    items = items.OrderByDescending(t => t.TeamTitle);
+            } 
+            else
+            {
+                items = items.OrderBy(t => t.TeamTitle);
+            }
+
+            if (filter.OrderByProjectTitle != null)
+            {
+                if (filter.OrderByProjectTitle == SortOrder.Ascending)
+                    items = items.OrderBy(t => t.ProjectTitle);
+                else
+                    items = items.OrderByDescending(t => t.ProjectTitle);
+            }
+
+            if (filter.OrderByTeamSize != null)
+            {
+                if (filter.OrderByTeamSize == SortOrder.Ascending)
+                    items = items.OrderBy(t => t.TeamSize);
+                else
+                    items = items.OrderByDescending(t => t.TeamSize);
+            }
+
+            return items;
+        }
+
+
         private IEnumerable<TeamListViewModel> GetFilteredItems(IEnumerable<TeamListViewModel> items, TeamListFilterRequestModel filter)
         {
             InitFilter(filter);
-
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
@@ -52,6 +83,12 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(t => filter.ProjectIds.Contains(t.ProjectId));
             }
+
+            items = GetOrderedItems(items, filter);
+
+            items = items
+                .Skip(filter.Skip.Value)
+                .Take(filter.Take.Value);
 
             return items;
         }
@@ -84,27 +121,27 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "Team2",
+                    TeamTitle = "ATeam2",
                     TeamId = 102,
-                    ProjectTitle = "Project2",
+                    ProjectTitle = "BProject2",
                     ProjectId = 2,
                     TeamSize = 10,
                     TeamLead = "User2"
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "Team3",
+                    TeamTitle = "CTeam3",
                     TeamId = 103,
-                    ProjectTitle = "Project11",
+                    ProjectTitle = "AProject1",
                     ProjectId = 1,
                     TeamSize = 15,
                     TeamLead = "User3"
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "Team4",
+                    TeamTitle = "BTeam4",
                     TeamId = 104,
-                    ProjectTitle = "Project4",
+                    ProjectTitle = "CProject4",
                     ProjectId = 4,
                     TeamSize = 20,
                     TeamLead = "User4"
