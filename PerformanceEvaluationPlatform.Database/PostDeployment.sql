@@ -20,6 +20,8 @@
 :r .\FormData\PostDeployment\01.FormDataStates.sql
 :r .\FormData\PostDeployment\02.FormData.sql
 
+:r .\FieldsGroups\PostDeployment\01.FieldGroups.sql
+
 :r .\Field\PostDeployment\01.FieldTypes.sql
 :r .\Field\PostDeployment\02.AssesmentGroups.sql
 :r .\Field\PostDeployment\03.Fields.sql
@@ -29,3 +31,9 @@
 :r .\FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql
 
 :r .\Project\PostDeployment\01.Project.sql
+
+:r .\Document\PostDeployment\01.DocumentType.sql
+:r .\Document\PostDeployment\02.Document.sql
+
+:r .\Deeplink\PostDeployment\01.DeeplinkStates.sql
+:r .\Deeplink\PostDeployment\02.Deeplinks.sql

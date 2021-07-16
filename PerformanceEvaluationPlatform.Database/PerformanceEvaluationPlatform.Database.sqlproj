@@ -83,9 +83,18 @@
     <Folder Include="Users" />
     <Folder Include="Users\Tablse" />
     <Folder Include="Users\PostDeployment" />
+    <Folder Include="Document" />
+    <Folder Include="Document\Tables" />
+    <Folder Include="Document\PostDeployment" />
     <Folder Include="Project" />
-    <Folder Include="Project\Tables" />
     <Folder Include="Project\PostDeployment" />
+    <Folder Include="Project\Tables" />
+    <Folder Include="FieldsGroups" />
+    <Folder Include="FieldsGroups\Tables" />
+    <Folder Include="FieldsGroups\PostDeployment" />
+    <Folder Include="Shared" />
+    <Folder Include="Shared\Types" />
+    <Folder Include="Example\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -110,14 +119,24 @@
     <Build Include="FormTemplate\Tables\FormTemplateStatus.sql" />
     <Build Include="FormTemplate\Tables\FormTemplate.sql" />
     <Build Include="FormTemplate\Tables\FormTemplateFieldMap.sql" />
-    <Build Include="Deeplink\Tables\Table1.sql" />
+    <Build Include="Deeplink\Tables\Deeplink.sql" />
+    <Build Include="Deeplink\Tables\DeeplinkState.sql" />
     <Build Include="Role\Tables\Role.sql" />
     <Build Include="Field\Tables\FieldData.sql" />
     <None Include="Field\PostDeployment\05.FieldsData.sql" />
     <Build Include="Users\Tablse\User.sql" />
     <Build Include="Users\Tablse\UserState.sql" />
     <Build Include="Users\Tablse\UserRoleMap.sql" />
+    <Build Include="Document\Tables\Document.sql" />
+    <Build Include="Document\Tables\DocumentType.sql" />
+    <None Include="Document\PostDeployment\01.DocumentType.sql" />
+    <None Include="Document\PostDeployment\02.Document.sql" />
+    <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
+    <None Include="Project\PostDeployment\01.Project.sql" />
     <Build Include="Project\Tables\Project.sql" />
+    <Build Include="FieldsGroups\Tables\FieldGroup.sql" />
+    <Build Include="Shared\Types\IntList.sql" />
+    <Build Include="Example\StoredProcedures\spGetExampleListItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -131,13 +150,15 @@
     <None Include="FormTemplate\PostDeployment\02.FormTemplate.sql" />
     <None Include="Users\PostDeployment\01.UserState.sql" />
     <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
+    <None Include="Deeplink\PostDeployment\02.Deeplinks.sql" />
+    <None Include="Deeplink\PostDeployment\01.DeeplinkStates.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
     <None Include="Role\PostDeployment\01.Role.sql" />
     <None Include="Users\PostDeployment\02.User.sql" />
     <None Include="Users\PostDeployment\03.UserRoleMap.sql" />
-    <None Include="Project\PostDeployment\01.Project.sql" />
+    <None Include="FieldsGroups\PostDeployment\01.FieldGroups.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />

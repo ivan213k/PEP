@@ -112,25 +112,25 @@ namespace PerformanceEvaluationPlatform.Controllers
                 filter.Take = 30;
             }
         }
-        [HttpGet("deeplinks/sentto")]
-        public IActionResult GetDeeplinkUserTo([FromRoute] int id)
+        [HttpGet("deeplinks/states")]
+        public IActionResult GetDeeplinkStates([FromRoute] int id)
         {
-            var DeeplinkUserTo = new List<DeeplinkSentToListItemViewModel>
+            var DeeplinkState = new List<DeeplinkStateListItemViewModel>
             {
-                new DeeplinkSentToListItemViewModel
+                new DeeplinkStateListItemViewModel
                 {
                     Id = 1,
-                    Name = "User 1"
+                    Name = "Draft"
                 },
-                new DeeplinkSentToListItemViewModel
+                new DeeplinkStateListItemViewModel
                 {
                     Id = 2,
-                    Name = "User 2"
+                    Name = "Expired"
                 }
 
             };
 
-            return Ok(DeeplinkUserTo);
+            return Ok(DeeplinkState);
         }
 
         private static IEnumerable<DeeplinkListItemViewModel> GetDeeplinkListItemViewModels()
