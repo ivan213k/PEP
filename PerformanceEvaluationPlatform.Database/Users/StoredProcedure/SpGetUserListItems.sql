@@ -16,14 +16,12 @@ Begin
 	DECLARE @WhereClause NVARCHAR(MAX) = ''
 	DECLARE @JoinClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
+	DECLARE @UserNextPeDate TABLE([userId] INT, [NextPe]DATE)
+	DECLARE @UserPreviousPeDate TABLE([userId] INT, [PreviousPe]DATE)
 
 DECLARE @UserPEs TABLE([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
 
-	DECLARE @UserNextPe TABLE([userId] INT, [NextPe]DATE)
-
-	DECLARE @UserPreviousPe TABLE([userId] INT, [PreviousPe]DATE)
-
-	INSERT INTO @UserNextPe ([userId],[NextPE])
+	INSERT INTO @UserNextPeDate ([userId],[NextPE])
 SELECT  [U].[Id],MAX([S].[AppointmentDate])
 FROM  [dbo].[User] AS[U]
 LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
@@ -31,12 +29,12 @@ LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
 WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
 LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
 
-INSERT INTO @UserPreviousPe ([userId],[PreviousPe])
+INSERT INTO @UserPreviousPeDate ([userId],[PreviousPe])
 
  SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
  
  INSERT  INTO @UserPEs ([userId],[PreviousPE],[NextPE])
- SELECT [UNP].userId,[UPP].PreviousPe,[UNP].NextPe FROM @UserNextPe AS [UNP] LEFT JOIN @UserPreviousPe AS [UPP]ON[UPP].userId = [UNP].userId 
+ SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM @UserNextPeDate AS [UNPD] LEFT JOIN @UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
 
 
 	IF(@Search IS NOT NULL)
@@ -127,7 +125,7 @@ INSERT INTO @UserPreviousPe ([userId],[PreviousPe])
 	@PreviousPeDate,
 	@NextPeDate,
 	@Skip,
-	@Take
+	@Take,
 End
 
 
