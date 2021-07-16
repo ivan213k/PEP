@@ -10,8 +10,7 @@
 
 	CONSTRAINT [PK_Field] PRIMARY KEY([Id]),
 	CONSTRAINT [FK_Field_FieldTypeId] FOREIGN KEY ([FieldTypeId]) REFERENCES [dbo].[FieldType]([Id]),
-	CONSTRAINT [FK_Field_Field_AssesmentGroupId] FOREIGN KEY ([AssesmentGroupId]) REFERENCES [dbo].[AssesmentGroup]([Id])
-	/*
-	CONSTRAINT [FK_Field_FieldGroupId] FOREIGN KEY ([FieldGroupId]) REFERENCES [dbo].[FieldGroup]([Id]),
-	*/
+	CONSTRAINT [FK_Field_Field_AssesmentGroupId] FOREIGN KEY ([AssesmentGroupId]) REFERENCES [dbo].[AssesmentGroup]([Id]),
+	CONSTRAINT [FK_Field_FieldGroupId] FOREIGN KEY ([FieldGroupId]) REFERENCES [dbo].[FieldGroup]([Id])
+	
 )
