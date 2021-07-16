@@ -17,6 +17,28 @@ Begin
 	DECLARE @JoinClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
 
+DECLARE @UserPEs TABLE([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
+
+	DECLARE @UserNextPe TABLE([userId] INT, [NextPe]DATE)
+
+	DECLARE @UserPreviousPe TABLE([userId] INT, [PreviousPe]DATE)
+
+	INSERT INTO @UserNextPe ([userId],[NextPE])
+SELECT  [U].[Id],MAX([S].[AppointmentDate])
+FROM  [dbo].[User] AS[U]
+LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
+
+WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
+LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
+
+INSERT INTO @UserPreviousPe ([userId],[PreviousPe])
+
+ SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
+ 
+ INSERT  INTO @UserPEs ([userId],[PreviousPE],[NextPE])
+ SELECT [UNP].userId,[UPP].PreviousPe,[UNP].NextPe FROM @UserNextPe AS [UNP] LEFT JOIN @UserPreviousPe AS [UPP]ON[UPP].userId = [UNP].userId 
+
+
 	IF(@Search IS NOT NULL)
 	BEGIN
 		SET @SearchClause = '%' + @Search + '%'
@@ -80,12 +102,12 @@ Begin
 
 
 
-	DECLARE @Sql NVARCHAR(MAX)= 'SELECT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],[T].[Title] as [Team Name], [R].[Title] as [Role Name] FROM [dbo].[User] AS [U]
+	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],[T].[Title] as [Team Name], [R].[Title] as [Role Name] FROM [dbo].[User] AS [U]
 	INNER JOIN [dbo].[UserState] AS [US] ON [U].StateId = [US].[Id] 
 	INNER JOIN [dbo].[Team] AS [T] ON [T].Id = [U].[TeamId]
 	INNER JOIN [dbo].[UserRoleMap] AS [URM] ON [U].Id = [URM].[UserId]
 	INNER JOIN [dbo].[Role] AS [R] ON [URM].[ROleId] = [R].[Id]
-	LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id]
+	INNER JOIN @UserPEs AS [UPES] ON [UPES].userId = [U].[Id]
 	'+@JoinClause+'
 	' + @WhereClause +'
 	ORDER BY ' + @OrderClause + '
