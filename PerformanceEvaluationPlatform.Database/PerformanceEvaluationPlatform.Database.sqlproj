@@ -92,6 +92,9 @@
     <Folder Include="FieldsGroups" />
     <Folder Include="FieldsGroups\Tables" />
     <Folder Include="FieldsGroups\PostDeployment" />
+    <Folder Include="Shared" />
+    <Folder Include="Shared\Types" />
+    <Folder Include="Example\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -132,6 +135,8 @@
     <None Include="Project\PostDeployment\01.Project.sql" />
     <Build Include="Project\Tables\Project.sql" />
     <Build Include="FieldsGroups\Tables\FieldGroup.sql" />
+    <Build Include="Shared\Types\IntList.sql" />
+    <Build Include="Example\StoredProcedures\spGetExampleListItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
