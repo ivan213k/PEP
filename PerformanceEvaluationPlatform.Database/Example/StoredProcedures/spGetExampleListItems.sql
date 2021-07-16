@@ -40,6 +40,7 @@ BEGIN
 		SET @JoinClause = @JoinClause + ' INNER JOIN @TypeIds [TI] ON [TI].[Id] = [E].[ExampleTypeId] '
 	END
 
+
 	IF (@TitleSortOrder IS NOT NULL)
 	BEGIN
 		IF (@TitleSortOrder = 1)
