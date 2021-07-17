@@ -16,12 +16,12 @@ Begin
 	DECLARE @WhereClause NVARCHAR(MAX) = ''
 	DECLARE @JoinClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
-	DECLARE @UserNextPeDate TABLE([userId] INT, [NextPe]DATE)
-	DECLARE @UserPreviousPeDate TABLE([userId] INT, [PreviousPe]DATE)
+CREATE TABLE #UserNextPeDate ([userId] INT, [NextPe]DATE)
+CREATE TABLE #UserPreviousPeDate ([userId] INT, [PreviousPe]DATE)
 
-DECLARE @UserPEs TABLE([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
+CREATE TABLE #UserPEs ([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
 
-	INSERT INTO @UserNextPeDate ([userId],[NextPE])
+	INSERT INTO #UserNextPeDate ([userId],[NextPE])
 SELECT  [U].[Id],MAX([S].[AppointmentDate])
 FROM  [dbo].[User] AS[U]
 LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
@@ -29,12 +29,12 @@ LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
 WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
 LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
 
-INSERT INTO @UserPreviousPeDate ([userId],[PreviousPe])
+INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 
  SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
  
- INSERT  INTO @UserPEs ([userId],[PreviousPE],[NextPE])
- SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM @UserNextPeDate AS [UNPD] LEFT JOIN @UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
+ INSERT  INTO #UserPEs ([userId],[PreviousPE],[NextPE])
+ SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
 
 
 	IF(@Search IS NOT NULL)
@@ -100,12 +100,14 @@ INSERT INTO @UserPreviousPeDate ([userId],[PreviousPe])
 
 
 
-	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],[T].[Title] as [Team Name], [R].[Title] as [Role Name] FROM [dbo].[User] AS [U]
+	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],
+	[T].[Title] as [Team Name], [R].[Title] as [Role Name],[UPES].[PreviousPE], [UPES].[NextPE]
+	FROM [dbo].[User] AS [U]
 	INNER JOIN [dbo].[UserState] AS [US] ON [U].StateId = [US].[Id] 
 	INNER JOIN [dbo].[Team] AS [T] ON [T].Id = [U].[TeamId]
 	INNER JOIN [dbo].[UserRoleMap] AS [URM] ON [U].Id = [URM].[UserId]
 	INNER JOIN [dbo].[Role] AS [R] ON [URM].[ROleId] = [R].[Id]
-	INNER JOIN @UserPEs AS [UPES] ON [UPES].userId = [U].[Id]
+	INNER JOIN #UserPEs AS [UPES] ON [UPES].userId = [U].[Id]
 	'+@JoinClause+'
 	' + @WhereClause +'
 	ORDER BY ' + @OrderClause + '
@@ -125,15 +127,5 @@ INSERT INTO @UserPreviousPeDate ([userId],[PreviousPe])
 	@PreviousPeDate,
 	@NextPeDate,
 	@Skip,
-	@Take,
+	@Take
 End
-
-
-
-
-
-
-
-
-
-
