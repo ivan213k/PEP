@@ -2,8 +2,8 @@
 @Search NVARCHAR(258),
 @StateIds [dbo].[IntList] READONLY,
 @RoleIds [dbo].[IntList]READONLY,
-@PreviousPeDate date,
-@NextPeDate date,
+@PreviousPeDate DATE,
+@NextPeDate DATE,
 @UserNameSort INT,
 @UserPreviousPE INt,
 @UserNextPE INT,
@@ -36,7 +36,7 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
  INSERT  INTO #UserPEs ([userId],[PreviousPE],[NextPE])
  SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
 
-
+ --Search Where Clause
 	IF(@Search IS NOT NULL)
 	BEGIN
 		SET @SearchClause = '%' + @Search + '%'
@@ -50,6 +50,35 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 		SET @WhereClause = @WhereClause + 'concat ([U].[FirstName], ' +'[U].[LastName], '+ '[U].[Email])'+ ' LIKE ''' + @SearchClause +''' '
 
 	END
+
+	--Previous PE DATE WHERE CLAUSE
+	IF(@PreviousPeDate IS NOT NULL)
+	BEGIN
+
+		If(@WhereClause ='')
+		SET @WhereClause = 'WHERE '
+
+		ELSE
+		SET @WhereClause = @WhereClause+' AND '
+
+	SET @WhereClause = @WhereClause + '[UPES].[PreviousPE] = @PreviousPeDate'
+
+	END
+
+	--NEXT PE DATE WHERE CLAUSE
+		IF(@NextPeDate IS NOT NULL)
+	BEGIN
+
+		If(@WhereClause ='')
+		SET @WhereClause = 'WHERE '
+
+		ELSE
+		SET @WhereClause = @WhereClause+' AND '
+
+		SET @WhereClause = @WhereClause + '[UPES].[NextPE] = @NextPeDate'
+
+	END
+
 	--INSERT INTO @StateIds VALUES(1);
 	IF(EXISTS(SELECT* FROM @StateIds))
 	BEGIN
@@ -62,7 +91,7 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 	SET @JoinClause = @JoinClause+ 'INNER JOIN @RoleIds AS [RI] ON [R].[Id] = [RI].[Id]'
 	END
 
-
+	-- UserName Or Email Order  CLause
 	IF(@UserNameSort IS NOT NULL)
 	BEGIN
 		IF(@UserNameSort = 1)
@@ -73,7 +102,7 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 
 	END
 
-
+	
 	If(@OrderClause  = '')
 	Begin
 	SET @OrderClause = '[U].[FirstName] ASC'
@@ -83,19 +112,19 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 	IF(@UserNextPE IS NOT NULL)
 	BEGIN
 		IF(@UserNextPE = 1)
-		Set @OrderClause ='[S].[AppointmentDate] ASC'
+		Set @OrderClause ='[UPES].[NextPE] ASC'
 
 		ELSE
-		Set @OrderClause ='[S].[AppointmentDate] DESC'
+		Set @OrderClause ='[UPES].[NextPE] DESC'
 	END
 
 	IF(@UserPreviousPE IS NOT NULL)
 	BEGIN
 		IF(@UserPreviousPE = 1)
-		Set @OrderClause ='[S].[AppointmentDate] DESC'
+		Set @OrderClause ='[UPES].[PreviousPE] ASC'
 
 		ELSE
-		Set @UserPreviousPE ='[S].[AppointmentDate] ASC'
+		Set @OrderClause ='[UPES].[PreviousPE] DESC'
 	END
 
 
