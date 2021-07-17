@@ -154,6 +154,7 @@
     <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
     <None Include="Deeplink\PostDeployment\02.Deeplinks.sql" />
     <None Include="Deeplink\PostDeployment\01.DeeplinkStates.sql" />
+    <None Include="Project\PostDeployment\02.Coordinators.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />

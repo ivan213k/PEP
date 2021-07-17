@@ -5,6 +5,8 @@
 :r .\FormTemplate\PostDeployment\01.FormTemplateStatus.sql
 :r .\FormTemplate\PostDeployment\02.FormTemplate.sql
 
+:r .\Project\PostDeployment\01.Project.sql
+
 :r .\Team\PostDeployment\01.Teams.sql
 
 :r .\Role\PostDeployment\01.Role.sql
@@ -30,7 +32,7 @@
 
 :r .\FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql
 
-:r .\Project\PostDeployment\01.Project.sql
+:r .\Project\PostDeployment\02.Coordinators.sql
 
 :r .\Document\PostDeployment\01.DocumentType.sql
 :r .\Document\PostDeployment\02.Document.sql

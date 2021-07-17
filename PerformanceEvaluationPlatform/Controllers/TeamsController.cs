@@ -25,7 +25,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         public IActionResult GetTeamDetails(int id)
         {
             var items = GetTeamsListItemViewModels();
-            var item = items.FirstOrDefault(t => t.TeamId == id);
+            var item = items.FirstOrDefault(t => t.Id == id);
             if (item == null)
             {
                 return NotFound();
@@ -39,13 +39,13 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (filter.OrderByTeamTitle != null)
             {
                 if (filter.OrderByTeamTitle == SortOrder.Ascending)
-                    items = items.OrderBy(t => t.TeamTitle);
+                    items = items.OrderBy(t => t.Title);
                 else
-                    items = items.OrderByDescending(t => t.TeamTitle);
+                    items = items.OrderByDescending(t => t.Title);
             } 
             else
             {
-                items = items.OrderBy(t => t.TeamTitle);
+                items = items.OrderBy(t => t.Title);
             }
 
             if (filter.OrderByProjectTitle != null)
@@ -59,12 +59,44 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (filter.OrderByTeamSize != null)
             {
                 if (filter.OrderByTeamSize == SortOrder.Ascending)
-                    items = items.OrderBy(t => t.TeamSize);
+                    items = items.OrderBy(t => t.Size);
                 else
-                    items = items.OrderByDescending(t => t.TeamSize);
+                    items = items.OrderByDescending(t => t.Size);
             }
 
             return items;
+        }
+
+        [HttpPost("teams")]
+        public IActionResult AddNewTeam([FromBody] AddNewTeamRequestModel team)
+        {
+            var items = GetTeamsListItemViewModels();
+
+            if (team == null)
+            {
+                return BadRequest();
+            }
+
+            bool teamAlreadyExists = items.Any(t => t.Title == team.Title);
+
+            if (teamAlreadyExists)
+            {
+                ModelState.AddModelError("", "Team with such title already exists.");
+
+                return Conflict(ModelState);
+            }
+
+            var newTeam = new TeamListViewModel
+            {
+                Title = team.Title,
+                ProjectId = team.ProjectId,
+                Size = team.Size,
+                TeamLead = team.TeamLead
+            };
+
+            items = items.Append(newTeam);
+
+            return Ok(newTeam);
         }
 
 
@@ -75,7 +107,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
-                    .Where(t => t.TeamTitle.Contains(filter.Search));
+                    .Where(t => t.Title.Contains(filter.Search));
             }
 
             if (filter.ProjectIds != null)
@@ -112,38 +144,38 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 new TeamListViewModel
                 {
-                    TeamTitle = "Team1",
-                    TeamId = 101,
+                    Title = "Team1",
+                    Id = 101,
                     ProjectTitle = "Project1",
                     ProjectId = 1,
-                    TeamSize = 5,
+                    Size = 5,
                     TeamLead = "User1"
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "ATeam2",
-                    TeamId = 102,
-                    ProjectTitle = "BProject2",
+                    Title = "ATeam2",
+                    Id = 102,
+                    ProjectTitle = "Project2",
                     ProjectId = 2,
-                    TeamSize = 10,
+                    Size = 10,
                     TeamLead = "User2"
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "CTeam3",
-                    TeamId = 103,
-                    ProjectTitle = "AProject1",
+                    Title = "CTeam3",
+                    Id = 103,
+                    ProjectTitle = "Project1",
                     ProjectId = 1,
-                    TeamSize = 15,
+                    Size = 15,
                     TeamLead = "User3"
                 },
                 new TeamListViewModel
                 {
-                    TeamTitle = "BTeam4",
-                    TeamId = 104,
-                    ProjectTitle = "CProject4",
-                    ProjectId = 4,
-                    TeamSize = 20,
+                    Title = "BTeam4",
+                    Id = 104,
+                    ProjectTitle = "Project3",
+                    ProjectId = 3,
+                    Size = 20,
                     TeamLead = "User4"
                 }
             };
