@@ -12,13 +12,12 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class SurveysController : ControllerBase
     {
         [HttpGet("surveys")]
-        public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)
+        public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)     
         {
             var surveys = GetSurveyListItemViewModels();
             surveys = GetFilteredItems(surveys, filter);
             return Ok(surveys);
         }
-
 
         [HttpGet("surveys/{id}")]
         public IActionResult GetSurveyDetails([FromRoute] int id)
@@ -196,9 +195,9 @@ namespace PerformanceEvaluationPlatform.Controllers
                 else
                     surveys = surveys.OrderByDescending(r => r.FormName);
             }
-            if (filter.AssigneeNameSortOrder != null)
+            if (filter.AssigneeSortOrder != null)
             {
-                if (filter.AssigneeNameSortOrder == SortOrder.Ascending)
+                if (filter.AssigneeSortOrder == SortOrder.Ascending)
                     surveys = surveys.OrderBy(r => r.Assignee);
                 else
                     surveys = surveys.OrderByDescending(r => r.Assignee);
