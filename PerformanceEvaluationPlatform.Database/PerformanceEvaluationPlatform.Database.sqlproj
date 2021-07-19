@@ -97,6 +97,7 @@
     <Folder Include="Example\StoredProcedures" />
     <Folder Include="Survey\StoredProcedures" />
     <Folder Include="Field\StoredProcedures" />
+    <Folder Include="Document\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -141,6 +142,8 @@
     <Build Include="Example\StoredProcedures\spGetExampleListItems.sql" />
     <Build Include="Survey\StoredProcedures\spGetSurveyListItems.sql" />
     <Build Include="Field\StoredProcedures\spGetFieldListItems.sql" />
+    <Build Include="Document\StoredProcedures\spGetDocumentListItems.sql" />
+    <Build Include="Document\StoredProcedures\spGetDocumentDetailById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />

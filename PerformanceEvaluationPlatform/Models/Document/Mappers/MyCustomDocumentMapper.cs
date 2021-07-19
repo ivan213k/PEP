@@ -17,7 +17,8 @@ namespace PerformanceEvaluationPlatform.Models.Document.Mappers
             DocumentListItemViewModel item = new DocumentListItemViewModel()
             {
                 Id = modeldoc.Id,
-                Username = $"testUser {modeldoc.UserId}",//refactor after created UserModel
+                FirstName = $"testUser {modeldoc.UserId}",//refactor after created UserModel
+                LastName = $"testUser {modeldoc.UserId+5}",//refactor after created UserModel
                 DocumentTypeName = typedoc.TypeName,
                 ValidToDate = modeldoc.ValidToDate,
                 FileName = modeldoc.FileName
@@ -28,13 +29,16 @@ namespace PerformanceEvaluationPlatform.Models.Document.Mappers
         public static DocumentDetailViewModel MappDetailDocument(DocumentModel modeldoc, TypeModel typedoc) {
             DocumentDetailViewModel item = new DocumentDetailViewModel() {
                 Id = modeldoc.Id,
-                UserName = $"testUser {modeldoc.UserId}", //refactor after created UserModel
+                FirstName = $"testUser {modeldoc.UserId}",//refactor after created UserModel
+                LastName= $"testUser {modeldoc.UserId + 5}",//refactor after created UserModel
                 DocumentType = typedoc.Name,
                 ValidTo = modeldoc.ValidToDate,
                 FileName = modeldoc.FileName,
-                CreatedBy = $"User {modeldoc.CreatedById}",
+                CreatedByFirstName = $"User {modeldoc.CreatedById}",
+                CreatedByLastName= $"User {modeldoc.CreatedById+5}",
                 CreatedAt = modeldoc.CreatedAt,
-                LastUpdatesBy = $"User {modeldoc.LastUpdateById}",
+                LastUpdatesByFirstName = $"User {modeldoc.LastUpdateById}",
+                LastUpdatesByLastName = $"User {modeldoc.LastUpdateById+5}",
                 LastUpdatesAt = modeldoc.LastUpdatesAt.Value
                 //TODO: parsing and converting Metadata from json
 
