@@ -1,14 +1,11 @@
-﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
+﻿using PerformanceEvaluationPlatform.Models.Shared;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.Models.Project.RequestModels
 {
-    public class ProjectListFilterRequestModel
+    public class ProjectListFilterRequestModel : BaseFilterRequestModel
     {
-        public int? Skip { get; set; }
-        public int? Take { get; set; }
-
-        public string Search { get; set; }
         public ICollection<int> CoordinatorIds { get; set; }
 
         public SortOrder? TitleSortOrder { get; set; }

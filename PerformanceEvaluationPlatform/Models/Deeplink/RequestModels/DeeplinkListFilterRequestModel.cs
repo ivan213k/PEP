@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
 using System;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.Deeplink.RequestModels
 {
-    public class DeeplinkListFilterRequestModel
+    public class DeeplinkListFilterRequestModel : BaseFilterRequestModel
     {
-        public int? Skip { get; set; }
-        public int? Take { get; set; }
-
-    
-        public string Search { get; set; }
         public ICollection<int> SentToIds { get; set; }
 
         public DateTime? ExpiresAtFrom { get; set; }

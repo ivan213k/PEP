@@ -2,10 +2,8 @@
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using PerformanceEvaluationPlatform.Models.Team.RequestModels;
 using PerformanceEvaluationPlatform.Models.Team.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -102,8 +100,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<TeamListViewModel> GetFilteredItems(IEnumerable<TeamListViewModel> items, TeamListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -123,19 +119,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 .Take(filter.Take.Value);
 
             return items;
-        }
-
-        private void InitFilter(TeamListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
         }
 
         private static IEnumerable<TeamListViewModel> GetTeamsListItemViewModels()

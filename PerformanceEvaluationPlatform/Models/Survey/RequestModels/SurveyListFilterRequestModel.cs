@@ -1,16 +1,12 @@
-﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
+﻿using PerformanceEvaluationPlatform.Models.Shared;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
 {
-    public class SurveyListFilterRequestModel
+    public class SurveyListFilterRequestModel : BaseFilterRequestModel
     {
-        public int? Skip { get; set; }
-        public int? Take { get; set; }
-
-        public string Search { get; set; }
-
         public DateTime? AppointmentDateFrom { get; set; }
         public DateTime? AppointmentDateTo { get; set; }
 

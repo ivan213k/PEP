@@ -5,7 +5,6 @@ using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -50,7 +49,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var items = SortingUsers(userSorting, users);
             items = FilterUsers(userFilter, items);
             var resultItems = MapToUserViewModel(items);
-            return Ok(resultItems.Skip((userFilter.Skip - 1) * userFilter.Take).Take(userFilter.Take));
+            return Ok(resultItems.Skip((userFilter.Skip.Value - 1) * userFilter.Take.Value).Take(userFilter.Take.Value));
         }
 
 
@@ -69,7 +68,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPut("{id}")]
         public IActionResult EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
-            if(ModelState.IsValid == false)
+            if (ModelState.IsValid == false)
             {
                 return BadRequest();
             }
@@ -86,19 +85,19 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost]
         public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
-            if(createUserRequest == null)
+            if (createUserRequest == null)
             {
                 ModelState.AddModelError("", "You didnt create user");
                 return BadRequest(ModelState);
             }
 
-            if(ModelState.IsValid == false)
+            if (ModelState.IsValid == false)
             {
                 return BadRequest();
             }
 
             var validation = users.Any(s => string.Equals(s.Email, createUserRequest.Email, StringComparison.InvariantCultureIgnoreCase));
-            if(validation is  true)
+            if (validation is true)
             {
                 ModelState.AddModelError("", "User with the same email is already exists");
                 return Conflict(ModelState);
@@ -121,7 +120,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 TeamId = createUserRequest.TeamId
             };
             users.Add(user);
-            var absoluteUri = string.Concat(HttpContext.Request.Scheme,"://",HttpContext.Request.Host.ToUriComponent());
+            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
         }
@@ -138,7 +137,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.EnglishLevelName = editedUser.EnglishLevelName;
             user.FirstDayInCompany = editedUser.FirstDayInCompany;
             user.ProjectName = editedUser.ProjectName;
-            
+
         }
         private UserDetailViewModel MapToUserDeailViewModel(User user)
         {

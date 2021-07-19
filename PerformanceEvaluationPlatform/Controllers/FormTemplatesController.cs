@@ -5,7 +5,6 @@ using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -29,8 +28,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items.Where(i => i.Name.Contains(filter.Search));
@@ -57,19 +54,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
 
             return items;
-        }
-
-        private void InitFilter(FormTemplateListFilterOrderRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
         }
 
         private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()

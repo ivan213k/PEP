@@ -84,7 +84,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var item = items.SingleOrDefault(t => t.Id == id);
             if (item == null)
             {
-                return NotFound();              
+                return NotFound();
             }
             item.Name = fieldRequestModel.Name;
             item.IsRequired = fieldRequestModel.IsRequired;
@@ -98,7 +98,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var item = items.SingleOrDefault(t => t.Id == id);
             if (item == null)
             {
-                return NotFound();               
+                return NotFound();
             }
             items = items.Where(t => t.Id != item.Id).ToList();
 
@@ -120,7 +120,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var item = items.SingleOrDefault(t => t.Id == id);
             if (item == null)
             {
-                return NotFound();               
+                return NotFound();
             }
 
             return Ok(item);
@@ -163,11 +163,9 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-            private IEnumerable<FieldListItemViewModel> GetFilteredItems(IEnumerable<FieldListItemViewModel> items,
-            FieldListFilterRequestModel filter)
+        private IEnumerable<FieldListItemViewModel> GetFilteredItems(IEnumerable<FieldListItemViewModel> items,
+        FieldListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -195,18 +193,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        private void InitFilter(FieldListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 5;
-            }
-        }
         private static IEnumerable<FieldListItemViewModel> GetFieldListItemViewModels()
         {
             var items = new List<FieldListItemViewModel>
@@ -219,7 +205,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                     TypeId = 2,
                     AssesmentGroupName = "A-F Group",
                     AssesmentGroupId = 2,
-                    IsRequired = true 
+                    IsRequired = true
                 },
                 new FieldListItemViewModel
                 {

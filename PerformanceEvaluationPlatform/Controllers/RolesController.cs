@@ -98,8 +98,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<RoleListItemViewModel> GetFilteredItems(IEnumerable<RoleListItemViewModel> items,
             RoleListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -149,19 +147,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
 
             return items;
-        }
-
-        private void InitFilter(RoleListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 10;
-            }
         }
 
         private static IEnumerable<RoleListItemViewModel> GetRoleListItemViewModels()

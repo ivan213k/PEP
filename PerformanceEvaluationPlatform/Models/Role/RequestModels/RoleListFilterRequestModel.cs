@@ -1,13 +1,10 @@
-﻿using PerformanceEvaluationPlatform.Models.Shared.Enums;
+﻿using PerformanceEvaluationPlatform.Models.Shared;
+using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Models.Role.RequestModels
 {
-    public class RoleListFilterRequestModel
+    public class RoleListFilterRequestModel : BaseFilterRequestModel
     {
-        public int? Skip { get; set; }
-        public int? Take { get; set; }
-
-        public string Search { get; set; }
         public bool? IsPrimary { get; set; }
         public int? UsersCountFrom { get; set; }
         public int? UsersCountTo { get; set; }

@@ -1,14 +1,11 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Models.Shared;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
-    public class UserFilterRequestModel
+    public class UserFilterRequestModel : BaseFilterRequestModel
     {
-        public int Skip { get; set; }
-        public int Take { get; set; }
         public string EmailOrName { get; set; }
         public ICollection<int> StateIds { get; set; }
         public ICollection<int> RoleIds { get; set; }

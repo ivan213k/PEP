@@ -5,9 +5,7 @@ using PerformanceEvaluationPlatform.Models.Document.RequestModels;
 using PerformanceEvaluationPlatform.Models.Document.ViewModels;
 using PerformanceEvaluationPlatform.Repositories.Document;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -22,7 +20,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("documents")]
         public IActionResult GetDocuments([FromQuery] DocumentRequestModel filter)
         {
-            
             return Ok(MyCustomDocumentMapper.GetListOfMappedDocumentsItemViewModels(_documentsRepository.GetFiltredDocumentsLits(filter),_documentsRepository.GetTypes()));
         }
 

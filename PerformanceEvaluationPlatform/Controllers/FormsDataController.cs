@@ -12,7 +12,6 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class FormsDataController : ControllerBase
     {
-
         [HttpGet("forms")]
         public IActionResult Get([FromQuery] FormDataListFilterRequestModel filter)
         {
@@ -70,24 +69,9 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        private void InitFilter(FormDataListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
-        }
-
         private IEnumerable<FormDataListItemViewModel> GetFilteredItems(IEnumerable<FormDataListItemViewModel> items,
             FormDataListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
