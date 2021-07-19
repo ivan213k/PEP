@@ -62,7 +62,7 @@ Begin
 	SET @WhereClause = @WhereClause + '[UPES].[PreviousPE] = @PreviousPeDate'
 
 	END
-
+	 
 	--NEXT PE DATE WHERE CLAUSE
 		IF(@NextPeDate IS NOT NULL)
 	BEGIN
