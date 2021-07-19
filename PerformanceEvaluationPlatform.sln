@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceEvaluationPlatfo
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PerformanceEvaluationPlatform.Database", "PerformanceEvaluationPlatform.Database\PerformanceEvaluationPlatform.Database.sqlproj", "{0FED2668-E599-446F-97ED-89668CC867B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceEvaluationPlatform.DAL", "PerformanceEvaluationPlatform.DAL\PerformanceEvaluationPlatform.DAL.csproj", "{8248AD11-D262-443B-A163-45A41F47F866}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{0FED2668-E599-446F-97ED-89668CC867B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FED2668-E599-446F-97ED-89668CC867B9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0FED2668-E599-446F-97ED-89668CC867B9}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8248AD11-D262-443B-A163-45A41F47F866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8248AD11-D262-443B-A163-45A41F47F866}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8248AD11-D262-443B-A163-45A41F47F866}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8248AD11-D262-443B-A163-45A41F47F866}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

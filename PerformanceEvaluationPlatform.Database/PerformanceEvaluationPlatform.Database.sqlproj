@@ -95,6 +95,8 @@
     <Folder Include="Shared" />
     <Folder Include="Shared\Types" />
     <Folder Include="Example\StoredProcedures" />
+    <Folder Include="Survey\StoredProcedures" />
+    <Folder Include="Field\StoredProcedures" />
     <Folder Include="Users\StoredProcedure" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +140,8 @@
     <Build Include="FieldsGroups\Tables\FieldGroup.sql" />
     <Build Include="Shared\Types\IntList.sql" />
     <Build Include="Example\StoredProcedures\spGetExampleListItems.sql" />
+    <Build Include="Survey\StoredProcedures\spGetSurveyListItems.sql" />
+    <Build Include="Field\StoredProcedures\spGetFieldListItems.sql" />
     <Build Include="Users\StoredProcedure\SpGetUserListItems.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +158,7 @@
     <None Include="FormTemplate\PostDeployment\03.FormTemplateFieldMap.sql" />
     <None Include="Deeplink\PostDeployment\02.Deeplinks.sql" />
     <None Include="Deeplink\PostDeployment\01.DeeplinkStates.sql" />
+    <None Include="Project\PostDeployment\02.Coordinators.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />

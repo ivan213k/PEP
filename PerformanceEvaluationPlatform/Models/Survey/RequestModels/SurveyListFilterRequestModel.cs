@@ -19,6 +19,6 @@ namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
         public ICollection<int> SupervisorIds { get; set; }
 
         public SortOrder? FormNameSortOrder { get; set; }
-        public SortOrder? AssigneeNameSortOrder { get; set; }
+        public SortOrder? AssigneeSortOrder { get; set; }
     }
 }

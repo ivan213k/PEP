@@ -238,7 +238,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                AssigneeNameSortOrder = SortOrder.Ascending
+                AssigneeSortOrder = SortOrder.Ascending
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -260,7 +260,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                AssigneeNameSortOrder = SortOrder.Descending
+                AssigneeSortOrder = SortOrder.Descending
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
