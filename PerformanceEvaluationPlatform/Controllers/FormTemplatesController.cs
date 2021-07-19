@@ -32,14 +32,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 items = items.Where(i => i.Name.Contains(filter.Search));
             }
-            if (filter.Sort == SortOrder.Ascending)
-            {
-                items = items.OrderBy(i => i.Name);
-            }
-            if (filter.Sort == SortOrder.Descending)
-            {
-                items = items.OrderByDescending(i => i.Name);
-            }
             if (filter.StatusIds != null)
             {
                 items = items
@@ -51,7 +43,22 @@ namespace PerformanceEvaluationPlatform.Controllers
                     .Where(i => filter.AssesmentGroupIds.Contains(i.AssesmentGroupId));
             }
 
+            items = GetSortedItems(items, filter);
+
             items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
+
+            return items;
+        }
+
+        private IEnumerable<FormTemplateListItemViewModel> GetSortedItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
+        {
+            if (filter.NameSortOrder != null)
+            {
+                if (filter.NameSortOrder == SortOrder.Ascending)
+                    items = items.OrderBy(i => i.Name);
+                else
+                    items = items.OrderByDescending(i => i.Name);
+            }
 
             return items;
         }

@@ -131,14 +131,14 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<RoleListItemViewModel> SortItems(IEnumerable<RoleListItemViewModel> items, RoleListFilterRequestModel filter)
         {
-            if (filter.TitleSortOrder != SortOrder.Undefined)
+            if (filter.TitleSortOrder != null)
             {
                 if (filter.TitleSortOrder == SortOrder.Ascending)
                     items = items.OrderBy(t => t.Title);
                 else
                     items = items.OrderByDescending(t => t.Title);
             }
-            if (filter.IsPrimarySortOrder != SortOrder.Undefined)
+            if (filter.IsPrimarySortOrder != null)
             {
                 if (filter.IsPrimarySortOrder == SortOrder.Ascending)
                     items = items.OrderBy(t => t.IsPrimary);

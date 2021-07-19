@@ -8,6 +8,6 @@ namespace PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel
     {
         public ICollection<int> StatusIds { get; set; }
         public ICollection<int> AssesmentGroupIds { get; set; }
-        public SortOrder Sort { get; set; }
+        public SortOrder? NameSortOrder { get; set; }
     }
 }

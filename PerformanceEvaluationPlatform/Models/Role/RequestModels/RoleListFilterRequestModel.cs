@@ -9,7 +9,7 @@ namespace PerformanceEvaluationPlatform.Models.Role.RequestModels
         public int? UsersCountFrom { get; set; }
         public int? UsersCountTo { get; set; }
 
-        public SortOrder TitleSortOrder { get; set; }
-        public SortOrder IsPrimarySortOrder { get; set; }
+        public SortOrder? TitleSortOrder { get; set; }
+        public SortOrder? IsPrimarySortOrder { get; set; }
     }
 }
