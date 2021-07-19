@@ -16,25 +16,23 @@ Begin
 	DECLARE @WhereClause NVARCHAR(MAX) = ''
 	DECLARE @JoinClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
-CREATE TABLE #UserNextPeDate ([userId] INT, [NextPe]DATE)
-CREATE TABLE #UserPreviousPeDate ([userId] INT, [PreviousPe]DATE)
 
-CREATE TABLE #UserPEs ([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
+	CREATE TABLE #UserNextPeDate ([userId] INT, [NextPe]DATE)
+	CREATE TABLE #UserPreviousPeDate ([userId] INT, [PreviousPe]DATE)
+	CREATE TABLE #UserPEs ([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
 
 	INSERT INTO #UserNextPeDate ([userId],[NextPE])
-SELECT  [U].[Id],MAX([S].[AppointmentDate])
-FROM  [dbo].[User] AS[U]
-LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
+	SELECT  [U].[Id],MAX([S].[AppointmentDate])
+	FROM  [dbo].[User] AS[U]
+	LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
 
-WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
-LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
-
-INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
-
- SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
+	WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
+	LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
+	INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
+	SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
  
- INSERT  INTO #UserPEs ([userId],[PreviousPE],[NextPE])
- SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
+	INSERT  INTO #UserPEs ([userId],[PreviousPE],[NextPE])
+	SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
 
  --Search Where Clause
 	IF(@Search IS NOT NULL)
@@ -42,10 +40,10 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 		SET @SearchClause = '%' + @Search + '%'
 
 		IF(@WhereClause ='')
-		SET @WhereClause = 'WHERE '
+			SET @WhereClause = 'WHERE '
 
 		ELSE
-		SET @WhereClause = @WhereClause+' AND '
+			SET @WhereClause = @WhereClause+' AND '
 	
 		SET @WhereClause = @WhereClause + 'concat ([U].[FirstName], ' +'[U].[LastName], '+ '[U].[Email])'+ ' LIKE ''' + @SearchClause +''' '
 
@@ -56,10 +54,10 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 	BEGIN
 
 		If(@WhereClause ='')
-		SET @WhereClause = 'WHERE '
+			SET @WhereClause = 'WHERE '
 
 		ELSE
-		SET @WhereClause = @WhereClause+' AND '
+			SET @WhereClause = @WhereClause+' AND '
 
 	SET @WhereClause = @WhereClause + '[UPES].[PreviousPE] = @PreviousPeDate'
 
@@ -70,10 +68,10 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 	BEGIN
 
 		If(@WhereClause ='')
-		SET @WhereClause = 'WHERE '
+			SET @WhereClause = 'WHERE '
 
 		ELSE
-		SET @WhereClause = @WhereClause+' AND '
+			SET @WhereClause = @WhereClause+' AND '
 
 		SET @WhereClause = @WhereClause + '[UPES].[NextPE] = @NextPeDate'
 
@@ -82,30 +80,31 @@ INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
 	--INSERT INTO @StateIds VALUES(1);
 	IF(EXISTS(SELECT* FROM @StateIds))
 	BEGIN
-	SET @JoinClause = @JoinClause + ' INNER JOIN @StateIds AS [SI] ON [SI].Id = [U].[StateId] '
+		SET @JoinClause = @JoinClause + ' INNER JOIN @StateIds AS [SI] ON [SI].Id = [U].[StateId] '
 	END
 
 	--INSERT INTO @RoleIds VALUES(1);
 	IF(EXISTS(SELECT * FROM @RoleIds))
+
 	BEGIN 
-	SET @JoinClause = @JoinClause+ 'INNER JOIN @RoleIds AS [RI] ON [R].[Id] = [RI].[Id]'
+		SET @JoinClause = @JoinClause+ 'INNER JOIN @RoleIds AS [RI] ON [R].[Id] = [RI].[Id]'
 	END
 
 	-- UserName Or Email Order  CLause
 	IF(@UserNameSort IS NOT NULL)
 	BEGIN
 		IF(@UserNameSort = 1)
-		SET @OrderClause = '[U].[FirstName] ASC'
+			SET @OrderClause = '[U].[FirstName] ASC'
 
 		Else
-		SET @OrderClause = '[U].[FirstName] DESC'
+			SET @OrderClause = '[U].[FirstName] DESC'
 
 	END
 
 	
 	If(@OrderClause  = '')
 	Begin
-	SET @OrderClause = '[U].[FirstName] ASC'
+		SET @OrderClause = '[U].[FirstName] ASC'
 	End
 
 
