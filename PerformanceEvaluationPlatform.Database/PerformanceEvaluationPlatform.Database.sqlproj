@@ -99,6 +99,7 @@
     <Folder Include="Field\StoredProcedures" />
     <Folder Include="Document\StoredProcedures" />
     <Folder Include="FormData\StoredProcedures" />
+    <Folder Include="Deeplink\StoredProcedures" />
     <Folder Include="Users\StoredProcedure" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
     <Build Include="Field\StoredProcedures\spGetFieldListItems.sql" />
     <Build Include="Document\StoredProcedures\spGetDocumentListItems.sql" />
     <Build Include="Document\StoredProcedures\spGetDocumentDetailById.sql" />
+    <Build Include="Deeplink\StoredProcedures\spGetDeeplinkListItems.sql" />
     <Build Include="Users\StoredProcedure\SpGetUserListItems.sql" />
   </ItemGroup>
   <ItemGroup>
