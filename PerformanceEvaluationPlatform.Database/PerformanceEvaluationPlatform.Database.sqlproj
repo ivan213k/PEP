@@ -98,6 +98,7 @@
     <Folder Include="Survey\StoredProcedures" />
     <Folder Include="Field\StoredProcedures" />
     <Folder Include="Document\StoredProcedures" />
+    <Folder Include="FormData\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -160,6 +161,7 @@
     <None Include="Deeplink\PostDeployment\02.Deeplinks.sql" />
     <None Include="Deeplink\PostDeployment\01.DeeplinkStates.sql" />
     <None Include="Project\PostDeployment\02.Coordinators.sql" />
+    <None Include="FormData\StoredProcedures\spGetFormDataListItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment.sql" />
