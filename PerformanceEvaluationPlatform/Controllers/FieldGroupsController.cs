@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.FieldGroups.ViewModels;
 using PerformanceEvaluationPlatform.Models.FieldGroups.RequestModels;
@@ -14,7 +12,6 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         [HttpGet("fields/groups")]
         public IActionResult Get([FromQuery]FieldGroupsListFilterRequestModel filter)
-
         {
             var items = GetFieldGroupsListItemViewModel();
             items = GetFilteredItems(items, filter);
@@ -24,8 +21,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<FieldGroupsListItemViewModel> GetFilteredItems (IEnumerable<FieldGroupsListItemViewModel> items,
             FieldGroupsListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -88,20 +83,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 .Take(filter.Take.Value);
 
             return items;
-        }
-
-
-        private void InitFilter (FieldGroupsListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 20;
-            }
         }
 
         private IEnumerable<FieldGroupsListItemViewModel> GetFieldGroupsListItemViewModel()

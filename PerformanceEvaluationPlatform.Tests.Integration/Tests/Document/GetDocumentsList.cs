@@ -239,8 +239,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             var documentlist = JsonConvert.DeserializeObject<IList<DocumentListItemViewModel>>(await response.Content.ReadAsStringAsync());
             CustomAssert.IsSuccess(response);
             Assert.IsNotEmpty(documentlist);
-            Assert.True(documentlist[0].Username.Contains("2"));
-            Assert.True(documentlist[29].Username.Contains("31"));
+            Assert.True(documentlist[0].FirstName.Contains("2"));
+            Assert.True(documentlist[29].FirstName.Contains("31"));
         }
         [Test]
         public async Task Request_should_return_ordered_descending_list_of_document_by_username()
@@ -260,8 +260,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             var documnetlist = JsonConvert.DeserializeObject<IList<DocumentListItemViewModel>>(await response.Content.ReadAsStringAsync());
             CustomAssert.IsSuccess(response);
             Assert.IsNotEmpty(documnetlist);
-            Assert.True(documnetlist[0].Username.Contains("51"));
-            Assert.True(documnetlist[29].Username.Contains("22"));
+            Assert.True(documnetlist[0].FirstName.Contains("51"));
+            Assert.True(documnetlist[29].FirstName.Contains("22"));
         }
         [Test]
         public async Task Request_should_return_ordered_ascendeing_list_of_document_by_typername()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.Deeplink.RequestModels;
-
 using PerformanceEvaluationPlatform.Models.Deeplink.ViewModels;
 
 namespace PerformanceEvaluationPlatform.Controllers
@@ -24,8 +23,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<DeeplinkListItemViewModel> GetFilteredItems(IEnumerable<DeeplinkListItemViewModel> items,
             DeeplinkListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             items = items
                 .Skip(filter.Skip.Value)
                 .Take(filter.Take.Value);
@@ -58,9 +55,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(t => filter.ExpiresAtTo >= t.ExpiresAt);
             }
-
-    
-
             return items;
         }
         [HttpGet("deeplinks/{id}")]
@@ -100,18 +94,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-            private void InitFilter(DeeplinkListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
-        }
         [HttpGet("deeplinks/states")]
         public IActionResult GetDeeplinkStates([FromRoute] int id)
         {
@@ -127,7 +109,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     Id = 2,
                     Name = "Expired"
                 }
-
             };
 
             return Ok(DeeplinkState);
@@ -147,8 +128,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     StateId = 1,
                     FormTemplateName = "Form1",
                     FormTemplateNameId = 1
-
-
                 },
                 new DeeplinkListItemViewModel
                 {
@@ -160,8 +139,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     StateId = 1,
                     FormTemplateName = "Form2",
                     FormTemplateNameId = 1
-
-
                 },
                 new DeeplinkListItemViewModel
                 {
@@ -173,8 +150,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     StateId = 2,
                     FormTemplateName = "Form3",
                     FormTemplateNameId = 1
-
-
                 },
                 new DeeplinkListItemViewModel
                 {
@@ -186,13 +161,9 @@ namespace PerformanceEvaluationPlatform.Controllers
                     StateId = 2,
                     FormTemplateName = "Form5",
                     FormTemplateNameId = 2
-
-
                 },
             };
             return items;
         }
-    }
-       
-    
+    }    
 }

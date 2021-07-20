@@ -5,7 +5,6 @@ using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -29,19 +28,9 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items.Where(i => i.Name.Contains(filter.Search));
-            }
-            if (filter.Sort == SortOrder.Ascending)
-            {
-                items = items.OrderBy(i => i.Name);
-            }
-            if (filter.Sort == SortOrder.Descending)
-            {
-                items = items.OrderByDescending(i => i.Name);
             }
             if (filter.StatusIds != null)
             {
@@ -54,22 +43,24 @@ namespace PerformanceEvaluationPlatform.Controllers
                     .Where(i => filter.AssesmentGroupIds.Contains(i.AssesmentGroupId));
             }
 
+            items = GetSortedItems(items, filter);
+
             items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
 
             return items;
         }
 
-        private void InitFilter(FormTemplateListFilterOrderRequestModel filter)
+        private IEnumerable<FormTemplateListItemViewModel> GetSortedItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
         {
-            if (filter.Skip == null)
+            if (filter.NameSortOrder != null)
             {
-                filter.Skip = 0;
+                if (filter.NameSortOrder == SortOrder.Ascending)
+                    items = items.OrderBy(i => i.Name);
+                else
+                    items = items.OrderByDescending(i => i.Name);
             }
 
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
+            return items;
         }
 
         private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()

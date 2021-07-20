@@ -2,14 +2,12 @@
 using PerformanceEvaluationPlatform.Models.FormData.Enums;
 using System;
 using System.Collections.Generic;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
 {
-    public class FormDataListFilterRequestModel
+    public class FormDataListFilterRequestModel : BaseFilterRequestModel
     {
-        public int? Skip { get; set; }
-        public int? Take { get; set; }
-        public string Search { get; set; }
         public IEnumerable<StateEnum> State { get; set; }
         public DateTime? AppointmentDateFrom { get; set; }
         public DateTime? AppointmentDateTo { get; set; }
@@ -17,6 +15,5 @@ namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
         public ICollection<int> ReviewersIds { get; set; }
         public SortOrder? FormNameOrderBy { get; set; }
         public SortOrder? AssigneeNameOrderBy { get; set; }
-
     }
 }

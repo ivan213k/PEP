@@ -88,7 +88,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
         {
             var request = GetHttpRequest(new FormTemplateListFilterOrderRequestModel
             {
-                Sort = SortOrder.Ascending
+                NameSortOrder = SortOrder.Ascending
             });
 
             var response = await SendRequest(request);
@@ -109,7 +109,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
         {
             var request = GetHttpRequest(new FormTemplateListFilterOrderRequestModel
             {
-                Sort = SortOrder.Descending
+                NameSortOrder = SortOrder.Descending
             });
 
             var response = await SendRequest(request);

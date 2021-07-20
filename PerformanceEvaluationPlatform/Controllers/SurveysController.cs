@@ -139,8 +139,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<SurveyListItemViewModel> GetFilteredItems(IEnumerable<SurveyListItemViewModel> items,
             SurveyListFilterRequestModel filter) 
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -203,19 +201,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     surveys = surveys.OrderByDescending(r => r.Assignee);
             }
             return surveys;
-        }
-
-        private void InitFilter(SurveyListFilterRequestModel filter)
-        {
-            if (filter.Skip is null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take is null)
-            {
-                filter.Take = 30;
-            }
         }
     }
 }

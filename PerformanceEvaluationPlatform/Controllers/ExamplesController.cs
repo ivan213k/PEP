@@ -61,8 +61,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<ExampleListItemViewModel> GetFilteredItems(IEnumerable<ExampleListItemViewModel> items,
             ExampleListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             items = items
                 .Skip(filter.Skip.Value)
                 .Take(filter.Take.Value);
@@ -88,18 +86,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return items;
         }
 
-        private void InitFilter(ExampleListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
-        }
         private static IEnumerable<ExampleListItemViewModel> GetExampleListItemViewModels()
         {
             var items = new List<ExampleListItemViewModel>

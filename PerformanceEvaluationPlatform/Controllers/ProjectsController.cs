@@ -23,8 +23,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private IEnumerable<ProjectListItemViewModel> GetFilteredItems(IEnumerable<ProjectListItemViewModel> items,
             ProjectListFilterRequestModel filter)
         {
-            InitFilter(filter);
-
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
                 items = items
@@ -69,19 +67,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     projects = projects.OrderByDescending(r => r.Coordinator);
             }
             return projects;
-        }
-
-        private void InitFilter(ProjectListFilterRequestModel filter)
-        {
-            if (filter.Skip == null)
-            {
-                filter.Skip = 0;
-            }
-
-            if (filter.Take == null)
-            {
-                filter.Take = 30;
-            }
         }
 
         [HttpPost("projects")]
