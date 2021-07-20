@@ -100,6 +100,7 @@
     <Folder Include="Document\StoredProcedures" />
     <Folder Include="FormData\StoredProcedures" />
     <Folder Include="Deeplink\StoredProcedures" />
+    <Folder Include="FormTemplate\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -147,6 +148,7 @@
     <Build Include="Document\StoredProcedures\spGetDocumentListItems.sql" />
     <Build Include="Document\StoredProcedures\spGetDocumentDetailById.sql" />
     <Build Include="Deeplink\StoredProcedures\spGetDeeplinkListItems.sql" />
+    <Build Include="FormTemplate\StoredProcedures\spGetFormTemplateListItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
