@@ -4,7 +4,7 @@
 	[Code] UNIQUEIDENTIFIER NOT NULL,
 	[SurveyId] INT NOT NULL,
 	[UserId] INT NOT NULL,
-	[ExpiresDate] DATETIME2 NOT NULL,
+	[ExpireDate] DATETIME2 NOT NULL,
 	[StateId] INT NOT NULL,
 
 	CONSTRAINT [PK_Deeplink] PRIMARY KEY([Id]),
