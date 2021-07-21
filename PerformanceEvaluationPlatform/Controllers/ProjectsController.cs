@@ -52,19 +52,23 @@ namespace PerformanceEvaluationPlatform.Controllers
                 else
                     projects = projects.OrderByDescending(r => r.Title);
             }
-            if (filter.StartDateSortOrder != null)
-            {
-                if (filter.StartDateSortOrder == SortOrder.Ascending)
-                    projects = projects.OrderBy(r => r.StartDate);
-                else
-                    projects = projects.OrderByDescending(r => r.StartDate);
-            }
             if (filter.CoordinatorSortOrder != null)
             {
-                if (filter.StartDateSortOrder == SortOrder.Ascending)
+                if (filter.CoordinatorSortOrder == SortOrder.Ascending)
                     projects = projects.OrderBy(r => r.Coordinator);
                 else
                     projects = projects.OrderByDescending(r => r.Coordinator);
+            }
+            if (filter.StartDateSortOrder != null)
+            {
+                if (filter.StartDateSortOrder == SortOrder.Ascending)
+                {
+                    projects = projects.OrderBy(r => r.StartDate);
+                }
+                else
+                { 
+                    projects = projects.OrderByDescending(r => r.StartDate);
+                }
             }
             return projects;
         }
