@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
+namespace PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dto
 {
-    public class FormTemplateListItemViewModel
+    public class FormTemplateListItemDto
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
         public int Version { get; set; }
-        
+
         public string StatusName { get; set; }
 
         public int StatusId { get; set; }

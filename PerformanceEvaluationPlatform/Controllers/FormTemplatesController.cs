@@ -1,21 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class FormTemplatesController: ControllerBase
     {
-        [HttpGet("formtemplates")]
-        public IActionResult Get([FromQuery]FormTemplateListFilterOrderRequestModel filter)
+        private readonly IFormTemplatesRepository _formTemplatesRepository;
+
+        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository)
         {
-            var items = GetFormTemplatesListItemViewModel();
-            items = GetFilteredItems(items, filter);
+            _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
+        }
+
+        [HttpGet("formtemplates")]
+        public async Task<IActionResult> GetAsync([FromQuery]FormTemplateListFilterOrderRequestModel filter)
+        {
+            var filterDto = new FormTemplateListFilterOrderDto
+            {
+                Search = filter.Search,
+                StatusIds = filter.StatusIds,
+                NameSortOrder = (int?)filter.NameSortOrder,
+                Skip = (int)filter.Skip,
+                Take = (int)filter.Take
+            };
+            var itemsDto = await _formTemplatesRepository.GetList(filterDto);
+            var items = itemsDto.Select(f => new FormTemplateListItemViewModel
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Version = f.Version,
+                StatusName = f.StatusName,
+                StatusId = f.StatusId,
+                CreatedAt = f.CreatedAt
+            });
             return Ok(items);
         }
 
@@ -81,21 +107,21 @@ namespace PerformanceEvaluationPlatform.Controllers
                 new FormTemplateListItemViewModel{
                     Name = "Middle Back-End Dev",
                     Version = 12,
-                    Status = "Draft",
+                    StatusName = "Draft",
                     StatusId = 2,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
                 new FormTemplateListItemViewModel{
                     Name = "Middle Front-End Dev",
                     Version = 1,
-                    Status = "Active",
+                    StatusName = "Active",
                     StatusId = 1,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
                 new FormTemplateListItemViewModel{
                     Name = "Junior Front-End Dev",
                     Version = 1,
-                    Status = "Active",
+                    StatusName = "Active",
                     StatusId = 1,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },

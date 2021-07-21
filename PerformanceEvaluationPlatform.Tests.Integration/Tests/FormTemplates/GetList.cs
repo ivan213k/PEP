@@ -144,8 +144,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
                 .DeserializeObject<IList<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
             Assert.AreEqual(2, content.Count);
-            Assert.AreEqual("Middle Back-End Dev", content[0].Name);
-            Assert.AreEqual("Middle Front-End Dev", content[1].Name);
+            Assert.AreEqual("Middle Back-End Dev", content[1].Name);
+            Assert.AreEqual("Junior Front-End Dev", content[0].Name);
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[spGetFormTemplatesListItems]
 @Search NVARCHAR(256),
 @StatusIds [dbo].[IntList] READONLY,
-@TitleSortOrder INT,
+@NameSortOrder INT,
 @Skip INT,
 @Take INT
 AS
@@ -29,9 +29,9 @@ BEGIN
 		SET @JoinClause = @JoinClause + ' INNER JOIN @StatusIds [SI] ON [SI].[Id] = [FT].[StatusId] '
 	END
 
-	IF (@TitleSortOrder IS NOT NULL)
+	IF (@NameSortOrder IS NOT NULL)
 	BEGIN
-		IF (@TitleSortOrder = 1)
+		IF (@NameSortOrder = 1)
 			SET @OrderClause = '[FT].[Name] ASC'
 		ELSE
 			SET @OrderClause = '[FT].[Name] DESC'
@@ -60,7 +60,7 @@ BEGIN
 	DECLARE @Params NVARCHAR(MAX) = '
 		@Search NVARCHAR(256),
 		@StatusIds [dbo].[IntList] READONLY,
-		@TitleSortOrder INT,
+		@NameSortOrder INT,
 		@Skip INT,
 		@Take INT
 	';
@@ -68,7 +68,7 @@ BEGIN
 	EXECUTE sp_executesql @Sql, @Params,
 		@Search,
 		@StatusIds,
-		@TitleSortOrder,
+		@NameSortOrder,
 		@Skip,
 		@Take
 END
