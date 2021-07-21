@@ -144,8 +144,8 @@ Begin
 
 
 
-	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],
-	[T].[Title] as [Team Name], [R].[Title] as [Role Name],[L].[Name],[UPES].[PreviousPE], [UPES].[NextPE]
+	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name] AS [User State],
+	[T].[Title] as [Team Name], [R].[Title] as [Role Name],[L].[Name] AS [Level Name],[UPES].[PreviousPE], [UPES].[NextPE]
 	FROM [dbo].[User] AS [U]
 	INNER JOIN [dbo].[UserState] AS [US] ON [U].StateId = [US].[Id] 
 	INNER JOIN [dbo].[Team] AS [T] ON [T].Id = [U].[TeamId]
