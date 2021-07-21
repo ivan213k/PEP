@@ -145,12 +145,13 @@ Begin
 
 
 	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name],
-	[T].[Title] as [Team Name], [R].[Title] as [Role Name],[UPES].[PreviousPE], [UPES].[NextPE]
+	[T].[Title] as [Team Name], [R].[Title] as [Role Name],[L].[Name],[UPES].[PreviousPE], [UPES].[NextPE]
 	FROM [dbo].[User] AS [U]
 	INNER JOIN [dbo].[UserState] AS [US] ON [U].StateId = [US].[Id] 
 	INNER JOIN [dbo].[Team] AS [T] ON [T].Id = [U].[TeamId]
 	INNER JOIN [dbo].[UserRoleMap] AS [URM] ON [U].Id = [URM].[UserId]
 	INNER JOIN [dbo].[Role] AS [R] ON [URM].[ROleId] = [R].[Id]
+	INNER JOIN [dbo].[Level] AS [L] ON [U].[LevelId] = [L].[Id]
 	INNER JOIN #UserPEs AS [UPES] ON [UPES].userId = [U].[Id]
 	'+@JoinClause+'
 	' + @WhereClause +'
