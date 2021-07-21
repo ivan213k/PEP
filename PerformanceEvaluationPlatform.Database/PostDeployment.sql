@@ -11,12 +11,13 @@
 
 :r .\Role\PostDeployment\01.Role.sql
 
+:r .\Survey\PostDeployment\01.SurveyStates.sql
+:r .\Survey\PostDeployment\02.Levels.sql
+
 :r .\Users\PostDeployment\01.UserState.sql
 :r .\Users\PostDeployment\02.User.sql
 :r .\Users\PostDeployment\03.UserRoleMap.sql
 
-:r .\Survey\PostDeployment\01.SurveyStates.sql
-:r .\Survey\PostDeployment\02.Levels.sql
 :r .\Survey\PostDeployment\03.Surveys.sql
 
 :r .\FormData\PostDeployment\01.FormDataStates.sql
