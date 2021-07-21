@@ -37,12 +37,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 items = items
                     .Where(i => filter.StatusIds.Contains(i.StatusId));
             }
-            if (filter.AssesmentGroupIds != null)
-            {
-                items = items
-                    .Where(i => filter.AssesmentGroupIds.Contains(i.AssesmentGroupId));
-            }
-
             items = GetSortedItems(items, filter);
 
             items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
@@ -89,8 +83,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     Version = 12,
                     Status = "Draft",
                     StatusId = 2,
-                    AssesmentGroup = "A-F Marks",
-                    AssesmentGroupId = 1,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
                 new FormTemplateListItemViewModel{
@@ -98,8 +90,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     Version = 1,
                     Status = "Active",
                     StatusId = 1,
-                    AssesmentGroup = "A-F Marks",
-                    AssesmentGroupId = 1,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
                 new FormTemplateListItemViewModel{
@@ -107,8 +97,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                     Version = 1,
                     Status = "Active",
                     StatusId = 1,
-                    AssesmentGroup = "5 points",
-                    AssesmentGroupId = 2,
                     CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
                 },
             };

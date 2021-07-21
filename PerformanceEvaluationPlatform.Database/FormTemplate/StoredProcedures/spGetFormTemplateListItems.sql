@@ -1,7 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[spGetFormTemplatesListItems]
 @Search NVARCHAR(256),
 @StatusIds [dbo].[IntList] READONLY,
-@AssesmentGroupIds [dbo].[IntList] READONLY,
 @TitleSortOrder INT,
 @Skip INT,
 @Take INT
@@ -30,11 +29,6 @@ BEGIN
 		SET @JoinClause = @JoinClause + ' INNER JOIN @StatusIds [SI] ON [SI].[Id] = [FT].[StatusId] '
 	END
 
-	IF (EXISTS (SELECT * FROM @AssesmentGroupIds))
-	BEGIN
-		SET @JoinClause = @JoinClause + ' INNER JOIN @AssesmentGroupIds [ASI] ON [ASI].[Id] = [F].[AssesmentGroupId] '
-	END
-
 	IF (@TitleSortOrder IS NOT NULL)
 	BEGIN
 		IF (@TitleSortOrder = 1)
@@ -54,14 +48,9 @@ BEGIN
 		[FT].[Version],
 		[FT].[StatusId],
 		[FTS].[Name] AS [StatusName],
-		[F].[AssesmentGroupId] AS [AssesmentGroupId],
-		[AS].[Name] AS [AssesmentGroupName],
 		[FT].[CreatedAt]
 		FROM [dbo].[FormTemplate] [FT]
 		INNER JOIN [dbo].[FormTemplateStatus] [FTS] ON [FTS].[Id] = [FT].[StatusId]
-		INNER JOIN [dbo].[FormTemplateFieldMap] [FTFM] ON [FTFM].[FormTemplateId] = [FT].[Id]
-		INNER JOIN [dbo].[Field] [F] ON [F].[Id] = [FTFM].[FieldId]
-		INNER JOIN [dbo].[AssesmentGroup] [AS] ON [AS].[Id] = [F].[AssesmentGroupId]
 		'+ @JoinClause +'
 		'+ @WhereClause +'
 		ORDER BY ' + @OrderClause + '
@@ -71,7 +60,6 @@ BEGIN
 	DECLARE @Params NVARCHAR(MAX) = '
 		@Search NVARCHAR(256),
 		@StatusIds [dbo].[IntList] READONLY,
-		@AssesmentGroupIds [dbo].[IntList] READONLY,
 		@TitleSortOrder INT,
 		@Skip INT,
 		@Take INT
@@ -80,7 +68,6 @@ BEGIN
 	EXECUTE sp_executesql @Sql, @Params,
 		@Search,
 		@StatusIds,
-		@AssesmentGroupIds,
 		@TitleSortOrder,
 		@Skip,
 		@Take

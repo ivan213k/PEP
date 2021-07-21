@@ -66,24 +66,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
         }
 
         [Test]
-        public async Task Request_should_return_valid_items_when_filtering_by_assesment_groups()
-        {
-            var request = GetHttpRequest(new FormTemplateListFilterOrderRequestModel
-            {
-                AssesmentGroupIds = new List<int> { 2 }
-            });
-
-            var response = await SendRequest(request);
-
-            CustomAssert.IsSuccess(response);
-
-            var content = JsonConvert
-                .DeserializeObject<ICollection<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
-            Assert.NotNull(content);
-            Assert.AreEqual(1, content.Count);
-        }
-
-        [Test]
         public async Task Request_should_return_valid_items_when_ordering_by_ascending()
         {
             var request = GetHttpRequest(new FormTemplateListFilterOrderRequestModel
