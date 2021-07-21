@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
+namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
 {
-    public class SurveyDetailsViewModel
+    public class SurveyDetailsDto
     {
         public string FormName { get; set; }
         public int FormId { get; set; }
@@ -16,7 +16,7 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
         public int StateId { get; set; }
         public string RecommendedLevel { get; set; }
         public int RecommendedLevelId { get; set; }
-        public ICollection<SurveyAssigneeViewModel> AssignedUsers { get; set; }
+        public ICollection<SurveyAssigneeDto> AssignedUsers { get; set; }
         public string Summary { get; set; }
     }
 }

@@ -1,49 +1,95 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.Models.Shared.Enums;
+using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class SurveysController : ControllerBase
     {
-        [HttpGet("surveys")]
-        public IActionResult Get([FromQuery] SurveyListFilterRequestModel filter)     
+        private readonly ISurveysRepository _surveysRepository;
+
+        public SurveysController(ISurveysRepository surveysRepository)
         {
-            var surveys = GetSurveyListItemViewModels();
-            surveys = GetFilteredItems(surveys, filter);
+            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+        }
+
+        [HttpGet("surveys")]
+        public async Task<IActionResult> Get([FromQuery] SurveyListFilterRequestModel filter)
+        {
+            var filterDto = new SurveyListFilterDto
+            {
+                AppointmentDateFrom = filter.AppointmentDateFrom,
+                AppointmentDateTo = filter.AppointmentDateTo,
+                AssigneeSortOrder = (int?)filter.AssigneeSortOrder,
+                FormNameSortOrder = (int?)filter.FormNameSortOrder,
+                Search = filter.Search,
+                StateIds = filter.StateIds,
+                AssigneeIds = filter.AssigneeIds,
+                SupervisorIds = filter.SupervisorIds,
+                Skip = filter.Skip,
+                Take = filter.Take
+            };
+            var surveysDto = await _surveysRepository.GetList(filterDto);
+
+            var surveys = surveysDto.Select(t => new SurveyListItemViewModel
+            {
+                Id = t.Id,
+                AppointmentDate = t.AppointmentDate,
+                Assignee = $"{t.AssigneeFirstName} {t.AssigneeLastName}",
+                AssigneeId = t.AssigneeId,
+                Supervisor = $"{t.SupervisorFirstName} {t.SupervisorLastName}",
+                SupervisorId = t.SupervisorId,
+                FormName = t.FormName,
+                FormId = t.FormId,
+                State = t.StateName,
+                StateId = t.StateId,
+            });
             return Ok(surveys);
         }
 
         [HttpGet("surveys/{id}")]
-        public IActionResult GetSurveyDetails([FromRoute] int id)
+        public async Task<IActionResult> GetSurveyDetails([FromRoute] int id)
         {
-            var surveyDetails = new SurveyDetailsViewModel 
+            var detailsDto = await _surveysRepository.GetDetails(id);
+            if (detailsDto == null)
             {
-                AppointmentDate = new DateTime(2021, 7, 10),
-                AssignedUserIds = new List<int>{1,2},
-                Assignee = "Test User",
-                AssigneeId = 1,
-                FormId = 1,
-                FormName = "Manual QA",
-                RecommendedLevel = "Middle",
-                RecommendedLevelId = 2,
-                State = "Active",
-                StateId = 1,
-                Summary = "summary text",
-                Supervisor = "Admin User",
-                SupervisorId = 1
+                return NotFound();
+            }
+
+            var detailsViewModel = new SurveyDetailsViewModel
+            {
+                AppointmentDate = detailsDto.AppointmentDate,
+                Assignee = detailsDto.Assignee,
+                AssigneeId = detailsDto.AssigneeId,
+                FormId = detailsDto.FormId,
+                FormName = detailsDto.FormName,
+                RecommendedLevel = detailsDto.RecommendedLevel,
+                RecommendedLevelId = detailsDto.RecommendedLevelId,
+                State = detailsDto.State,
+                StateId = detailsDto.StateId,
+                Supervisor = detailsDto.Supervisor,
+                SupervisorId = detailsDto.SupervisorId,
+                Summary = detailsDto.Summary,
+                AssignedUsers = detailsDto.AssignedUsers?
+                    .Select(t => new SurveyAssigneeViewModel
+                    {
+                        Id = t.Id,
+                        Name = t.Name
+                    }).ToList()
             };
-    
-            return Ok(surveyDetails);
+
+            return Ok(detailsViewModel);
         }
 
         [HttpPost("surveys")]
-        public IActionResult CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel) 
+        public IActionResult CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel)
         {
             if (surveyRequestModel is null)
             {
@@ -65,33 +111,27 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
-           
+
             return Ok();
         }
 
         [HttpGet("surveys/states")]
-        public IActionResult GetStates()
+        public async Task<IActionResult> GetStates()
         {
-            var items = new List<SurveyStateListItemViewModel>
-            {
-                new SurveyStateListItemViewModel
+            var itemsDto = await _surveysRepository.GetStatesList();
+            var items = itemsDto
+                .Select(t => new SurveyStateListItemViewModel
                 {
-                    Id = 1,
-                    Name = "Active"
-                },
-                new SurveyStateListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Blocked"
-                }
-            };
+                    Id = t.Id,
+                    Name = t.Name
+                });
 
             return Ok(items);
         }
 
-        private IEnumerable<SurveyListItemViewModel> GetSurveyListItemViewModels() 
+        private IEnumerable<SurveyListItemViewModel> GetSurveyListItemViewModels()
         {
-            var items = new List<SurveyListItemViewModel> 
+            var items = new List<SurveyListItemViewModel>
             {
                 new SurveyListItemViewModel
                 {
@@ -134,73 +174,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 },
             };
             return items;
-        }
-
-        private IEnumerable<SurveyListItemViewModel> GetFilteredItems(IEnumerable<SurveyListItemViewModel> items,
-            SurveyListFilterRequestModel filter) 
-        {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                items = items
-                    .Where(t => t.FormName.Contains(filter.Search) || t.Assignee.Contains(filter.Search));
-            }
-
-            if (filter.AssigneeIds != null)
-            {
-                items = items
-                    .Where(t => filter.AssigneeIds.Contains(t.AssigneeId));
-            }
-
-            if (filter.SupervisorIds != null)
-            {
-                items = items
-                    .Where(t => filter.SupervisorIds.Contains(t.SupervisorId));
-            }
-
-            if (filter.AppointmentDateFrom != null) 
-            {
-                items = items.
-                    Where(t => t.AppointmentDate >= filter.AppointmentDateFrom.Value);
-            }
-
-            if (filter.AppointmentDateTo != null)
-            {
-                items = items.
-                    Where(t => t.AppointmentDate <= filter.AppointmentDateTo.Value);
-            }
-
-            if (filter.StateIds != null)
-            {
-                items = items.
-                    Where(t => filter.StateIds.Contains(t.StateId));
-            }
-
-            items = GetSortedItems(items, filter);
-
-            items = items
-               .Skip(filter.Skip.Value)
-               .Take(filter.Take.Value);
-
-            return items;
-        }
-
-        private IEnumerable<SurveyListItemViewModel> GetSortedItems(IEnumerable<SurveyListItemViewModel> surveys, SurveyListFilterRequestModel filter)
-        {
-            if (filter.FormNameSortOrder != null)
-            {
-                if (filter.FormNameSortOrder == SortOrder.Ascending)
-                    surveys = surveys.OrderBy(r => r.FormName);
-                else
-                    surveys = surveys.OrderByDescending(r => r.FormName);
-            }
-            if (filter.AssigneeSortOrder != null)
-            {
-                if (filter.AssigneeSortOrder == SortOrder.Ascending)
-                    surveys = surveys.OrderBy(r => r.Assignee);
-                else
-                    surveys = surveys.OrderByDescending(r => r.Assignee);
-            }
-            return surveys;
         }
     }
 }

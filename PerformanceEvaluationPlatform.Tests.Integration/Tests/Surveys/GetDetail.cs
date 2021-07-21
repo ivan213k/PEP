@@ -10,7 +10,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
     [TestFixture]
     public class GetDetail : IntegrationTestBase
     {
-        [Test, Ignore("")]
+        [Test]
         public async Task Request_should_return_not_found_when_wrong_id_is_requested()
         {
             //Arrange
