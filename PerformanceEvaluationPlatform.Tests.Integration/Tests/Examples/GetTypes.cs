@@ -33,10 +33,10 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Examples
             Assert.AreEqual(2, content.Count);
 
             Assert.AreEqual(1, content[0].Id);
-            Assert.AreEqual("Type 1", content[0].Name);
+            Assert.AreEqual("Type 1", content[0].Title);
 
             Assert.AreEqual(2, content[1].Id);
-            Assert.AreEqual("Type 2", content[1].Name);
+            Assert.AreEqual("Type 2", content[1].Title);
         }
     }
 }

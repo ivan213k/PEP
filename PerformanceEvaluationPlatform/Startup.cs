@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PerformanceEvaluationPlatform.DAL;
+using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.Repositories.Document;
 
 namespace PerformanceEvaluationPlatform
@@ -25,6 +27,8 @@ namespace PerformanceEvaluationPlatform
             services.AddSingleton<IDocumentReposotory, MockDataRepository>();
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
+            services.AddDbContext<PepDbContext>();
+            services.AddTransient<IExamplesRepository, ExamplesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

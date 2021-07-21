@@ -58,7 +58,6 @@ BEGIN
 		[E].[Id],
 		[E].[Title],
 		[ET].[Name] AS [TypeName],
-		[ET].[Id],
 		[ES].[Name] AS [StateName]
 	FROM [dbo].[Example] [E]
 		INNER JOIN [dbo].[ExampleType] [ET] ON [ET].[Id] = [E].[ExampleTypeId]

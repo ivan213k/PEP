@@ -2,6 +2,7 @@
 using DapperParameters;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Models.Shared;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
     public abstract class BaseRepository
     {
         private readonly DatabaseOptions _databaseOptions;
+        protected readonly PepDbContext DbContext;
 
-        public BaseRepository(IOptions<DatabaseOptions> databaseOptions)
+        protected BaseRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext)
         {
+            DbContext = dbContext;
             _databaseOptions = databaseOptions?.Value ?? throw new ArgumentNullException(nameof(databaseOptions));
             if (databaseOptions.Value.SqlConnectionString is null)
             {
@@ -33,6 +36,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
                 return result.AsList();
             }
         }
+
         private DynamicParameters MapParameters(object model) 
         {
             var parameters = new DynamicParameters();

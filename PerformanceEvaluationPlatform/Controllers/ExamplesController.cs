@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.Models.Example.RequestModels;
 using PerformanceEvaluationPlatform.Models.Example.ViewModels;
 
@@ -9,116 +12,84 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class ExamplesController : ControllerBase
     {
+        private readonly IExamplesRepository _examplesRepository;
+
+        public ExamplesController(IExamplesRepository examplesRepository)
+        {
+            _examplesRepository = examplesRepository ?? throw new ArgumentNullException(nameof(examplesRepository));
+        }
 
         [HttpGet("examples")]
-        public IActionResult Get([FromQuery]ExampleListFilterRequestModel filter)
+        public async Task<IActionResult> Get([FromQuery]ExampleListFilterRequestModel filter)
         {
-            var items = GetExampleListItemViewModels();
-            items = GetFilteredItems(items, filter);
+            var filterDto = new ExampleListFilterDto
+            {
+                Search = filter.Search,
+                Skip = filter.Skip,
+                Take = filter.Take,
+                StateId = filter.StateId,
+                TitleSortOrder = (int?) filter.TitleSortOrder,
+                TypeIds = filter.TypeIds
+            };
+
+            var itemsDto = await _examplesRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new ExampleListItemViewModel
+            {  
+                Id = t.Id,
+                State = t.StateName,
+                Type = t.TypeName,
+                Title = t.Title
+            });
             return Ok(items);
         }
 
         [HttpGet("examples/types")]
-        public IActionResult GetTypes()
+        public async Task<IActionResult> GetTypes()
         {
-            var items = new List<ExampleTypeListItemViewModel>
-            {
-                new ExampleTypeListItemViewModel
+            var itemsDto = await _examplesRepository.GetTypesList();
+            var items = itemsDto
+                .Select(t => new ExampleTypeListItemViewModel
                 {
-                    Id = 1,
-                    Name = "Type 1"
-                },
-                new ExampleTypeListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Type 2"
-                }
-            };
+                    Id = t.Id,
+                    Title = t.Title
+                });
 
             return Ok(items);
         }
 
         [HttpGet("examples/states")]
-        public IActionResult GetStates()
+        public async Task<IActionResult> GetStates()
         {
-            var items = new List<ExampleStateListItemViewModel>
-            {
-                new ExampleStateListItemViewModel
+            var itemsDto = await _examplesRepository.GetStatesList();
+            var items = itemsDto
+                .Select(t => new ExampleStateListItemViewModel
                 {
-                    Id = 1,
-                    Name = "Active"
-                },
-                new ExampleStateListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Blocked"
-                }
-            };
+                    Id = t.Id,
+                    Name = t.Title
+                });
 
             return Ok(items);
         }
 
-        private IEnumerable<ExampleListItemViewModel> GetFilteredItems(IEnumerable<ExampleListItemViewModel> items,
-            ExampleListFilterRequestModel filter)
+        [HttpGet("examples/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            if (!string.IsNullOrWhiteSpace(filter.Search))
+            var detailsDto = await _examplesRepository.GetDetails(id);
+            if (detailsDto == null)
             {
-                items = items
-                    .Where(t => t.Title.Contains(filter.Search) || t.User.Contains(filter.Search));
+                return NotFound();
             }
 
-            if (filter.StateId != null)
+            var detailsVm = new ExampleDetailsViewModel
             {
-                items = items
-                    .Where(t => t.StateId == filter.StateId);
-            }
-
-            if (filter.TypeIds != null)
-            {
-                items = items
-                    .Where(t => filter.TypeIds.Contains(t.TypeId));
-            }
-
-            return items;
-        }
-
-        private static IEnumerable<ExampleListItemViewModel> GetExampleListItemViewModels()
-        {
-            var items = new List<ExampleListItemViewModel>
-            {
-                new ExampleListItemViewModel
-                {
-                    Title = "Example 1",
-                    Type = "Type 1",
-                    TypeId = 1,
-                    State = "Active",
-                    StateId = 1,
-                    User = "Test User 1"
-                },
-                new ExampleListItemViewModel
-                {
-                    Title = "Example 2",
-                    Type = "Type 2",
-                    TypeId = 2,
-                    State = "Blocked",
-                    StateId = 2,
-                    User = "Test User 2"
-                },
-                new ExampleListItemViewModel
-                {
-                    Title = "Example 3",
-                    Type = "Type 1",
-                    TypeId = 1,
-                    State = "Active",
-                    StateId = 1,
-                    User = "Test User 3"
-                }
+                Id = detailsDto.Id,
+                Title = detailsDto.Title,
+                StateName = detailsDto.StateName,
+                TypeName = detailsDto.TypeName
             };
-            return items;
+
+            return Ok(detailsVm);
         }
+
     }
 }
