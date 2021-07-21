@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Fields.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.Models.Field.RequestModels;
 using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
@@ -10,11 +14,17 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class FieldsController : ControllerBase
     {
-        private static IEnumerable<FieldListItemViewModel> items = GetFieldListItemViewModels();
+        private readonly IFieldsRepository _fieldsRepository;
+
+        public FieldsController(IFieldsRepository fieldsRepository)
+        {
+            _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
+        }
 
         [HttpPost("fields")]
         public IActionResult Create([FromBody] CreateFieldRequestModel field)
         {
+            var items = GetFieldListItemViewModels();
             if (field == null)
             {
                 return BadRequest();
@@ -106,10 +116,27 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("fields")]
-        public IActionResult Get([FromQuery] FieldListFilterRequestModel filter)
+        public async Task<IActionResult> Get([FromQuery] FieldListFilterRequestModel filter)
         {
-            var items = GetFieldListItemViewModels(); //add this for integration tests
-            items = GetFilteredItems(items, filter);
+            var filterDto = new FieldListFilterDto
+            {
+                Search = filter.Search,
+                Skip = (int)filter.Skip,
+                Take = (int)filter.Take,
+                AssesmentGroupIds = filter.AssesmentGroupIds,
+                TitleSortOrder = (int?)filter.FieldNameSortOrder,
+                TypeIds = filter.TypeIds
+            };
+
+            var itemsDto = await _fieldsRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new FieldListItemViewModel
+            {
+                Id = t.Id,
+                Name = t.Name,
+                AssesmentGroupName = t.AssesmentGroupName,
+                Type = t.TypeName,
+                IsRequired = t.IsRequired
+            });
             return Ok(items);
         }
 
