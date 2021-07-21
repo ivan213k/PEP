@@ -22,17 +22,33 @@ Begin
 	CREATE TABLE #UserPEs ([userId] INT, [PreviousPE] DATE, [NextPE] DATE)
 
 	INSERT INTO #UserNextPeDate ([userId],[NextPE])
-	SELECT  [U].[Id],MAX([S].[AppointmentDate])
+	SELECT  
+		[U].[Id],
+		MAX([S].[AppointmentDate])
 	FROM  [dbo].[User] AS[U]
 	LEFT JOIN [dbo].[Survey] AS [S] ON [S].[AssigneeId] = [U].[Id] GROUP BY[U].[Id];
 
-	WITH[UserAppointments] AS (SELECT  [U].[Id],[S].[AppointmentDate], ROW_NUMBER() OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number] FROM [dbo].[User] AS [U]
+	WITH[UserAppointments] 
+	AS (SELECT  
+			[U].[Id],
+			[S].[AppointmentDate], 
+			ROW_NUMBER() 
+			OVER(PARTITION BY [U].Id ORDER BY[S].[AppointmentDate]DESC)AS [Number]
+		FROM [dbo].[User] AS [U]
 	LEFT JOIN [dbo].[Survey] AS [S] ON [S].AssigneeId = [U].Id)
+
 	INSERT INTO #UserPreviousPeDate ([userId],[PreviousPe])
-	SELECT [UA].[Id], [UA].AppointmentDate FROM [UserAppointments] AS [UA] WHERE [Number] = 2
+	SELECT 
+		[UA].[Id], 
+		[UA].AppointmentDate 
+	FROM [UserAppointments] AS [UA] WHERE [Number] = 2
  
 	INSERT  INTO #UserPEs ([userId],[PreviousPE],[NextPE])
-	SELECT [UNPD].userId,[UPPD].PreviousPe,[UNPD].NextPe FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
+	SELECT 
+		[UNPD].userId,
+		[UPPD].PreviousPe,
+		[UNPD].NextPe
+	FROM #UserNextPeDate AS [UNPD] LEFT JOIN #UserPreviousPeDate AS [UPPD]ON[UPPD].userId = [UNPD].userId 
 
  --Search Where Clause
 	IF(@Search IS NOT NULL)
