@@ -55,7 +55,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(newField);
         }
 
-        [HttpPost("fields/{id}")]
+        [HttpPost("fields/{id:int}")]
         public IActionResult Copy(int id)
         {
             var items = GetFieldListItemViewModels();
@@ -82,7 +82,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(newField);
         }
 
-        [HttpPut("fields/{id}")]
+        [HttpPut("fields/{id:int}")]
         public IActionResult EditField(int id, [FromBody] EditFieldRequestModel fieldRequestModel)
         {
             if (fieldRequestModel == null)
@@ -101,7 +101,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok();
         }
-        [HttpDelete("fields/{id}")]
+        [HttpDelete("fields/{id:int}")]
         public IActionResult DeleteField(int id)
         {
             var items = GetFieldListItemViewModels();
@@ -140,37 +140,40 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(items);
         }
 
-        [HttpGet("fields/{id}")]
-        public IActionResult GetFieldDetails(int id)
+        [HttpGet("fields/{id:int}")]
+        public async Task<IActionResult> GetFieldDetails(int id)
         {
-            var items = GetFieldListItemViewModels();
-            var item = items.SingleOrDefault(t => t.Id == id);
-            if (item == null)
+            var detailsDto = await _fieldsRepository.GetDetails(id);
+            if (detailsDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(item);
+            var detailsVm = new FieldDetailsViewModel
+            {
+                Id = detailsDto.Id,
+                Name = detailsDto.Name,
+                AssesmentGroupName = detailsDto.AssasmentGroupName,
+                Type = detailsDto.TypeName,
+                IsRequired = detailsDto.IsRequired,
+                Description = detailsDto.Description
+            };
+
+            return Ok(detailsVm);
         }
 
         //delete FieldGroupListItemViewModel because Olexandr Melnychuk maked this part 
 
         [HttpGet("fields/types")]
-        public IActionResult GetTypes()
+        public async Task<IActionResult> GetTypes()
         {
-            var items = new List<FieldTypeListItemViewModel>
-            {
-                new FieldTypeListItemViewModel
+            var itemsDto = await _fieldsRepository.GetTypesList();
+            var items = itemsDto
+                .Select(t => new FieldTypeListItemViewModel
                 {
-                    Id = 1,
-                    Name = "Divider"
-                },
-                new FieldTypeListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Dropdown with comment"
-                }
-            };
+                    Id = t.Id,
+                    Name = t.Name
+                });
 
             return Ok(items);
         }
