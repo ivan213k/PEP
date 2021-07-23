@@ -12,6 +12,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public DateTime FirstDayInIndustry { get; set; }
+        public DateTime FirstDayInCompany { get; set; }
         public int TeamId { get; set; }
         public int StateId { get; set; }
         public UserState UserState { get; set; }
@@ -32,6 +34,12 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
             userTableBuilder.Property(ln => ln.LastName)
                 .IsRequired()
                 .HasMaxLength(120);
+
+            userTableBuilder.Property(fdi => fdi.FirstDayInIndustry)
+                .IsRequired();
+
+            userTableBuilder.Property(fdi => fdi.FirstDayInCompany)
+               .IsRequired();
 
             userTableBuilder.Property(e => e.Email)
                 .IsRequired()

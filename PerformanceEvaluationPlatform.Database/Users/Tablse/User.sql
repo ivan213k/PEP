@@ -4,6 +4,8 @@
 	[FirstName] NVARCHAR(70) NOT NULL,
 	[LastName] NVARCHAR(120) NOT NULL,
 	[Email] NVARCHAR(40) NOT NULL,
+	[FirstDayInIndustry] DATE NOT NULL,
+	[FirstDayInCompany] DATE NOT NULL,
 	[TeamId] INT NOT NULL,
 	[StateId] INT  NOT NULL,
 	[LevelId] INT NOT NULL
