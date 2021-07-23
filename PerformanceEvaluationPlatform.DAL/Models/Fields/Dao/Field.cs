@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Fields.Dao
 {
@@ -32,6 +33,11 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Fields.Dao
             fieldBuilder.HasOne<FieldAssesmentGroup>(t => t.AssesmentGroup)
                 .WithMany()
                 .HasForeignKey(t => t.AssesmentGroupId)
+                .IsRequired();
+
+            fieldBuilder.HasMany<FormTemplateFieldMap>()
+                .WithOne(m=>m.Field)
+                .HasForeignKey(m => m.FieldId)
                 .IsRequired();
 
         }
