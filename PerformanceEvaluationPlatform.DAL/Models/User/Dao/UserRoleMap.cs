@@ -29,7 +29,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .WithMany()
                 .HasForeignKey(s=>s.UserId)
                 .IsRequired();
-            
+
 
         }
 

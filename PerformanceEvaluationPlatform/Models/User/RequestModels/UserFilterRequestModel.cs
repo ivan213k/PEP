@@ -14,7 +14,7 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 
         public UserFilterRequestModel()
         {
-            Skip = 1;
+            Skip = 0;
             Take = 2;
         }
     }

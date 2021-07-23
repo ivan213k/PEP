@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public int StateId { get; set; }
         public UserState UserState { get; set; }
         public int LevelId { get; set; }
+        public Level Level { get; set; }
+
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -26,11 +29,11 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .IsRequired()
                 .HasMaxLength(70);
 
-            userTableBuilder.Property(ln=>ln.LastName)
+            userTableBuilder.Property(ln => ln.LastName)
                 .IsRequired()
                 .HasMaxLength(120);
 
-            userTableBuilder.Property(e=>e.Email)
+            userTableBuilder.Property(e => e.Email)
                 .IsRequired()
                 .HasMaxLength(40);
 
@@ -48,6 +51,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .HasForeignKey(s => s.StateId)
                 .IsRequired();
 
+            userTableBuilder.HasOne(l=>l.Level)
+               .WithMany()
+               .HasForeignKey(s => s.LevelId)
+               .IsRequired();
         }
     }
 }
