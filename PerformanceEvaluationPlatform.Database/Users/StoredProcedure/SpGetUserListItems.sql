@@ -144,7 +144,7 @@ Begin
 
 
 
-	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name] AS [UserState],
+	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name] AS [StateName],
 	[T].[Title] as [TeamName], [R].[Title] as [RoleName],[L].[Name] AS [LevelName],[UPES].[PreviousPE], [UPES].[NextPE]
 	FROM [dbo].[User] AS [U]
 	INNER JOIN [dbo].[UserState] AS [US] ON [U].StateId = [US].[Id] 

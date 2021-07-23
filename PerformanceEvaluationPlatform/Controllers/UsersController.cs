@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.User;
 using PerformanceEvaluationPlatform.Models.User.Domain;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -12,6 +15,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IUserRepository _userRepository;
         private static List<User> users = new List<User>()
             {
                 new User(){Id = 1,Email = "userExample@gor.com",FirstName ="Artur",LastName = "Grugon",LevelName = "Junior",
@@ -41,15 +45,46 @@ namespace PerformanceEvaluationPlatform.Controllers
                             new DateTime(2021,03,07)
                         } }
             };
+        public UsersController(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
 
 
         [HttpGet]
-        public IActionResult Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
+        public async Task<IActionResult> Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
         {
-            var items = SortingUsers(userSorting, users);
-            items = FilterUsers(userFilter, items);
-            var resultItems = MapToUserViewModel(items);
-            return Ok(resultItems.Skip((userFilter.Skip.Value - 1) * userFilter.Take.Value).Take(userFilter.Take.Value));
+            var parameters = new UserFilterDto()
+            {
+                NextPeDate = userFilter.NextPEDate,
+                PreviousPeDate = userFilter.PreviousPEDate,
+                RoleIds = userFilter.RoleIds,
+                Search = userFilter.EmailOrName,
+                Skip = userFilter.Skip,
+                StateIds = userFilter.StateIds,
+                Take=userFilter.Take,
+                UserNameSort = userSorting.UserName,
+                UserNextPE = userSorting.UserNextPE,
+                UserPreviousPE = userSorting.UserPreviousPE
+            };
+
+            var itemsDto = await _userRepository.GetUsers(parameters);
+
+            var itemViewModel = itemsDto.Select(s => new UserViewModel()
+            {
+                Id = s.Id,
+                Email = s.Email,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                LevelName = s.LevelName,
+                NextPEDate = s.NextPE,
+                StateName = s.StateName,
+                PreviousPEDate = s.PreviousPE,
+                RoleName = s.RoleName,
+                TeamName = s.TeamName
+            });
+
+            return Ok(itemViewModel);
         }
 
 
@@ -160,31 +195,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 YearsOfExpirience = user.YearsOfExpirience
             };
         }
-        private IEnumerable<UserViewModel> MapToUserViewModel(IEnumerable<User> items)
-        {
-            List<UserViewModel> users = new List<UserViewModel>();
-            foreach (var item in items)
-            {
-                users.Add(new UserViewModel()
-                {
-                    Id = item.Id,
-                    Email = item.Email,
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    LevelName = item.LevelName,
-                    LevelId = item.LevelId,
-                    PreviousPEDate = item.PreviousPEDate,
-                    NextPEDate = item.NextPEDate,
-                    StateName = item.StateName,
-                    StateId = item.StateId,
-                    TeamName = item.TeamName,
-                    RoleName = item.RoleName,
-                    RoleId = item.RoleId
-                });
-            }
-            return users;
-        }
-
+       
         private IEnumerable<User> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<User> items)
         {
             if (userFilter.EmailOrName != null)

@@ -14,13 +14,10 @@ namespace PerformanceEvaluationPlatform.Models.User.ViewModels
         //Повиннен получати доступ до імені команди з змінної типу Team, поки що так 
         public string TeamName { get; set; }
 
-        public int StateId { get; set; }
         public string StateName { get; set; }
 
-        public int LevelId { get; set; }
         public string LevelName { get; set; }
 
-        public int RoleId { get; set; }
         public string RoleName { get; set; }
 
         public DateTime PreviousPEDate { get; set; }
