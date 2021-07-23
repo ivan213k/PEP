@@ -100,14 +100,14 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
             //Assert
 
             var content = JsonConvert.DeserializeObject<List<UserViewModel>>(await result.Content.ReadAsStringAsync());
-            Assert.That(content.Count, Is.EqualTo(filter.Take));
+            Assert.That(content.Count, Is.EqualTo(1));
         }
 
         [Test]
         public async Task Get_FilteredByPreviousPEDate_ReturnValidFilteredItems()
         {
             //Arrange
-            var filter = new UserFilterRequestModel() { PreviousPEDate = new DateTime(2020, 12, 03) };
+            var filter = new UserFilterRequestModel() { PreviousPEDate = new DateTime(2021, 07, 10) };
             var items = GetArrangeWithFilteredParams(filter);
 
             //Act
@@ -123,7 +123,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
         public async Task Get_FilteredByNextPEDate_ReturnValidFilteredItems()
         {
             //Arrange
-            var filter = new UserFilterRequestModel() { NextPEDate = new DateTime(2021, 08, 21) };
+            var filter = new UserFilterRequestModel() { NextPEDate = new DateTime(2021, 07, 12) };
             var items = GetArrangeWithFilteredParams(filter);
 
             //Act

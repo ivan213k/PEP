@@ -59,7 +59,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 NextPeDate = userFilter.NextPEDate,
                 PreviousPeDate = userFilter.PreviousPEDate,
                 RoleIds = userFilter.RoleIds,
-                Search = userFilter.Search,
+                Search = userFilter.EmailOrName,
                 Skip = userFilter.Skip,
                 StateIds = userFilter.StateIds,
                 Take=userFilter.Take,
