@@ -85,7 +85,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
 
             var content = await response.Content.DeserializeAsAsync<ICollection<SurveyListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                SupervisorIds = new List<int> { 2 }
+                SupervisorIds = new List<int> { 1 }
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -105,7 +105,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
 
             var content = await response.Content.DeserializeAsAsync<ICollection<SurveyListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(1, content.Count);
+            Assert.AreEqual(3, content.Count);
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                AppointmentDateFrom = new DateTime(2021, 7, 11)
+                AppointmentDateFrom = new DateTime(2021, 11, 7)
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -133,7 +133,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                AppointmentDateTo = new DateTime(2021, 7, 11)
+                AppointmentDateTo = new DateTime(2021, 11, 7)
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -152,7 +152,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                Search = "Manual QA"
+                Search = "Junior Front-End Dev"
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -172,7 +172,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             //Arrange
             var requestModel = new SurveyListFilterRequestModel
             {
-                Search = "Test User 1"
+                Search = "Kristina Lavruk"
             };
             var request = CreateGetHttpRequest(requestModel);
             //Act
@@ -204,9 +204,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             var content = await response.Content.DeserializeAsAsync<IList<SurveyListItemViewModel>>();
             Assert.NotNull(content);
             Assert.AreEqual(3, content.Count);
-            Assert.AreEqual(content[0].FormName, ".NET");
-            Assert.AreEqual(content[1].FormName, "JS");
-            Assert.AreEqual(content[2].FormName, "Manual QA");
+            Assert.AreEqual(content[0].FormName, "Junior Front-End Dev");
+            Assert.AreEqual(content[1].FormName, "Middle Back-End Dev");
+            Assert.AreEqual(content[2].FormName, "Middle Front-End Dev");
         }
 
         [Test]
@@ -227,9 +227,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             var content = await response.Content.DeserializeAsAsync<IList<SurveyListItemViewModel>>();
             Assert.NotNull(content);
             Assert.AreEqual(3, content.Count);
-            Assert.AreEqual(content[0].FormName, "Manual QA");
-            Assert.AreEqual(content[1].FormName, "JS");
-            Assert.AreEqual(content[2].FormName, ".NET");
+            Assert.AreEqual(content[0].FormName, "Middle Front-End Dev");
+            Assert.AreEqual(content[1].FormName, "Middle Back-End Dev");
+            Assert.AreEqual(content[2].FormName, "Junior Front-End Dev");
         }
 
         [Test]
@@ -250,9 +250,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             var content = await response.Content.DeserializeAsAsync<IList<SurveyListItemViewModel>>();
             Assert.NotNull(content);
             Assert.AreEqual(3, content.Count);
-            Assert.AreEqual(content[0].Assignee, "Test User");
-            Assert.AreEqual(content[1].Assignee, "Test User 1");
-            Assert.AreEqual(content[2].Assignee, "Test User 2");
+            Assert.AreEqual(content[0].Assignee, "Kiril Krigan");
+            Assert.AreEqual(content[1].Assignee, "Kiril Krigan");
+            Assert.AreEqual(content[2].Assignee, "Kristina Lavruk");
         }
         [Test]
         public async Task Request_should_return_valid_items_when_ordering_by_assignee_descending()
@@ -272,9 +272,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Surveys
             var content = await response.Content.DeserializeAsAsync<IList<SurveyListItemViewModel>>();
             Assert.NotNull(content);
             Assert.AreEqual(3, content.Count);
-            Assert.AreEqual(content[0].Assignee, "Test User 2");
-            Assert.AreEqual(content[1].Assignee, "Test User 1");
-            Assert.AreEqual(content[2].Assignee, "Test User");
+            Assert.AreEqual(content[0].Assignee, "Kristina Lavruk");
+            Assert.AreEqual(content[1].Assignee, "Kiril Krigan");
+            Assert.AreEqual(content[2].Assignee, "Kiril Krigan");
         }
     }
 }

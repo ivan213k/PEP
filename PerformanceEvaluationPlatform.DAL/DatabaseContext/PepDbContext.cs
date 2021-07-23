@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 {
@@ -30,6 +33,17 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             ExampleState.Configure(modelBuilder);
             Example.Configure(modelBuilder);
 
+            Survey.Configure(modelBuilder);
+            SurveyState.Configure(modelBuilder);
+            Level.Configure(modelBuilder);
+
+            Field.Configure(modelBuilder);
+            FieldType.Configure(modelBuilder);
+            FieldAssesmentGroup.Configure(modelBuilder);
+
+            FormTemplate.Configure(modelBuilder);
+            FormTemplateStatus.Configure(modelBuilder);
+            FormTemplateFieldMap.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }

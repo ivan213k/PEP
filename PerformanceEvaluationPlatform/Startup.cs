@@ -8,6 +8,7 @@ using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.User;
 using PerformanceEvaluationPlatform.Repositories.Document;
 
@@ -36,6 +37,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IFieldsRepository, FieldsRepository>();
+            services.AddTransient<ISurveysRepository, SurveysRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

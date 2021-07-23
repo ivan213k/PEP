@@ -9,5 +9,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
     public interface IFormTemplatesRepository
     {
         Task<IList<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter);
+        Task<IList<FormTemplateStatusListItemDto>> GetStatusListAsync();
+        Task<FormTemplateDetailsDto> GetDetailsAsync(int id);
     }
 }

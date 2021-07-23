@@ -10,7 +10,7 @@
 	[Summary] NVARCHAR(256),
 
 	CONSTRAINT [PK_Survey] PRIMARY KEY([Id]),
-	CONSTRAINT [FK_Survey_SurveyStateId] FOREIGN KEY ([StateId]) REFERENCES [dbo].[SurveyState]([Id]),
+	CONSTRAINT [FK_Survey_StateId] FOREIGN KEY ([StateId]) REFERENCES [dbo].[SurveyState]([Id]),
 	CONSTRAINT [FK_Survey_RecommendedLevelId] FOREIGN KEY ([RecommendedLevelId]) REFERENCES [dbo].[Level]([Id]),
 	CONSTRAINT [FK_Survey_FormTemplateId] FOREIGN KEY ([FormTemplateId]) REFERENCES [dbo].[FormTemplate]([Id]),
 	CONSTRAINT [FK_Survey_AssigneeId] FOREIGN KEY ([AssigneeId]) REFERENCES [dbo].[User]([Id]),

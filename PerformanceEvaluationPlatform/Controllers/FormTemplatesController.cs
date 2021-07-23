@@ -46,87 +46,47 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("formtemplates/statuses")]
-        public IActionResult GetStatuses()
+        public async Task<IActionResult> GetStatusesAsync()
         {
-            var items = GetFormTemplatesStatusesListItemViewModel();
+            var itemsDto = await _formTemplatesRepository.GetStatusListAsync();
+            var items = itemsDto
+                .Select(s => new FormTemplateStatusListItemViewModel
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                });
             return Ok(items);
         }
 
-        private IEnumerable<FormTemplateListItemViewModel> GetFilteredItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
-        {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
+       [HttpGet("formtemplates/{id:int}")]
+       public async Task<IActionResult> DetailsAsync(int id)
+       {
+            var itemDto = await _formTemplatesRepository.GetDetailsAsync(id);
+            if(itemDto == null)
             {
-                items = items.Where(i => i.Name.Contains(filter.Search));
+                return NotFound();
             }
-            if (filter.StatusIds != null)
+            var item = new FormTemplateDetailsViewModel
             {
-                items = items
-                    .Where(i => filter.StatusIds.Contains(i.StatusId));
-            }
-            items = GetSortedItems(items, filter);
-
-            items = items.Skip(filter.Skip.Value).Take(filter.Take.Value);
-
-            return items;
-        }
-
-        private IEnumerable<FormTemplateListItemViewModel> GetSortedItems(IEnumerable<FormTemplateListItemViewModel> items, FormTemplateListFilterOrderRequestModel filter)
-        {
-            if (filter.NameSortOrder != null)
-            {
-                if (filter.NameSortOrder == SortOrder.Ascending)
-                    items = items.OrderBy(i => i.Name);
-                else
-                    items = items.OrderByDescending(i => i.Name);
-            }
-
-            return items;
-        }
-
-        private IEnumerable<FormTemplateStatusListItemViewModel> GetFormTemplatesStatusesListItemViewModel()
-        {
-            var items = new List<FormTemplateStatusListItemViewModel>
-            {
-                new FormTemplateStatusListItemViewModel
+                Id = itemDto.Id,
+                Name = itemDto.Name,
+                Version = itemDto.Version,
+                CreatedAt = itemDto.CreatedAt,
+                StatusId = itemDto.StatusId,
+                Status = itemDto.Status,
+                Fields = itemDto.Fields?
+                .Select(t => new FormTemplateFieldViewModel
                 {
-                    Id = 1,
-                    Name = "Active"
-                },
-                new FormTemplateStatusListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Draft"
-                }
+                    Id = t.Id,
+                    Name = t.Name,
+                    Order = t.Order,
+                    FieldTypeId = t.FieldTypeId,
+                    FieldTypeName = t.FieldTypeName
+                }).ToList()
             };
-            return items;
-        }
 
-        private IEnumerable<FormTemplateListItemViewModel> GetFormTemplatesListItemViewModel()
-        {
-            var items = new List<FormTemplateListItemViewModel> {
-                new FormTemplateListItemViewModel{
-                    Name = "Middle Back-End Dev",
-                    Version = 12,
-                    StatusName = "Draft",
-                    StatusId = 2,
-                    CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
-                },
-                new FormTemplateListItemViewModel{
-                    Name = "Middle Front-End Dev",
-                    Version = 1,
-                    StatusName = "Active",
-                    StatusId = 1,
-                    CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
-                },
-                new FormTemplateListItemViewModel{
-                    Name = "Junior Front-End Dev",
-                    Version = 1,
-                    StatusName = "Active",
-                    StatusId = 1,
-                    CreatedAt = new DateTime(2021, 7, 1, 9, 15, 0)
-                },
-            };
-            return items;
-        }
+            return Ok(item);
+
+       }
     }
 }

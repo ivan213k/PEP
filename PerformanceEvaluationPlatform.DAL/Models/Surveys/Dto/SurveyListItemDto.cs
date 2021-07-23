@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerformanceEvaluationPlatform.Models.Survey.Dtos
+namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
 {
     public class SurveyListItemDto
     {
