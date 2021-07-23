@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.User.Dto
 {
-    class UserListItemDto
+   public  class UserListItemDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

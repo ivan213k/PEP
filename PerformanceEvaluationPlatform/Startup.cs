@@ -8,6 +8,7 @@ using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
+using PerformanceEvaluationPlatform.DAL.Repositories.User;
 using PerformanceEvaluationPlatform.Repositories.Document;
 
 namespace PerformanceEvaluationPlatform
@@ -32,6 +33,7 @@ namespace PerformanceEvaluationPlatform
             services.AddDbContext<PepDbContext>();
             services.AddTransient<IExamplesRepository, ExamplesRepository>();
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IFieldsRepository, FieldsRepository>();
         }

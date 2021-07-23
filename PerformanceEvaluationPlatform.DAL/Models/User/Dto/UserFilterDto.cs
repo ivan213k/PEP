@@ -4,10 +4,10 @@ using System.Text;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.User.Dto
 {
-    class UserFilterDto
+    public class UserFilterDto
     {
         public string Search { get; set; }
-        public ICollection<int> StateIds{ get; set; }
+        public ICollection<int> StateIds { get; set; }
         public ICollection<int> RoleIds{ get; set; }
         public DateTime? PreviousPeDate { get; set; }
         public DateTime? NextPeDate { get; set; }

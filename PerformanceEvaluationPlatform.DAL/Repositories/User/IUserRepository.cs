@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.User
 {
-    interface IUserRepository
+    public interface IUserRepository
     {
         public Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter);
     }
