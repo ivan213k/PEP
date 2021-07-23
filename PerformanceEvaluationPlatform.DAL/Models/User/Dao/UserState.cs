@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
 {
-    class UserState
+    public class UserState
     {
         public int Id { get; set; }
         public string Name { get; set; }
