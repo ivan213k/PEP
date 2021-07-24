@@ -19,8 +19,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Examples
         {
             //Arrange
             HttpRequestMessage request = BaseAddress
-	            .AppendPathSegment("examples")
-	            .WithHttpMethod(HttpMethod.Get);
+                .AppendPathSegment("examples")
+                .WithHttpMethod(HttpMethod.Get);
 
             //Act
             HttpResponseMessage response = await SendRequest(request);

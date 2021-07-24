@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories
 {
-    public abstract class BaseRepository
+    public abstract class BaseRepository : IBaseRepository
     {
         private readonly DatabaseOptions _databaseOptions;
         protected readonly PepDbContext DbContext;
@@ -35,6 +35,21 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
                 var result = await dbConnection.QueryAsync<TResult>(spName, mappedParameters, commandType: CommandType.StoredProcedure);
                 return result.AsList();
             }
+        }
+
+        protected async Task<TEntity> Get<TEntity>(int id) where TEntity: class
+        {
+            return await DbContext.Set<TEntity>().FindAsync(id);
+        }
+
+        protected async Task Create<TEntity>(TEntity entity)
+        {
+            await DbContext.AddAsync(entity);
+        }
+
+        public Task SaveChanges()
+        {
+            return DbContext.SaveChangesAsync();
         }
 
         private DynamicParameters MapParameters(object model) 
