@@ -78,7 +78,7 @@ BEGIN
 		[R].[Id],
 		[R].Title,
 		[R].IsPrimary,
-	COUNT([U].RoleId) AS [UserCount]
+	COUNT([U].RoleId) AS [UsersCount]
 	FROM [dbo].[Role] [R]
 	LEFT JOIN [dbo].[UserRoleMap] [U] ON [U].[RoleId] = [R].[Id]
 	'+ @WhereClause + '

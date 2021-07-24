@@ -6,6 +6,7 @@ using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 {
@@ -49,6 +50,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             User.Configure(modelBuilder);
             UserState.Configure(modelBuilder);
             UserRoleMap.Configure(modelBuilder);
+
+            Role.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }
