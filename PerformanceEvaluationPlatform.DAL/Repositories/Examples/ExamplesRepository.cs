@@ -74,5 +74,32 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Examples
 
             return details;
         }
+
+        public Task<ExampleState> GetState(int id)
+        {
+            return Get<ExampleState>(id);
+        }
+
+        public Task Create(Example example)
+        {
+            return Create<Example>(example);
+        }
+
+        public Task<ExampleType> GetType(int id)
+        {
+            return Get<ExampleType>(id);
+        }
+
+        public Task<Example> Get(int id)
+        {
+            return Get<Example>(id);
+        }
+
+        public async Task Update(int id)
+        {
+            
+          
+            await DbContext.SaveChangesAsync();
+        }
     }
 }

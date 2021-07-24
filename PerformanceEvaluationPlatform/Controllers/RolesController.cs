@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.Models.Role.RequestModels;
 using PerformanceEvaluationPlatform.Models.Role.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
@@ -10,31 +14,60 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
+        private readonly IRolesRepository _rolesRepository;
+
+        public RolesController(IRolesRepository rolesRepository)
+        {
+            _rolesRepository = rolesRepository ?? throw new ArgumentNullException(nameof(rolesRepository));
+        }
+
         [Route("roles")]
         [HttpGet]
-        public IActionResult Get([FromQuery] RoleListFilterRequestModel filter)
+        public async Task<IActionResult> Get([FromQuery] RoleListFilterRequestModel filter)
         {
-            var items = GetRoleListItemViewModels();
-            items = GetFilteredItems(items, filter);
-            items = SortItems(items, filter);
+            var filterDto = new RoleListFilterDto
+            {
+                Skip = filter.Skip,
+                Take = filter.Take,
+                Search = filter.Search,
+                IsPrimary = filter.IsPrimary,
+                UsersCountFrom =filter.UsersCountFrom,
+                UsersCountTo = filter.UsersCountTo,
+                TitleSortOrder = (int?)filter.TitleSortOrder,
+                IsPrimarySortOrder = (int?)filter.IsPrimarySortOrder
+            };
+
+            var itemsDto = await _rolesRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new RoleListItemViewModel
+            {
+                Id = t.Id,
+                Title = t.Title,
+                IsPrimary = t.IsPrimary,
+                UsersCount = t.UsersCount
+            });
 
             return Ok(items);
         }
 
-        [Route("roles/{id}")]
+        [Route("roles/{id:int}")]
         [HttpGet]
-        public IActionResult GetRoleDetails([FromRoute] int id)
+        public async Task<IActionResult> GetRoleDetails([FromRoute] int id)
         {
-            var items = GetRoleListItemViewModels();
-
-            var role = items.FirstOrDefault(t => t.Id == id);
-
-            if (role is null)
+            var detailsDto = await _rolesRepository.GetDetails(id);
+            if (detailsDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(role);
+            var detailsVm = new RoleDetailsViewModel
+            {
+                Id = detailsDto.Id,
+                Title = detailsDto.Title,
+                IsPrimary = detailsDto.IsPrimary,
+                UsersCount = detailsDto.UsersCount
+            };
+
+            return Ok(detailsVm);
         }
 
         [Route("roles")]

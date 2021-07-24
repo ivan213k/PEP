@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.Models.Example.RequestModels;
@@ -91,5 +92,64 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(detailsVm);
         }
 
+        [HttpPut("examples/{id:int}")]
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateExampleRequestModel requestModel)
+        {
+            var entity = await _examplesRepository.Get(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var exampleType = await _examplesRepository.GetType(requestModel.TypeId);
+            if (exampleType == null)
+            {
+                return BadRequest("Type does not exists.");
+            }
+
+            var exampleState = await _examplesRepository.GetState(requestModel.StateId);
+            if (exampleState == null)
+            {
+                return BadRequest("State does not exists.");
+            }
+
+
+            entity.Title = requestModel.Title;
+            entity.ExampleTypeId = requestModel.TypeId;
+            entity.ExampleStateId = requestModel.StateId;
+
+            await _examplesRepository.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPost("examples")]
+        public async Task<IActionResult> Create([FromBody]CreateExampleRequestModel requestModel)
+        {
+            var exampleType = await _examplesRepository.GetType(requestModel.TypeId);
+            if (exampleType == null)
+            {
+                return BadRequest("Type does not exists.");
+            }
+
+            var exampleState = await _examplesRepository.GetState(requestModel.StateId);
+            if (exampleState == null)
+            {
+                return BadRequest("State does not exists.");
+            }
+
+            var example = new Example
+            {
+                Title = requestModel.Title,
+                ExampleState = exampleState,
+                ExampleType = exampleType
+            };
+
+            await _examplesRepository.Create(example);
+            await _examplesRepository.SaveChanges();
+
+            var result = new ObjectResult(new {Id = example.Id}) {StatusCode = 201};
+            return result;
+
+        }
     }
 }

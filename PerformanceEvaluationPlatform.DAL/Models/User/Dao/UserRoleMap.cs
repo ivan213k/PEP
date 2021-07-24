@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
 {
-    class UserRoleMap
+    public class UserRoleMap
     {
         public int Id { get; set; }
         public int UserId { get; set; }
@@ -27,7 +27,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
 
             userRoleMapTableBuilder.HasOne(ui => ui.User)
                 .WithMany()
-                .HasForeignKey(s=>s.UserId)
+                .HasForeignKey(s => s.UserId)
                 .IsRequired();
 
 

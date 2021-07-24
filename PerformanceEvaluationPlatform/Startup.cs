@@ -9,6 +9,8 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+
+using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Repositories.Document;
 
@@ -36,6 +38,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
+            services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
             services.AddTransient<ISurveysRepository, SurveysRepository>();
         }

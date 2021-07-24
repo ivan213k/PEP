@@ -17,7 +17,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
 
             userStateTableBuilder.HasKey(s => s.Id);
 
-            userStateTableBuilder.Property(n=>n.Name)
+            userStateTableBuilder.Property(n => n.Name)
                 .IsRequired()
                 .HasMaxLength(60);
 

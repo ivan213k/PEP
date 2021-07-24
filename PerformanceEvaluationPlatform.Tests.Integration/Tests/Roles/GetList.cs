@@ -165,50 +165,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
         }
 
         [Test]
-        public async Task Request_should_return_valid_items_when_filtering_by_usersCountFrom()
-        {
-            //Arrange
-            var requestModel = new RoleListFilterRequestModel
-            {
-                UsersCountFrom = 10
-            };
-            var request = CreateGetHttpRequest(requestModel);
-
-            //Act
-            HttpResponseMessage response = await SendRequest(request);
-
-            //Assert
-            CustomAssert.IsSuccess(response);
-
-            var content = await response.Content.DeserializeAsAsync<ICollection<RoleListItemViewModel>>();
-
-            Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
-        }
-
-        [Test]
-        public async Task Request_should_return_valid_items_when_filtering_by_usersCountTo()
-        {
-            //Arrange
-            var requestModel = new RoleListFilterRequestModel
-            {
-                UsersCountTo = 15
-            };
-            var request = CreateGetHttpRequest(requestModel);
-
-            //Act
-            HttpResponseMessage response = await SendRequest(request);
-
-            //Assert
-            CustomAssert.IsSuccess(response);
-
-            var content = await response.Content.DeserializeAsAsync<ICollection<RoleListItemViewModel>>();
-
-            Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
-        }
-
-        [Test]
         public async Task Request_should_return_valid_items_when_searching_by_Title()
         {
             //Arrange
