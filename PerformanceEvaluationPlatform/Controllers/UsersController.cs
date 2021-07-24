@@ -47,7 +47,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
         public UsersController(IUserRepository userRepository)
         {
-            _userRepository = userRepository?? throw new ArgumentNullException();
+            _userRepository = userRepository ??throw new ArgumentNullException(nameof(userRepository));
         }
 
 
