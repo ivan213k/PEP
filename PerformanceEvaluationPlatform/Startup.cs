@@ -9,7 +9,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
-using PerformanceEvaluationPlatform.DAL.Repositories.User;
+using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Repositories.Document;
 
 namespace PerformanceEvaluationPlatform
