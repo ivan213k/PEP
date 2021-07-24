@@ -43,22 +43,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
 
             return userStates;
         }
-        //public async  Task<bool> DeleteUser(int id)
-        //{
-        //    var user = await DbContext.Set<User>().FindAsync(id);
-
-        //    if( user is null)
-        //    {
-        //        return false;
-        //    }
-
-        //    DbContext.Set<User>().Remove(user);
-        //    return true;
-        //}
-
-        //public  Task Save()
-        //{
-        //   return DbContext.SaveChangesAsync();
-        //}
+       
     }
 }

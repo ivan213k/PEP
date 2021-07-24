@@ -168,19 +168,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
         }
 
-        //[HttpDelete("{id:int}")]
-        //public async Task<IActionResult> DeleteUser(int id)
-        //{
-        //    var validation = await _userRepository.DeleteUser(id);
-
-        //    if (validation == false)
-        //    {
-        //        return NotFound();
-        //    }
-        //    await _userRepository.Save();
-        //    return NoContent();
-        //}
-
         private void UpdateUser(User user, EditUserRequestModel editedUser)
         {
             user.Email = editedUser.Email;
