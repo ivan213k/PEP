@@ -1,12 +1,15 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.User
+namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
 {
     public class UserRepository : BaseRepository,IUserRepository
     {
@@ -14,6 +17,8 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.User
             :base(databaseOptions,dbContext)
         {
         }
+
+
         public async Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter)
         {
             var paramaters = new
@@ -31,5 +36,13 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.User
             };
             return  await ExecuteSp<UserListItemDto>("[dbo].[spGetUserListItems]", paramaters);
         }
+
+        public async Task<ICollection<UserStateListItemDto>> GetUserStates()
+        {
+            var userStates = await DbContext.Set<UserState>().Select(s => new UserStateListItemDto() { Id = s.Id, Name = s.Name }).ToListAsync(); ;
+
+            return userStates;
+        }
+       
     }
 }

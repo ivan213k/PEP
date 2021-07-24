@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
-using PerformanceEvaluationPlatform.DAL.Repositories.User;
+using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Domain;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
@@ -47,7 +47,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
         public UsersController(IUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            _userRepository = userRepository ??throw new ArgumentNullException(nameof(userRepository));
         }
 
 
@@ -87,8 +87,16 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(itemViewModel);
         }
 
+        [HttpGet("userstate")]
+        public async Task<IActionResult> GetUserStates()
+        {
+            var userStateDtos = await _userRepository.GetUserStates();
+            var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
+            return Ok(userStatesviewModel);
+        }
 
-        [HttpGet("{id}")]
+
+        [HttpGet("{id:int}")]
         public IActionResult GetUser(int id)
         {
             var user = users.FirstOrDefault(s => s.Id == id);
@@ -99,8 +107,8 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
             return Ok(MapToUserDeailViewModel(user));
         }
-
-        [HttpPut("{id}")]
+        
+        [HttpPut("{id:int}")]
         public IActionResult EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
             if (ModelState.IsValid == false)
