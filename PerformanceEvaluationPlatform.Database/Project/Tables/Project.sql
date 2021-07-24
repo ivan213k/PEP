@@ -6,5 +6,5 @@
     [CoordinatorId] INT NULL
 
     CONSTRAINT [PK_Project] PRIMARY KEY([Id])
-    CONSTRAINT [FK_Project_User] FOREIGN KEY ([CoordinatorId]) REFERENCES [dbo].[User]([Id]) 
+    CONSTRAINT [FK_Project_User] FOREIGN KEY ([CoordinatorId]) REFERENCES [dbo].[User]([Id]) ON DELETE NO ACTION
 )

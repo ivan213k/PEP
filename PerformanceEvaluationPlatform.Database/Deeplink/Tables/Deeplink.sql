@@ -10,5 +10,5 @@
 	CONSTRAINT [PK_Deeplink] PRIMARY KEY([Id]),
 	CONSTRAINT [FK_Deeplink_DeeplinkStateId] FOREIGN KEY ([StateId]) REFERENCES [dbo].[DeeplinkState]([Id]),
 	CONSTRAINT [FK_Deeplink_DeeplinkSurveyId] FOREIGN KEY ([SurveyId]) REFERENCES [dbo].[Survey]([Id]),
-	CONSTRAINT [FK_Deeplink_DeeplinkUserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User]([Id])
+	CONSTRAINT [FK_Deeplink_DeeplinkUserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User]([Id]) ON DELETE CASCADE
 )

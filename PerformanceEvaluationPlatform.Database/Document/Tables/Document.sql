@@ -14,8 +14,8 @@
 
 	CONSTRAINT [PK_Document] PRIMARY KEY([Id]),
 	CONSTRAINT [FK_Document_DocumentTypeId] FOREIGN KEY ([TypeId]) REFERENCES [dbo].[DocumentType]([Id]),
-	CONSTRAINT [FK_Document_DocumentUserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User]([Id]),
-	CONSTRAINT [FK_Document_DocumentCreatedById] FOREIGN KEY ([CreatedById]) REFERENCES [dbo].[User]([Id]),
-	CONSTRAINT [FK_Document_DocumentLastUpdatesById] FOREIGN KEY ([LastUpdatesById]) REFERENCES [dbo].[User]([Id]),
+	CONSTRAINT [FK_Document_DocumentUserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[User]([Id]) ON DELETE CASCADE,
+	CONSTRAINT [FK_Document_DocumentCreatedById] FOREIGN KEY ([CreatedById]) REFERENCES [dbo].[User]([Id]) ON DELETE CASCADE,
+	CONSTRAINT [FK_Document_DocumentLastUpdatesById] FOREIGN KEY ([LastUpdatesById]) REFERENCES [dbo].[User]([Id]) ON DELETE CASCADE,
 
 )
