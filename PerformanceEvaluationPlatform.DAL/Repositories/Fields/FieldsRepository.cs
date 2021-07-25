@@ -63,6 +63,24 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
 
             return details;
         }
+        public Task<FieldAssesmentGroup> GetAssesmentGroup(int id)
+        {
+            return Get<FieldAssesmentGroup>(id);
+        }
 
+        public Task Create(Field field)
+        {
+            return Create<Field>(field);
+        }
+
+        public Task<FieldType> GetType(int id)
+        {
+            return Get<FieldType>(id);
+        }
+
+        public Task<Field> Get(int id)
+        {
+            return Get<Field>(id);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.Models.Field.RequestModels;
 using PerformanceEvaluationPlatform.Models.Field.ViewModels;
@@ -22,37 +23,34 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPost("fields")]
-        public IActionResult Create([FromBody] CreateFieldRequestModel field)
+        public async Task<IActionResult> Create([FromBody] CreateFieldRequestModel requestModel)
         {
-            var items = GetFieldListItemViewModels();
-            if (field == null)
+            var fieldType = await _fieldsRepository.GetType(requestModel.TypeId);
+            if (fieldType == null)
             {
-                return BadRequest();
+                return BadRequest("Type does not exists.");
             }
 
-            bool fieldAlreadyExists = items.Any(t => t.Id == field.Id);
-
-            if (fieldAlreadyExists)
+            var assesmentGroup = await _fieldsRepository.GetAssesmentGroup(requestModel.AssesmentGroupId);
+            if (assesmentGroup == null)
             {
-                ModelState.AddModelError("", "This field already exists");
-                return Conflict(ModelState);
+                return BadRequest("Assesment group does not exists.");
             }
 
-            var newField = new FieldListItemViewModel
+            var field = new Field
             {
-                //in FieldListItemViewModel we dont use "FieldGroupName", "FieldGroupId", "Description"
-                Id = field.Id,
-                Name = field.Name,
-                Type = field.Type,
-                TypeId = field.TypeId,
-                AssesmentGroupName = field.AssesmentGroupName,
-                AssesmentGroupId = field.AssesmentGroupId,
-                IsRequired = field.IsRequired
+                Name = requestModel.Name,
+                FieldType = fieldType,
+                AssesmentGroup = assesmentGroup,
+                IsRequired = requestModel.IsRequired,
+                Description = requestModel.Description
             };
 
-            items = items.Append(newField);
+            await _fieldsRepository.Create(field);
+            await _fieldsRepository.SaveChanges();
 
-            return Ok(newField);
+            var result = new ObjectResult(new { Id = field.Id }) { StatusCode = 201 };
+            return result;
         }
 
         [HttpPost("fields/{id:int}")]
@@ -83,22 +81,32 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("fields/{id:int}")]
-        public IActionResult EditField(int id, [FromBody] EditFieldRequestModel fieldRequestModel)
+        public async Task<IActionResult> EditField([FromRoute] int id, [FromBody] EditFieldRequestModel requestModel)
         {
-            if (fieldRequestModel == null)
-            {
-                return BadRequest();
-            }
-
-            var items = GetFieldListItemViewModels();
-            var item = items.SingleOrDefault(t => t.Id == id);
-            if (item == null)
+            var entity = await _fieldsRepository.Get(id);
+            if (entity == null)
             {
                 return NotFound();
             }
-            item.Name = fieldRequestModel.Name;
-            item.IsRequired = fieldRequestModel.IsRequired;
 
+            var fieldType = await _fieldsRepository.GetType(requestModel.TypeId);
+            if (fieldType == null)
+            {
+                return BadRequest("Type does not exists.");
+            }
+
+            var assesmentGroup = await _fieldsRepository.GetAssesmentGroup(requestModel.AssesmentGroupId);
+            if (assesmentGroup == null)
+            {
+                return BadRequest("Assesment group does not exists.");
+            }
+
+            entity.Name = requestModel.Name;
+            entity.FieldTypeId = requestModel.TypeId;
+            entity.AssesmentGroupId = requestModel.AssesmentGroupId;
+            entity.Description = requestModel.Description;
+
+            await _fieldsRepository.SaveChanges();
             return Ok();
         }
         [HttpDelete("fields/{id:int}")]
@@ -162,8 +170,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(detailsVm);
         }
 
-        //delete FieldGroupListItemViewModel because Olexandr Melnychuk maked this part 
-
         [HttpGet("fields/types")]
         public async Task<IActionResult> GetTypes()
         {
@@ -176,51 +182,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 });
 
             return Ok(items);
-        }
-
-        private IEnumerable<FieldListItemViewModel> GetOrderedItems(IEnumerable<FieldListItemViewModel> items,
-            FieldListFilterRequestModel filter)
-        {
-            if (filter.FieldNameSortOrder != null)
-            {
-                if (filter.FieldNameSortOrder == SortOrder.Ascending)
-                    items = items.OrderBy(t => t.Name);
-                else if (filter.FieldNameSortOrder == SortOrder.Descending)
-                    items = items.OrderByDescending(t => t.Name);
-            }
-            else items = items.OrderBy(t => t.Name);
-
-            return items;
-        }
-
-        private IEnumerable<FieldListItemViewModel> GetFilteredItems(IEnumerable<FieldListItemViewModel> items,
-        FieldListFilterRequestModel filter)
-        {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                items = items
-                    .Where(t => t.Name.Contains(filter.Search));
-            }
-
-            if (filter.AssesmentGroupIds != null)
-            {
-                items = items
-                    .Where(t => filter.AssesmentGroupIds.Contains(t.AssesmentGroupId));
-            }
-
-            if (filter.TypeIds != null)
-            {
-                items = items
-                    .Where(t => filter.TypeIds.Contains(t.TypeId));
-            }
-
-            items = GetOrderedItems(items, filter);
-
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            return items;
         }
 
         private static IEnumerable<FieldListItemViewModel> GetFieldListItemViewModels()
