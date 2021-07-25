@@ -1,20 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Teams.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
 using PerformanceEvaluationPlatform.Models.Team.RequestModels;
 using PerformanceEvaluationPlatform.Models.Team.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class TeamsController : ControllerBase
     {
-        [HttpGet("teams")]
-        public IActionResult Get([FromQuery]TeamListFilterRequestModel filter)
+        private readonly ITeamsRepository _teamRepository;
+
+        public TeamsController(ITeamsRepository teamRepository)
         {
-            var items = GetTeamsListItemViewModels();
-            items = GetFilteredItems(items, filter);
+            _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
+        }
+
+        [HttpGet("teams")]
+        public async Task<IActionResult> Get([FromQuery]TeamListFilterRequestModel filter)
+        {
+            var filterDto = new TeamListFilterDto
+            {
+                Search = filter.Search,
+                Skip = filter.Skip,
+                Take = filter.Take,
+                TitleSortOrder = (int?)filter.OrderByTeamTitle,
+                ProjectIds = filter.ProjectIds
+            };
+
+            var itemsDto = await _teamRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new TeamListViewModel 
+            { 
+                Id = t.Id,
+                Title = t.Title,         
+                ProjectTitle = t.ProjectTitle,
+                ProjectId = t.ProjectId,
+                Size = t.Size,
+                TeamLead = t.TeamLead
+            });
 
             return Ok(items);
         }
@@ -95,30 +123,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             items = items.Append(newTeam);
 
             return Ok(newTeam);
-        }
-
-
-        private IEnumerable<TeamListViewModel> GetFilteredItems(IEnumerable<TeamListViewModel> items, TeamListFilterRequestModel filter)
-        {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                items = items
-                    .Where(t => t.Title.Contains(filter.Search));
-            }
-
-            if (filter.ProjectIds != null)
-            {
-                items = items
-                    .Where(t => filter.ProjectIds.Contains(t.ProjectId));
-            }
-
-            items = GetOrderedItems(items, filter);
-
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            return items;
         }
 
         private static IEnumerable<TeamListViewModel> GetTeamsListItemViewModels()

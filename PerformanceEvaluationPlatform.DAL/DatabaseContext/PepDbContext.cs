@@ -8,6 +8,7 @@ using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 {
@@ -56,6 +57,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 
             Deeplink.Configure(modelBuilder);
             DeeplinkState.Configure(modelBuilder);
+
+            Team.Configure(modelBuilder);            
 
             base.OnModelCreating(modelBuilder);
         }

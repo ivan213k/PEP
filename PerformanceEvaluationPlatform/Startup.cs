@@ -14,6 +14,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Repositories.Document;
+using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -43,6 +44,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFieldsRepository, FieldsRepository>();
             services.AddTransient<ISurveysRepository, SurveysRepository>();
             services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
+            services.AddTransient<ITeamsRepository, TeamsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

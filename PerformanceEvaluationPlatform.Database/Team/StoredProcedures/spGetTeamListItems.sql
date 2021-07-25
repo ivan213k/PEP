@@ -40,9 +40,10 @@ BEGIN
 	DECLARE @Sql NVARCHAR(MAX) = '
 	SELECT 
 		[T].[Id],
-		[T].[Title] AS [TeamTitle],
+		[T].[Title],
 		[P].[Title] AS [ProjectTitle],
-		COUNT([U].[Id]) AS [TeamSize],
+		[P].[Id] AS [ProjectId],
+		COUNT([U].[Id]) AS [Size],
 		(
 			SELECT
 				[U].[FirstName]
@@ -55,7 +56,7 @@ BEGIN
 		LEFT JOIN [dbo].[User] [U] ON [U].[TeamId] = [T].[Id]
 	' 
 	+ @JoinClause + ' ' 
-	+ @WhereClause + ' GROUP BY [T].[Id], [T].[Title], [P].[Title] ' + '
+	+ @WhereClause + ' GROUP BY [T].[Id], [T].[Title], [P].[Title], [P].[Id] ' + '
 	ORDER BY ' + @OrderClause + '
 	OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
 	';
