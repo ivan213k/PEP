@@ -1,62 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
 using PerformanceEvaluationPlatform.Models.Deeplink.RequestModels;
 using PerformanceEvaluationPlatform.Models.Deeplink.ViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class DeeeplinksController : ControllerBase
+    public class DeeplinksController : ControllerBase
     {
+        private readonly IDeeplinksRepository _deeplinksRepository;
+
+        public DeeplinksController(IDeeplinksRepository deeplinkRepository)
+        {
+            _deeplinksRepository = deeplinkRepository ?? throw new ArgumentNullException(nameof(deeplinkRepository));
+        }
 
         [HttpGet("deeplinks")]
-        public IActionResult Get([FromQuery] DeeplinkListFilterRequestModel filter)
+        public async Task<IActionResult> Get([FromQuery] DeeplinkListFilterRequestModel filter)
         {
-            var items = GetDeeplinkListItemViewModels();
-            items = GetFilteredItems(items, filter);
-            items = SortItems(items, filter);
+            var filterDto = new DeeplinkListFilterDto
+            {
+                Search = filter.Search,
+                SentToId = filter.SentToId,
+                StateIds = filter.StateIds,
+                ExpiresAtFrom = filter.ExpiresAtFrom,
+                ExpiresAtTo = filter.ExpiresAtTo,
+                SentToOrder = (int?)filter.OrderSentTo,
+                ExpiresAtOrder = (int?)filter.OrderExpiresAt,
+                Skip = filter.Skip,
+                Take = filter.Take
+            };
+
+            var itemsDto = await _deeplinksRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new DeeplinkListItemViewModel
+            {
+                Id = t.Id,
+                State = t.State,
+                SentTo = $"{t.SentToFirstName} {t.SentToLastName}",
+                ExpiresAt = t.ExpireDate,
+                FormTemplateName = t.FormTemplate
+
+            });
+            return Ok(items);
+        }
+        [HttpGet("deeplinks/states")]
+        public async Task<IActionResult> GetStates()
+        {
+            var itemsDto = await _deeplinksRepository.GetStatesList();
+            var items = itemsDto
+                .Select(t => new DeeplinkStateListItemViewModel
+                {
+                    Id = t.Id,
+                    Name = t.Title
+                });
+
             return Ok(items);
         }
 
-        private IEnumerable<DeeplinkListItemViewModel> GetFilteredItems(IEnumerable<DeeplinkListItemViewModel> items,
-            DeeplinkListFilterRequestModel filter)
+
+     /*   [HttpGet("deeplinks/{id:int}")]
+        public async Task<IActionResult> Details(int id)
         {
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            if (!string.IsNullOrWhiteSpace(filter.Search))
+            var detailsDto = await _deeplinksRepository.GetDetails(id);
+            if (detailsDto == null)
             {
-                items = items
-                    .Where(t => t.SentTo.Contains(filter.Search) || t.FormTemplateName.Contains(filter.Search));
+                return NotFound();
             }
 
-            if (filter.SentToIds != null)
+            var detailsVm = new DeeplinkDetailsViewModel
             {
-                items = items
-                    .Where(t => filter.SentToIds.Contains(t.SentToId));
-            }
+                Id = detailsDto.Id,
+                SentTo = $"{detailsDto.SentToFirstName} {detailsDto.SentToSecondtName}",
+                SentToEmail = detailsDto.SentToEmail,
+                SentAt = detailsDto.SentAt,
+                SentBy = detailsDto.SentBy,
+                State = detailsDto.StateName,
+                ExpiresAt = detailsDto.ExpiresAt,
+                FormTemplateName = detailsDto.FormTemplateName
+            };
 
-            if (filter.StateIds != null)
-            {
-                items = items
-                    .Where(t => filter.StateIds.Contains(t.StateId));
-            }
-            if(filter.ExpiresAtFrom != null &&  filter.ExpiresAtFrom != DateTime.MinValue)
-            {
-                items = items
-                    .Where(t => filter.ExpiresAtFrom <= t.ExpiresAt);
-            }
-         
-            if (filter.ExpiresAtTo != null && filter.ExpiresAtTo != DateTime.MinValue)
-            {
-                items = items
-                    .Where(t => filter.ExpiresAtTo >= t.ExpiresAt);
-            }
-            return items;
+            return Ok(detailsVm);
         }
+      */
+       
+        
         [HttpGet("deeplinks/{id}")]
         public IActionResult GetDeeplinkDetails([FromRoute] int id)
         {
@@ -73,97 +104,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok(DeeplinkDetails);
         }
-        private IEnumerable<DeeplinkListItemViewModel> SortItems(IEnumerable<DeeplinkListItemViewModel> items, DeeplinkListFilterRequestModel filter)
-        {
-            if (filter.OrderSentTo != null)
-            {
-                if (filter.OrderSentTo == Models.Shared.Enums.SortOrder.Ascending)
-                    items = items.OrderBy(t => t.SentTo);
-                else
-                    items = items.OrderByDescending(t => t.SentTo);
-            }
-
-            if (filter.OrderExpiresAt != null)
-            {
-                if (filter.OrderExpiresAt == Models.Shared.Enums.SortOrder.Ascending)
-                    items = items.OrderBy(t => t.ExpiresAt);
-                else
-                    items = items.OrderByDescending(t => t.ExpiresAt);
-            }
-
-            return items;
-        }
-
-        [HttpGet("deeplinks/states")]
-        public IActionResult GetDeeplinkStates([FromRoute] int id)
-        {
-            var DeeplinkState = new List<DeeplinkStateListItemViewModel>
-            {
-                new DeeplinkStateListItemViewModel
-                {
-                    Id = 1,
-                    Name = "Draft"
-                },
-                new DeeplinkStateListItemViewModel
-                {
-                    Id = 2,
-                    Name = "Expired"
-                }
-            };
-
-            return Ok(DeeplinkState);
-        }
-
-        private static IEnumerable<DeeplinkListItemViewModel> GetDeeplinkListItemViewModels()
-        {
-            var items = new List<DeeplinkListItemViewModel>
-            {
-                new DeeplinkListItemViewModel
-                {
-                    Id = 4,
-                    SentTo = "TestUser1",
-                    SentToId = 4,
-                    ExpiresAt = new System.DateTime(2019,7,20),
-                    State = "Draft",
-                    StateId = 1,
-                    FormTemplateName = "Form1",
-                    FormTemplateNameId = 1
-                },
-                new DeeplinkListItemViewModel
-                {
-                    Id = 1,
-                    SentTo = "TestUser2",
-                    SentToId = 1,
-                    ExpiresAt = new System.DateTime(2022,1,23),
-                    State = "Draft",
-                    StateId = 1,
-                    FormTemplateName = "Form2",
-                    FormTemplateNameId = 1
-                },
-                new DeeplinkListItemViewModel
-                {
-                    Id = 2,
-                    SentTo = "TestUser",
-                    SentToId = 2,
-                    ExpiresAt = new System.DateTime(2021,7,20),
-                    State = "Expired",
-                    StateId = 2,
-                    FormTemplateName = "Form3",
-                    FormTemplateNameId = 1
-                },
-                new DeeplinkListItemViewModel
-                {
-                    Id=3,
-                    SentTo = "Helloy",
-                    SentToId = 3,
-                    ExpiresAt = new System.DateTime(2024,7,20),
-                    State = "Expired",
-                    StateId = 2,
-                    FormTemplateName = "Form5",
-                    FormTemplateNameId = 2
-                },
-            };
-            return items;
-        }
-    }    
+        
+        
+    }
 }

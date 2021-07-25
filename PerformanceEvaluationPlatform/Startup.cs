@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
@@ -41,6 +42,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
             services.AddTransient<ISurveysRepository, SurveysRepository>();
+            services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

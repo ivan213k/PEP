@@ -7,7 +7,7 @@ namespace PerformanceEvaluationPlatform.Models.Deeplink.RequestModels
 {
     public class DeeplinkListFilterRequestModel : BaseFilterRequestModel
     {
-        public ICollection<int> SentToIds { get; set; }
+        public int? SentToId { get; set; }
 
         public DateTime? ExpiresAtFrom { get; set; }
         public DateTime? ExpiresAtTo { get; set; }

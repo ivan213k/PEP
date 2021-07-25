@@ -93,6 +93,7 @@ BEGIN
 
 	DECLARE @Sql NVARCHAR(MAX) = '
 	SELECT 
+		[D].[Id],
 		[U].[FirstName] AS SentToFirstName,
 		[U].[LastName] AS SentToLastName,
 		[D].[ExpireDate],

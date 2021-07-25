@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
@@ -52,6 +53,9 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             UserRoleMap.Configure(modelBuilder);
 
             Role.Configure(modelBuilder);
+
+            Deeplink.Configure(modelBuilder);
+            DeeplinkState.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }
