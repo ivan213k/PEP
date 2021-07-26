@@ -104,12 +104,26 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
            
-            var user = users.FirstOrDefault(s => s.Id == id);
+            var user = _userRepository.GetUserValidation(id);
             if (user is null)
             {
                 return NotFound();
             }
-            var userRoles = 
+            var userEmailValidation =await  _userRepository.UserEmailValidation(editedUser.Email, id);
+            if (userEmailValidation)
+            {
+                ModelState.AddModelError("","User with the same email is already exists");
+                return Conflict(ModelState);
+            }
+            var userRoles = _roleRepository.GetRolesValidation(editedUser.RoleIds);
+            if(userRoles is null)
+            {
+                ModelState.AddModelError("", "Role with this Id doesnt exists");
+                return BadRequest(ModelState);
+            }
+
+
+
             return Ok($"{user.Id} user with this Id was updated success");
         }
 

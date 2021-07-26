@@ -11,6 +11,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
     {
         Task<IList<RoleListItemDto>> GetList(RoleListFilterDto filter);
         Task<RoleDetailsDto> GetDetails(int id);
-        Task<ICollection<Role>> GetRolesValidation(int[] roleIds);
+        Task<ICollection<Role>> GetRolesValidation(ICollection<int> roleIds);
     }
 }

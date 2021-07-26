@@ -92,5 +92,16 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> UserEmailValidation(string email, int id)
+        {
+            var userValidation = await DbContext.Set<User>().FirstOrDefaultAsync(s => s.Email.Trim().ToLower() == email.ToLower().Trim()
+            && s.Id != id);
+            if(userValidation != null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
