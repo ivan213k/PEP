@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;
@@ -14,10 +17,14 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class SurveysController : ControllerBase
     {
         private readonly ISurveysRepository _surveysRepository;
+        private readonly IFormTemplatesRepository _formTemplatesRepository;
+        private readonly IUserRepository _userRepository;
 
-        public SurveysController(ISurveysRepository surveysRepository)
+        public SurveysController(ISurveysRepository surveysRepository, IFormTemplatesRepository formTemplatesRepository, IUserRepository userRepository)
         {
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository)); 
         }
 
         [HttpGet("surveys")]
@@ -89,29 +96,95 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
      
         [HttpPost("surveys")]
-        public IActionResult CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel)
+        public async Task<IActionResult> CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel)
         {
             if (surveyRequestModel is null)
             {
                 return BadRequest();
             }
-            return Created("surveys", surveyRequestModel);
+            var formTemplate = await _formTemplatesRepository.Get(surveyRequestModel.FormId);
+            if (formTemplate is null)
+            {
+                return BadRequest("Form template does not exists.");
+            }
+            var assignee = await _userRepository.GetUser(surveyRequestModel.AssigneeId);
+            if (assignee is null)
+            {
+                return BadRequest("Assignee does not exists.");
+            }
+            var supervisor = await _userRepository.GetUser(surveyRequestModel.SupervisorId);
+            if (supervisor is null)
+            {
+                return BadRequest("Supervisor does not exists.");
+            }
+            var level = await _surveysRepository.GetLevel(surveyRequestModel.RecommendedLevelId);
+            if (level is null)
+            {
+                return BadRequest("Level does not exists.");
+            }
+            if (ContainsSameAssignedUserIds(surveyRequestModel.AssignedUserIds))
+            {
+                return BadRequest($"{nameof(surveyRequestModel.AssignedUserIds)} contains same user id");
+            }
+            var assignedUsers = await _userRepository.GetUsers(surveyRequestModel.AssignedUserIds);
+            foreach (var assignedUserId in surveyRequestModel.AssignedUserIds)
+            {
+                var assignedUser = assignedUsers.Find(r => r.Id == assignedUserId);
+                if (assignedUser is null)
+                {
+                    return BadRequest($"Assigned user with id = {assignedUserId}, does not exist.");
+                }
+            }
+            var survey = new Survey
+            {
+                FormTemplateId = surveyRequestModel.FormId,
+                AssigneeId = surveyRequestModel.AssigneeId,
+                SupervisorId = surveyRequestModel.SupervisorId,
+                RecommendedLevelId = surveyRequestModel.RecommendedLevelId,
+                AppointmentDate = surveyRequestModel.AppointmentDate,
+                StateId = GetNewSurveyStateId(),
+            };
+
+            await _surveysRepository.Create(survey);
+            await _surveysRepository.SaveChanges();
+
+            return CreatedAtAction(nameof(GetSurveyDetails), new {Id = survey.Id }, survey);
+        }
+
+        private bool ContainsSameAssignedUserIds(ICollection<int> assignedUserIds)
+        {
+            return assignedUserIds.Count() != assignedUserIds.Distinct().Count();
+        }
+
+        private int GetNewSurveyStateId()
+        {
+            return 1;
         }
 
         [HttpPut("surveys/{id}")]
-        public IActionResult EditSurvey(int id, [FromBody] EditSurveyRequestModel surveyRequestModel)
+        public async Task<IActionResult> EditSurvey(int id, [FromBody] EditSurveyRequestModel surveyRequestModel)
         {
             if (surveyRequestModel is null)
             {
                 return BadRequest();
             }
-            var surveys = GetSurveyListItemViewModels();
-            var survey = surveys.Where(r => r.Id == id).SingleOrDefault();
-            if (survey is null)
+            var entity = await _surveysRepository.Get(id);
+            if (entity is null)
             {
                 return NotFound();
             }
 
+            var recommendedLevel = await _surveysRepository.GetLevel(surveyRequestModel.RecommendedLevelId);
+            if (recommendedLevel is null)
+            {
+                return BadRequest("Level does not exists.");
+            }
+
+            entity.AppointmentDate = surveyRequestModel.AppointmentDate;
+            entity.RecommendedLevelId = surveyRequestModel.RecommendedLevelId;
+            entity.Summary = surveyRequestModel.Summary;
+
+            await _surveysRepository.SaveChanges();
             return Ok();
         }
 
@@ -127,53 +200,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 });
 
             return Ok(items);
-        }
-
-        private IEnumerable<SurveyListItemViewModel> GetSurveyListItemViewModels()
-        {
-            var items = new List<SurveyListItemViewModel>
-            {
-                new SurveyListItemViewModel
-                {
-                    Id = 1,
-                    AppointmentDate = new DateTime(2021,7,10),
-                    Assignee = "Test User",
-                    AssigneeId = 1,
-                    Supervisor = "Admin User",
-                    SupervisorId = 1,
-                    FormName = "Manual QA",
-                    FormId = 1,
-                    State = "Active",
-                    StateId = 1
-                },
-                new SurveyListItemViewModel
-                {
-                    Id = 2,
-                    AppointmentDate = new DateTime(2021,7,11),
-                    Assignee = "Test User 1",
-                    AssigneeId = 2,
-                    Supervisor = "Admin User 1",
-                    SupervisorId = 2,
-                    FormName = ".NET",
-                    FormId = 2,
-                    State = "Blocked",
-                    StateId = 2
-                },
-                new SurveyListItemViewModel
-                {
-                    Id = 3,
-                    AppointmentDate = new DateTime(2021,7,12),
-                    Assignee = "Test User 2",
-                    AssigneeId = 3,
-                    Supervisor = "Admin User 2",
-                    SupervisorId = 3,
-                    FormName = "JS",
-                    FormId = 3,
-                    State = "Active",
-                    StateId = 1
-                },
-            };
-            return items;
         }
     }
 }
