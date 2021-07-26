@@ -78,14 +78,19 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             return userStates;
         }
 
-        public Task<User> GetUserForSurvey(int id)
+        public Task<User> GetUserValidation(int id)
         {
             return Get<User>(id);
         }
 
-        public Task<List<User>> GetUsers(ICollection<int> userIds)
+        public Task<List<User>> GetUsersValidation(ICollection<int> userIds)
         {
             return DbContext.Set<User>().Where(r => userIds.Contains(r.Id)).ToListAsync();
+        }
+
+        public Task<bool> UpdateUser(User user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

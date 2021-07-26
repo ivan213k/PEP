@@ -15,17 +15,17 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        public string TeamName { get; set; }
+        public ICollection<int> RoleIds { get; set; }
         [Required]
-        public string LevelName { get; set; }
+        public int TeamId{ get; set; }
         [Required]
-        public string RoleName { get; set; }
+        public int TechnicalLevelId{ get; set; }
+        public int EnglishLevelId { get; set; }
         [Required]
-        public string ProjectName { get; set; }
-        public string EnglishLevelName { get; set; }
-        [Required]
-        public DateTime NextPEDate { get; set; }
+        public int ProjectId { get; set; }
         [Required]
         public DateTime FirstDayInCompany { get; set; }
+        [Required]
+        public DateTime FirstDayInIndustry { get; set; }
     }
 }

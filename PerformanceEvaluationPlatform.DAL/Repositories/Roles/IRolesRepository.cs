@@ -1,4 +1,5 @@
-﻿using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
+﻿using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,5 +11,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
     {
         Task<IList<RoleListItemDto>> GetList(RoleListFilterDto filter);
         Task<RoleDetailsDto> GetDetails(int id);
+        Task<ICollection<Role>> GetRolesValidation(int[] roleIds);
     }
 }
