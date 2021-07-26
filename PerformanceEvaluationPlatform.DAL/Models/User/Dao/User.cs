@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,10 +16,14 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public DateTime FirstDayInIndustry { get; set; }
         public DateTime FirstDayInCompany { get; set; }
         public int TeamId { get; set; }
+        public Team Team { get; set; }
         public int StateId { get; set; }
         public UserState UserState { get; set; }
-        public int LevelId { get; set; }
-        public Level Level { get; set; }
+        public int TechnicalLevelId { get; set; }
+        public Level TechnicalLevel { get; set; }
+        public int EnglishLevelId { get; set; }
+        public Level EnglishLevel { get; set; }
+        public IEnumerable<UserRoleMap> Roles { get; set; }
 
 
         public static void Configure(ModelBuilder modelBuilder)
@@ -45,24 +50,26 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .IsRequired()
                 .HasMaxLength(40);
 
-            userTableBuilder.Property(ti => ti.TeamId)
-                .IsRequired();
-
-            userTableBuilder.Property(ti => ti.StateId)
-                .IsRequired();
-
-            userTableBuilder.Property(ti => ti.LevelId)
-                .IsRequired();
-
             userTableBuilder.HasOne(us => us.UserState)
                 .WithMany()
                 .HasForeignKey(s => s.StateId)
                 .IsRequired();
 
-            userTableBuilder.HasOne(l=>l.Level)
+            userTableBuilder.HasOne(l=>l.TechnicalLevel)
                .WithMany()
-               .HasForeignKey(s => s.LevelId)
+               .HasForeignKey(s => s.TechnicalLevelId)
                .IsRequired();
+
+            userTableBuilder.HasOne(t => t.Team)
+                .WithMany()
+                .HasForeignKey(t => t.TeamId)
+                .IsRequired();
+
+            userTableBuilder.HasOne(t => t.EnglishLevel)
+                .WithMany()
+                .HasForeignKey(T => T.EnglishLevelId)
+                .IsRequired();
+
         }
     }
 }
