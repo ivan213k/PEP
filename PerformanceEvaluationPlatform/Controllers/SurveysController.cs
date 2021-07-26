@@ -107,12 +107,12 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest("Form template does not exists.");
             }
-            var assignee = await _userRepository.GetUser(surveyRequestModel.AssigneeId);
+            var assignee = await _userRepository.GetUserForSurvey(surveyRequestModel.AssigneeId);
             if (assignee is null)
             {
                 return BadRequest("Assignee does not exists.");
             }
-            var supervisor = await _userRepository.GetUser(surveyRequestModel.SupervisorId);
+            var supervisor = await _userRepository.GetUserForSurvey(surveyRequestModel.SupervisorId);
             if (supervisor is null)
             {
                 return BadRequest("Supervisor does not exists.");

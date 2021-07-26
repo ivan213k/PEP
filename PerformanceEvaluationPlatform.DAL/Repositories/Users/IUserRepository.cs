@@ -11,7 +11,8 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
     {
         public Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter);
         public Task<ICollection<UserStateListItemDto>>GetUserStates();
-        Task<List<User>> GetUsers(ICollection<int> userIds);
+        public Task<User> GetUserForSurvey(int id);
+        public Task<List<User>> GetUsers(ICollection<int> userIds);
         public Task<UserDetailDto> GetUser(int id);
         
     }
