@@ -49,15 +49,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .IsRequired()
                 .HasMaxLength(40);
 
-            userTableBuilder.Property(ti => ti.TeamId)
-                .IsRequired();
-
-            userTableBuilder.Property(ti => ti.StateId)
-                .IsRequired();
-
-            userTableBuilder.Property(ti => ti.TechnicalLevelId)
-                .IsRequired();
-
             userTableBuilder.HasOne(us => us.UserState)
                 .WithMany()
                 .HasForeignKey(s => s.StateId)

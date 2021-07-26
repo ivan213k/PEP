@@ -38,11 +38,12 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
 
         public async Task<UserDetailDto> GetUser(int id)
         {
-            var user =await  DbContext.Set<User>()
-                .Include(s=>s.TechnicalLevel)
-                .Include(s=>s.EnglishLevel)
-                .Include(s=>s.Team)
-                .Include(s=>s.UserState).FirstOrDefaultAsync(s=>s.Id == id);
+            var user =await DbContext.Set<User>()
+                .Include(s => s.TechnicalLevel)
+                .Include(s => s.EnglishLevel)
+                .Include(s => s.Team)
+                .Include(s => s.UserState)
+                .SingleOrDefaultAsync(s=>s.Id == id);
 
             if(user is null)
             {
@@ -64,9 +65,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 EnglishLevel = user.EnglishLevel.Name,
                 YearsInCompany = DateTime.Now.Year - user.FirstDayInCompany.Year,
                 YearsOfExpirience = DateTime.Now.Year - user.FirstDayInIndustry.Year,
-                NextPeDate = new DateTime(00, 00, 00),
-                PreviousPEDate = new DateTime(00, 00, 00),
-                PreviousPes = new DateTime[] { new DateTime(00, 00, 00) }
+                NextPeDate = new DateTime(2001, 01, 01),
+                PreviousPEDate = new DateTime(2001, 01, 01),
+                PreviousPes = new DateTime[] { new DateTime(2001,01,01) }
             };
             return userDetailDto;
         }
