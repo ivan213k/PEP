@@ -23,6 +23,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public Level TechnicalLevel { get; set; }
         public int EnglishLevelId { get; set; }
         public Level EnglishLevel { get; set; }
+        public IEnumerable<UserRoleMap> Roles { get; set; }
 
 
         public static void Configure(ModelBuilder modelBuilder)
@@ -68,6 +69,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
                 .WithMany()
                 .HasForeignKey(T => T.EnglishLevelId)
                 .IsRequired();
+
         }
     }
 }

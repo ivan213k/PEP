@@ -43,13 +43,13 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 .Include(s => s.EnglishLevel)
                 .Include(s => s.Team)
                 .Include(s => s.UserState)
+                .Include(s=>s.Roles).ThenInclude(s=>s.Role)
                 .SingleOrDefaultAsync(s=>s.Id == id);
 
             if(user is null)
             {
                 return null;
             }
-            var roles =await DbContext.Set<UserRoleMap>().Include(s=>s.Role).Where(s => s.UserId == id).Select(s=>s.Role.Title).ToListAsync();
 
             var userDetailDto = new UserDetailDto()
             {
@@ -59,7 +59,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 FirstDayInCompany = user.FirstDayInCompany,
                 Team = user.Team.Title,
                 Project = user.Team.ProjectId.ToString(),
-                Role = roles,
+                Role = user.Roles.Select(s=>s.Role.Title).ToList(),
                 State = user.UserState.Name,
                 TechnicalLevel = user.TechnicalLevel.Name,
                 EnglishLevel = user.EnglishLevel.Name,

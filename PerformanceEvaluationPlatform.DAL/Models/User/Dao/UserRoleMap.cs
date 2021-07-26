@@ -21,23 +21,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
 
             userRoleMapTableBuilder.HasKey(s => s.Id);
 
-            userRoleMapTableBuilder.Property(ui => ui.UserId)
-                .IsRequired();
-
-            userRoleMapTableBuilder.Property(ri => ri.RoleId)
-                .IsRequired();
-
-            userRoleMapTableBuilder.HasOne(ui => ui.User)
-                .WithMany()
-                .HasForeignKey(s => s.UserId)
-                .IsRequired();
-
-            userRoleMapTableBuilder.HasOne(r => r.Role)
-                .WithMany()
-                .HasForeignKey(s => s.RoleId)
-                .IsRequired();
-
-
         }
 
     }
