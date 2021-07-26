@@ -8,7 +8,6 @@ using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using PerformanceEvaluationPlatform.Models.FormData.Enums;
 using System;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
@@ -43,7 +42,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    State = new List<StateEnum> {StateEnum.Draft }
+                    StateId = 1
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -112,7 +111,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    AppointmentDateFrom = DateTime.Today.AddDays(-20)
+                    AppointmentDateFrom = new DateTime(2021, 11, 7)
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -124,7 +123,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             var content = JsonConvert.DeserializeObject<ICollection<FormDataListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(2, content.Count);
         }
 
         [Test]
@@ -135,7 +134,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    AppointmentDateTo = DateTime.Today.AddDays(1)
+                    AppointmentDateTo = new DateTime(2021, 12, 7)
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -158,7 +157,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    Search = "Form 1"
+                    Search = "Middle Back-End Dev"
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -170,7 +169,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             var content = JsonConvert.DeserializeObject<ICollection<FormDataListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(1, content.Count);
         }
 
         [Test]
@@ -181,7 +180,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    Search = "User 1"
+                    Search = "Artur Grugon"
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -193,7 +192,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             var content = JsonConvert.DeserializeObject<ICollection<FormDataListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(1, content.Count);
         }
     }
 }

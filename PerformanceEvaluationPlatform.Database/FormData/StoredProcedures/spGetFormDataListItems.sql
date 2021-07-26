@@ -2,10 +2,11 @@
 @Search NVARCHAR(256),
 @StateId INT,
 @AssigneeIds [dbo].[IntList] READONLY,
-@ReviewerIds [dbo].[IntList] READONLY,
+@ReviewersIds [dbo].[IntList] READONLY,
 @AppointmentDateFrom DATETIME2,
 @AppointmentDateTo DATETIME2,
 @AssigneeSortOrder INT, 
+@FormNameSortOrder INT,
 @Skip INT = 0,
 @Take INT = 30
 AS
@@ -52,7 +53,7 @@ BEGIN
 		SET @JoinClause = @JoinClause + ' INNER JOIN @AssigneeIds [AI] ON [AI].[Id] = [FD].[UserId] '
 	END
 
-	IF (EXISTS ( SELECT * FROM @ReviewerIds))
+	IF (EXISTS ( SELECT * FROM @ReviewersIds))
 	BEGIN
 		SET @JoinClause = @JoinClause + ' INNER JOIN @ReviewerIds [RI] ON [RI].[Id] = [FD].[UserId] '
 	END
@@ -75,20 +76,32 @@ BEGIN
 			SET @OrderClause = '[FD].[UserId] DESC'
 	END
 
+	IF (@FormNameSortOrder IS NOT NULL)
+	BEGIN
+		IF (@FormNameSortOrder = 1)
+			SET @OrderClause = '[FT].[Name] ASC'
+		ELSE
+			SET @OrderClause = '[FT].[Name] DESC'
+	END
+
 
 	IF (@OrderClause = '')
-		SET @OrderClause = '[FD].[UserId] ASC'
+		SET @OrderClause = '[FT].[Name] ASC'
 
 	DECLARE @Sql NVARCHAR(MAX) = '
 	SELECT 
 		[FD].[Id],
-		[FT].[Name],  
+		[FT].[Name] AS [FormName],  
+		[FT].[Id] AS [FormId],
 		[U].[FirstName] AS [AssigneeFirstName],
 		[U].[LastName] AS [AssigneeLastName],
+		[U].[Id] AS [AssigneeId],
 		[U].[FirstName] AS [ReviewerFirstName],
 		[U].[LastName] AS [ReviewerLastName],
+		[U].[Id] AS [ReviewerId],
 		[S].[AppointmentDate],
-		[FDS].[Name] AS [StateName]
+		[FDS].[Name] AS [StateName],
+		[FDS].[Id] AS [StateId]
 	FROM [dbo].[FormData] [FD]
 		INNER JOIN [dbo].[Survey] [S] ON [S].[Id] = [FD].[SurveyId]
 		INNER JOIN [dbo].[FormTemplate] [FT] ON [FT].[Id] = [S].[FormTemplateId]
@@ -117,7 +130,7 @@ BEGIN
 		@AppointmentDateFrom,
 	    @AppointmentDateTo,
 		@AssigneeIds,
-		@ReviewerIds,
+		@ReviewersIds,
 		@Skip,
 		@Take
 END

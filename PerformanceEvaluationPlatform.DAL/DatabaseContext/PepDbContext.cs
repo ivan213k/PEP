@@ -9,6 +9,7 @@ using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 {
@@ -36,6 +37,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             ExampleType.Configure(modelBuilder);
             ExampleState.Configure(modelBuilder);
             Example.Configure(modelBuilder);
+            FormData.Configure(modelBuilder);
+            FormDataState.Configure(modelBuilder);
 
             Survey.Configure(modelBuilder);
             SurveyState.Configure(modelBuilder);
