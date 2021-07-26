@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,5 +72,25 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             };
             return details;
         }
+
+        public Task<Survey> Get(int id)
+        {
+            return Get<Survey>(id);
+        }
+
+        public Task<SurveyState> GetState(int id)
+        {
+            return Get<SurveyState>(id);
+        }
+
+        public Task<Level> GetLevel(int id)
+        {
+            return Get<Level>(id);
+        }
+
+        public Task Create(Survey survey)
+        {
+            return Create<Survey>(survey);
+        } 
     }
 }

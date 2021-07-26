@@ -17,9 +17,13 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
         {
         }
 
+        public Task<FormTemplate> Get(int id)
+        {
+            return Get<FormTemplate>(id);
+        }
+
         public async Task<FormTemplateDetailsDto> GetDetailsAsync(int id)
         {
-            
             var formTemplate = await DbContext.Set<FormTemplate>()
                 .Include(t => t.FormTemplateStatus)
                 .Include(t => t.FormTemplateFieldMaps)
