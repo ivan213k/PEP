@@ -97,15 +97,33 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
         [HttpGet("{id:int}")]
-        public IActionResult GetUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
-            var user = users.FirstOrDefault(s => s.Id == id);
+            var user = await _userRepository.GetUser(id);
 
             if (user is null)
             {
                 return NotFound();
             }
-            return Ok(MapToUserDeailViewModel(user));
+            var userViewModel = new UserDetailViewModel()
+            {
+                Email = user.Email,
+                EnglishLevelName = user.EnglishLevel,
+                FirstDayInCompany = user.FirstDayInCompany,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                TechnicalLevelName = user.TechnicalLevel,
+                NextPEDate = user.NextPeDate,
+                PreviousPEDate = user.PreviousPEDate,
+                PreviousPEs = user.PreviousPes,
+                ProjectName = user.Project,
+                RoleNames = user.Role,
+                StateName = user.State,
+                TeamName = user.Team,
+                YearsInCompany = user.YearsInCompany,
+                YearsOfExpirience = user.YearsOfExpirience
+            };
+            return Ok(userViewModel);
         }
         
         [HttpPut("{id:int}")]
@@ -180,101 +198,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.EnglishLevelName = editedUser.EnglishLevelName;
             user.FirstDayInCompany = editedUser.FirstDayInCompany;
             user.ProjectName = editedUser.ProjectName;
-
-        }
-        private UserDetailViewModel MapToUserDeailViewModel(User user)
-        {
-            return new UserDetailViewModel()
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                LevelName = user.LevelName,
-                PreviousPEDate = user.PreviousPEDate,
-                NextPEDate = user.NextPEDate,
-                StateName = user.StateName,
-                TeamName = user.TeamName,
-                RoleName = user.RoleName,
-                PreviousPEs = user.PreviousPEs,
-                EnglishLevelName = user.EnglishLevelName,
-                FirstDayInCompany = user.FirstDayInCompany,
-                ProjectName = user.ProjectName,
-                YearsInCompany = user.YearsInCompany,
-                YearsOfExpirience = user.YearsOfExpirience
-            };
-        }
-       
-        private IEnumerable<User> FilterUsers(UserFilterRequestModel userFilter, IEnumerable<User> items)
-        {
-            if (userFilter.EmailOrName != null)
-            {
-                items = items.Where(s => s.Email.ToLower().Contains(userFilter.EmailOrName.ToLower()) || $"{s.FirstName} {s.LastName}".ToLower().Contains(userFilter.EmailOrName.ToLower()));
-            }
-
-            if (userFilter.NextPEDate != null)
-            {
-                items = items.Where(s => s.NextPEDate <= userFilter.NextPEDate);
-            }
-
-            if (userFilter.PreviousPEDate != null)
-            {
-                items = items.Where(s => s.PreviousPEDate == userFilter.PreviousPEDate);
-            }
-
-            if (userFilter.RoleIds != null)
-            {
-                items = items.Where(s => userFilter.RoleIds.Contains(s.RoleId));
-            }
-
-            if (userFilter.StateIds != null)
-            {
-                items = items.Where(s => userFilter.StateIds.Contains(s.StateId));
-            }
-
-            return items;
-        }
-
-        private IEnumerable<User> SortingUsers(UserSortingRequestModel userSorting, IEnumerable<User> items)
-        {
-            if (userSorting != null)
-            {
-                switch (userSorting.UserName)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        items = items.OrderBy(s => s.FirstName).ToList();
-                        break;
-                    case 2:
-                        items = users.OrderByDescending(s => s.FirstName).ToList();
-                        break;
-                }
-
-                switch (userSorting.UserNextPE)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        items = users.OrderBy(s => s.NextPEDate).ToList();
-                        break;
-                    case 2:
-                        items = users.OrderByDescending(s => s.NextPEDate).ToList();
-                        break;
-                }
-
-                switch (userSorting.UserPreviousPE)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        items = users.OrderBy(s => s.PreviousPEDate).ToList();
-                        break;
-                    case 2:
-                        items = users.OrderByDescending(s => s.PreviousPEDate).ToList();
-                        break;
-                }
-            }
-            return items;
 
         }
     }

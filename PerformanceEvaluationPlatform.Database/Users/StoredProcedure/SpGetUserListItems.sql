@@ -151,7 +151,7 @@ Begin
 	INNER JOIN [dbo].[Team] AS [T] ON [T].Id = [U].[TeamId]
 	INNER JOIN [dbo].[UserRoleMap] AS [URM] ON [U].Id = [URM].[UserId]
 	INNER JOIN [dbo].[Role] AS [R] ON [URM].[ROleId] = [R].[Id]
-	INNER JOIN [dbo].[Level] AS [L] ON [U].[LevelId] = [L].[Id]
+	INNER JOIN [dbo].[Level] AS [L] ON [U].[TechnicalLevelId] = [L].[Id]
 	INNER JOIN #UserPEs AS [UPES] ON [UPES].userId = [U].[Id]
 	'+@JoinClause+'
 	' + @WhereClause +'

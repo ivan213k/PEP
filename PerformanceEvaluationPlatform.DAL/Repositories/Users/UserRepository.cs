@@ -17,8 +17,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             :base(databaseOptions,dbContext)
         {
         }
-
-
         public async Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter)
         {
             var paramaters = new
@@ -37,6 +35,41 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             return  await ExecuteSp<UserListItemDto>("[dbo].[spGetUserListItems]", paramaters);
         }
 
+
+        public async Task<UserDetailDto> GetUser(int id)
+        {
+            var user =await  DbContext.Set<User>()
+                .Include(s=>s.TechnicalLevel)
+                .Include(s=>s.EnglishLevel)
+                .Include(s=>s.Team)
+                .Include(s=>s.UserState).FirstOrDefaultAsync(s=>s.Id == id);
+
+            if(user is null)
+            {
+                return null;
+            }
+            var roles =await DbContext.Set<UserRoleMap>().Include(s=>s.Role).Where(s => s.UserId == id).Select(s=>s.Role.Title).ToListAsync();
+
+            var userDetailDto = new UserDetailDto()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                FirstDayInCompany = user.FirstDayInCompany,
+                Team = user.Team.Title,
+                Project = user.Team.ProjectId.ToString(),
+                Role = roles,
+                State = user.UserState.Name,
+                TechnicalLevel = user.TechnicalLevel.Name,
+                EnglishLevel = user.EnglishLevel.Name,
+                YearsInCompany = DateTime.Now.Year - user.FirstDayInCompany.Year,
+                YearsOfExpirience = DateTime.Now.Year - user.FirstDayInIndustry.Year,
+                NextPeDate = new DateTime(00, 00, 00),
+                PreviousPEDate = new DateTime(00, 00, 00),
+                PreviousPes = new DateTime[] { new DateTime(00, 00, 00) }
+            };
+            return userDetailDto;
+        }
         public async Task<ICollection<UserStateListItemDto>> GetUserStates()
         {
             var userStates = await DbContext.Set<UserState>().Select(s => new UserStateListItemDto() { Id = s.Id, Name = s.Name }).ToListAsync(); ;

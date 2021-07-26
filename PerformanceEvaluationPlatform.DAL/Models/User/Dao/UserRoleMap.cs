@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public int UserId { get; set; }
         public User User { get; set; }
         public int RoleId { get; set; }
+        public Role Role { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -28,6 +30,11 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
             userRoleMapTableBuilder.HasOne(ui => ui.User)
                 .WithMany()
                 .HasForeignKey(s => s.UserId)
+                .IsRequired();
+
+            userRoleMapTableBuilder.HasOne(r => r.Role)
+                .WithMany()
+                .HasForeignKey(s => s.RoleId)
                 .IsRequired();
 
 

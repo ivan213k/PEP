@@ -12,10 +12,10 @@ namespace PerformanceEvaluationPlatform.Models.User.ViewModels
         public string Email { get; set; }
         public string TeamName { get; set; }
 
-        public string LevelName { get; set; }
+        public string TechnicalLevelName { get; set; }
         public string StateName { get; set; }
 
-        public string RoleName { get; set; }
+        public ICollection<string> RoleNames { get; set; }
 
         public string ProjectName { get; set; }
 
