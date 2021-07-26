@@ -31,5 +31,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Teams
 
             return ExecuteSp<TeamListItemDto>("[dbo].[spGetTeamListItems]", parameters);
         }
+
+        public async Task<Team> GetTeamValidation(int id)
+        {
+            return await Get<Team>(id);
+        }
     }
 }

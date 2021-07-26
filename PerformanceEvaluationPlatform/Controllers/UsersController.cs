@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
-using PerformanceEvaluationPlatform.Models.User.Domain;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -18,10 +20,14 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IRolesRepository _roleRepository;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository)
+        private readonly ITeamsRepository _teamRepository;
+        private readonly ISurveysRepository _surveysRepository;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository)); ;
+            _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
+            _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
+            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
         }
 
 
@@ -104,38 +110,74 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
            
-            var user = _userRepository.GetUserValidation(id);
+            var user =await  _userRepository.GetUserValidation(id);
             if (user is null)
             {
                 return NotFound();
             }
+
             var userEmailValidation =await  _userRepository.UserEmailValidation(editedUser.Email, id);
-            if (userEmailValidation)
+            if (userEmailValidation != false)
             {
                 ModelState.AddModelError("","User with the same email is already exists");
                 return Conflict(ModelState);
             }
-            var userRoles = _roleRepository.GetRolesValidation(editedUser.RoleIds);
+
+            var userRoles = await _roleRepository.GetRolesValidation(editedUser.RoleIds);
             if(userRoles is null)
             {
-                ModelState.AddModelError("", "Role with this Id doesnt exists");
+                ModelState.AddModelError("", "Role with this Id doesn't exists");
                 return BadRequest(ModelState);
             }
 
+            var userTeam = await _teamRepository.GetTeamValidation(editedUser.TeamId);
+            if(userTeam is null)
+            {
+                ModelState.AddModelError("", "Team with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
 
+            var userTechnicalLevel =await  _surveysRepository.GetLevel(editedUser.TechnicalLevelId);
+            if(userTechnicalLevel is null)
+            {
+                ModelState.AddModelError("", "Level with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
+            var userEnglishLevel = await _surveysRepository.GetLevel(editedUser.EnglishLevelId);
+            if(userEnglishLevel is null)
+            {
+                ModelState.AddModelError("", "Level with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
+            UpdateUser(user,editedUser);
+            _userRepository.Save();
+            
 
             return Ok($"{user.Id} user with this Id was updated success");
         }
 
+
         //[HttpPost]
         //public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         //{
-           
+
         //    //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
         //    //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
         //    //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
         //}
 
-        
+        private void UpdateUser(User user, EditUserRequestModel editedUser)
+        {
+            user.Email = editedUser.Email;
+            user.EnglishLevelId = editedUser.EnglishLevelId;
+            user.FirstDayInCompany = editedUser.FirstDayInCompany;
+            user.FirstDayInIndustry = editedUser.FirstDayInIndustry;
+            user.FirstName = editedUser.FirstName;
+            user.LastName = editedUser.LastName;
+            user.TeamId = editedUser.TeamId;
+            user.TechnicalLevelId = editedUser.TechnicalLevelId;
+            _userRepository.UpdateUser(editedUser.RoleIds,user.Id);
+        }
+
     }
 }

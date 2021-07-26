@@ -88,10 +88,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             return DbContext.Set<User>().Where(r => userIds.Contains(r.Id)).ToListAsync();
         }
 
-        public Task<bool> UpdateUser(User user)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<bool> UserEmailValidation(string email, int id)
         {
@@ -102,6 +98,23 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 return true;
             }
             return false;
+        }
+
+        public async Task UpdateUser(List<int> roleIds,int id)
+        {
+            var roleToDelteFromUser = DbContext.Set<UserRoleMap>().Where(s => s.UserId == id);
+            DbContext.Set<UserRoleMap>().RemoveRange(roleToDelteFromUser);
+            List<UserRoleMap> roleUserToCreate = new List<UserRoleMap>();
+            for (int i = 0; i < roleIds.Count; i++)
+            {
+                roleUserToCreate.Add(new UserRoleMap { RoleId = roleIds[i], UserId = id });
+            }
+            await DbContext.Set<UserRoleMap>().AddRangeAsync(roleUserToCreate);
+        }
+
+        public Task Save()
+        {
+            return SaveChanges();
         }
     }
 }
