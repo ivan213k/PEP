@@ -15,6 +15,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormData;
 using PerformanceEvaluationPlatform.Repositories.Document;
+using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 
@@ -45,6 +46,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
             services.AddTransient<ISurveysRepository, SurveysRepository>();
+            services.AddTransient<IFieldsGroupRepository, FieldsGroupRepository>();
             services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
             services.AddTransient<ITeamsRepository, TeamsRepository>();
             services.AddTransient<IFormDataRepository, FormDataRepository>();

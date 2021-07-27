@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[spGetFieldGroupListItems]
+﻿ CREATE PROCEDURE [dbo].[spGetFieldGroupListItems]
 @Search NVARCHAR(256),
 @TitleSetOrder INT,
 @FieldCountSetOrder INT,
@@ -45,15 +45,14 @@ BEGIN
 	SET @HavingClause = @HavingClause + 'COUNT([F].[FieldGroupId]) <= @CountTo '
 END
 
-IF (@IsNotEmptyOnly IS NOT NULL)
+IF (@IsNotEmptyOnly IS NOT NULL AND @IsNotEmptyOnly != 0)
 BEGIN
 	IF (@HavingClause = '')
 		SET @HavingClause = 'HAVING '
 	ELSE
 		SET @HavingClause = @HavingClause + ' AND '
 
-	IF (@IsNotEmptyOnly = 1)
-		SET @HavingClause = @HavingClause + 'COUNT([F].[FieldGroupId]) > 0'
+	SET @HavingClause = @HavingClause + 'COUNT([F].[FieldGroupId]) > 0'
 END
 
 IF (@TitleSetOrder IS NOT NULL)
