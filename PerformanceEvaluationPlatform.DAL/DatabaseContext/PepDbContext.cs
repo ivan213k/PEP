@@ -37,8 +37,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             ExampleType.Configure(modelBuilder);
             ExampleState.Configure(modelBuilder);
             Example.Configure(modelBuilder);
-            //FormData.Configure(modelBuilder);
-            //FormDataState.Configure(modelBuilder);
+            FormData.Configure(modelBuilder);
+            FormDataState.Configure(modelBuilder);
 
             Survey.Configure(modelBuilder);
             SurveyState.Configure(modelBuilder);

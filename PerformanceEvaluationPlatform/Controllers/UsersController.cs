@@ -150,7 +150,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return BadRequest(ModelState);
             }
             UpdateUser(user,editedUser);
-            _userRepository.Save();
+            await _userRepository.Save();
             
 
             return Ok($"{user.Id} user with this Id was updated success");
