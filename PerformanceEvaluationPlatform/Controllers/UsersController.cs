@@ -138,6 +138,19 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var user = new User()
+            {
+                Email = createUserRequest.Email,
+                EnglishLevelId = createUserRequest.EnglishLevelId,
+                FirstDayInCompany = createUserRequest.FirstDayInCompany,
+                FirstDayInIndustry = createUserRequest.FirstDayInIndustry,
+                FirstName = createUserRequest.FirstName,
+                LastName = createUserRequest.LastName,
+                StateId = 1,
+                TeamId = createUserRequest.TeamId,
+                TechnicalLevelId = createUserRequest.TechnicalLevelId,
+            };
+            await _userRepository.Create(user);
             //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
