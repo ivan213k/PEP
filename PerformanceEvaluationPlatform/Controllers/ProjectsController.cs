@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Projects.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.Models.Project.RequestModels;
 using PerformanceEvaluationPlatform.Models.Project.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
@@ -11,36 +14,37 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
+        private readonly IProjectsRepository _projectRepository;
 
-        [HttpGet("projects")]
-        public IActionResult Get([FromQuery] ProjectListFilterRequestModel filter)
+        public ProjectsController(IProjectsRepository projectRepository)
         {
-            var items = GetProjectListItemViewModels();
-            items = GetFilteredItems(items, filter);
-            return Ok(items);
+            _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
         }
 
-        private IEnumerable<ProjectListItemViewModel> GetFilteredItems(IEnumerable<ProjectListItemViewModel> items,
-            ProjectListFilterRequestModel filter)
+        [HttpGet("projects")]
+        public async Task<IActionResult> Get([FromQuery] ProjectListFilterRequestModel filter)
         {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
+            var filterDto = new ProjectListFilterDto
             {
-                items = items
-                    .Where(t => t.Title.Contains(filter.Search));
-            }
+                Search = filter.Search,
+                Skip = filter.Skip,
+                Take = filter.Take,
+                TitleSortOrder = (int?)filter.TitleSortOrder,
+                StartDateSortOrder = (int?)filter.StartDateSortOrder,
+                CoordinatorSortOrder = (int?)filter.CoordinatorSortOrder,
+                CoordinatorId = filter.CoordinatorIds
+            };
 
-            if (filter.CoordinatorIds != null)
+            var itemsDto = await _projectRepository.GetList(filterDto);
+            var items = itemsDto.Select(t => new ProjectListItemViewModel
             {
-                items = items
-                    .Where(t => filter.CoordinatorIds.Contains(t.CoordinatorId));
-            }
-            items = GetSortedItems(items, filter);
+                Id = t.Id,
+                Title = t.Title,
+                StartDate = t.StartDate,
+                Coordinator = t.Coordinator
+            });
 
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            return items;
+            return Ok(items);
         }
 
         private IEnumerable<ProjectListItemViewModel> GetSortedItems(IEnumerable<ProjectListItemViewModel> projects, ProjectListFilterRequestModel filter)
