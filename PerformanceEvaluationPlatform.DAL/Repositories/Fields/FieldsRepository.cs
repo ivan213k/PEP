@@ -82,5 +82,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         {
             return Get<Field>(id);
         }
+
+        public async Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds)
+        {
+            var fields = await DbContext.Set<Field>().Where(f => fieldIds.Contains(f.Id)).ToListAsync();
+            return fields;
+        }
     }
 }

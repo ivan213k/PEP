@@ -81,5 +81,20 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
                 })
                 .ToListAsync();
         }
+
+        public Task<FormTemplateStatus> GetStatus(int id)
+        {
+            return Get<FormTemplateStatus>(id); 
+        }
+
+        public Task Create(FormTemplate formTemplate)
+        {
+            return Create<FormTemplate>(formTemplate); 
+        }
+
+        public Task<bool> ExistByName(string name)
+        {
+            return DbContext.Set<FormTemplate>().AnyAsync(t => t.Name == name);
+        }
     }
 }

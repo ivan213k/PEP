@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
 {
-    public interface IFormTemplatesRepository
+    public interface IFormTemplatesRepository: IBaseRepository
     {
         Task<IList<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter);
         Task<IList<FormTemplateStatusListItemDto>> GetStatusListAsync();
         Task<FormTemplateDetailsDto> GetDetailsAsync(int id);
         Task<FormTemplate> Get(int id);
+        Task<FormTemplateStatus> GetStatus(int id);
+        Task Create(FormTemplate formTemplate);
+        Task<bool> ExistByName(string name);
     }
 }

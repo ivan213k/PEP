@@ -14,5 +14,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         Task<FieldType> GetType(int id);
         Task<FieldAssesmentGroup> GetAssesmentGroup(int id);
         Task Create(Field field);
+        Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds);
     }
 }
