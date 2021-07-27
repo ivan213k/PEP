@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
-    public class CreateUserRequestModel
+    public class CreateUserRequestModel: IUserRequest
     {
         [Required]
         [MaxLength(70)]
@@ -22,9 +22,7 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         [Required]
         public int TechnicalLevelId { get; set; }
         [Required]
-        public int RoleId { get; set; }
-        [Required]
-        public int ProjectId { get; set; }
+        public List<int> RoleIds { get; set; }
         [Required]
         public int EnglishLevelId { get; set; }
         [Required]

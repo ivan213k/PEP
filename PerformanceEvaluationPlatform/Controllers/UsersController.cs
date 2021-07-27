@@ -116,67 +116,9 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return NotFound();
             }
 
-            var existingUser =await  _userRepository.Get(editedUser.Email);
-            if (existingUser != null&& existingUser.Id != id)
+            await UserValidation(editedUser,id);
+            if (ModelState.IsValid == false)
             {
-                ModelState.AddModelError(editedUser.Email,"User with the same email is already exists");
-                return Conflict(ModelState);
-            }
-
-            List<int> notValidUserRoles = new List<int>();
-            foreach (var item in editedUser.RoleIds)
-            {
-                var role = await _roleRepository.Get(item);
-                if(role == null)
-                {
-                    notValidUserRoles.Add(item);
-                }
-            }
-            if(notValidUserRoles.Any())
-            {
-                foreach (var item in notValidUserRoles)
-                {
-                    ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
-                }
-                return BadRequest(ModelState);
-            }
-
-            var userTeam = await _teamRepository.Get(editedUser.TeamId);
-            if(userTeam is null)
-            {
-                ModelState.AddModelError(editedUser.TeamId.ToString(), "Team with this Id doesn't exists");
-                return BadRequest(ModelState);
-            }
-
-            var userTechnicalLevel =await  _surveysRepository.GetLevel(editedUser.TechnicalLevelId);
-            if(userTechnicalLevel is null)
-            {
-                ModelState.AddModelError(editedUser.TechnicalLevelId.ToString(), "Level with this Id doesn't exists");
-                return BadRequest(ModelState);
-            }
-            var userEnglishLevel = await _surveysRepository.GetLevel(editedUser.EnglishLevelId);
-            if(userEnglishLevel is null)
-            {
-                ModelState.AddModelError(editedUser.EnglishLevelId.ToString(), "Level with this Id doesn't exists");
-                return BadRequest(ModelState);
-            }
-
-             if(editedUser.FirstDayInCompany < editedUser.FirstDayInIndustry)
-             {
-                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), "User couldn't worked In company before he  was in industry");
-                return BadRequest(ModelState);
-             }
-
-            var yearInCompany = DateTime.Now.Year - editedUser.FirstDayInCompany.Year;
-             if (yearInCompany > 60)
-             {
-                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could work In company for {yearInCompany} years");
-                return BadRequest(ModelState);
-             }
-            var yearInIndustry = DateTime.Now.Year - editedUser.FirstDayInIndustry.Year;
-            if (yearInIndustry > 60)
-            {
-                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could be In Industry for {yearInIndustry} years");
                 return BadRequest(ModelState);
             }
 
@@ -189,14 +131,82 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
         [HttpPost]
-        public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
-
+            await UserValidation(createUserRequest);
+            if (ModelState.IsValid == false)
+            {
+                return BadRequest(ModelState);
+            }
             //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
         }
 
+
+
+        private async Task UserValidation(IUserRequest userRequest, int? id=null)
+        {
+            var existingUser = await _userRepository.Get(userRequest.Email);
+            if(userRequest is EditUserRequestModel)
+            {
+                if (existingUser != null && existingUser.Id != id)
+                {
+                    ModelState.AddModelError(userRequest.Email, "User with the same email is already exists");
+                }
+            }
+            
+
+            List<int> notValidUserRoles = new List<int>();
+            foreach (var item in userRequest.RoleIds)
+            {
+                var role = await _roleRepository.Get(item);
+                if (role == null)
+                {
+                    notValidUserRoles.Add(item);
+                }
+            }
+            if (notValidUserRoles.Any())
+            {
+                foreach (var item in notValidUserRoles)
+                {
+                    ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
+                }
+            }
+
+            var userTeam = await _teamRepository.Get(userRequest.TeamId);
+            if (userTeam is null)
+            {
+                ModelState.AddModelError(userRequest.TeamId.ToString(), "Team with this Id doesn't exists");
+            }
+
+            var userTechnicalLevel = await _surveysRepository.GetLevel(userRequest.TechnicalLevelId);
+            if (userTechnicalLevel is null)
+            {
+                ModelState.AddModelError(userRequest.TechnicalLevelId.ToString(), "Level with this Id doesn't exists");
+            }
+            var userEnglishLevel = await _surveysRepository.GetLevel(userRequest.EnglishLevelId);
+            if (userEnglishLevel is null)
+            {
+                ModelState.AddModelError(userRequest.EnglishLevelId.ToString(), "Level with this Id doesn't exists");
+            }
+
+            if (userRequest.FirstDayInCompany < userRequest.FirstDayInIndustry)
+            {
+                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), "User couldn't worked In company before he  was in industry");
+            }
+
+            var yearInCompany = DateTime.Now.Year - userRequest.FirstDayInCompany.Year;
+            if (yearInCompany > 60)
+            {
+                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), $"User haven't could work In company for {yearInCompany} years");
+            }
+            var yearInIndustry = DateTime.Now.Year - userRequest.FirstDayInIndustry.Year;
+            if (yearInIndustry > 60)
+            {
+                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), $"User haven't could be In Industry for {yearInIndustry} years");
+            }
+        }
         private void UpdateUser(User user, EditUserRequestModel editedUser)
         {
             user.Email = editedUser.Email;
