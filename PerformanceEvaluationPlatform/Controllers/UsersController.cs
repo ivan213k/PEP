@@ -42,7 +42,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Search = userFilter.EmailOrName,
                 Skip = userFilter.Skip,
                 StateIds = userFilter.StateIds,
-                Take=userFilter.Take,
+                Take = userFilter.Take,
                 UserNameSort = userSorting.UserName,
                 UserNextPE = userSorting.UserNextPE,
                 UserPreviousPE = userSorting.UserPreviousPE
@@ -105,26 +105,26 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
             return Ok(userViewModel);
         }
-        
+
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
-           
-            var user =await  _userRepository.Get(id);
+
+            var user = await _userRepository.Get(id);
             if (user is null)
             {
                 return NotFound();
             }
 
-            await UserValidation(editedUser,id);
+            await UserValidation(editedUser, id);
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
 
-            UpdateUser(user,editedUser);
+            UpdateUser(user, editedUser);
             await _userRepository.Save();
-            
+
 
             return Ok($"{user.Id} user with this Id was updated success");
         }
@@ -138,6 +138,14 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest(ModelState);
             }
+            List<UserRoleMap> userRoleMaps = new List<UserRoleMap>();
+            foreach (var item in createUserRequest.RoleIds)
+            {
+                userRoleMaps.Add(new UserRoleMap() { RoleId = item });
+            }
+            {
+
+            }
             var user = new User()
             {
                 Email = createUserRequest.Email,
@@ -149,26 +157,29 @@ namespace PerformanceEvaluationPlatform.Controllers
                 StateId = 1,
                 TeamId = createUserRequest.TeamId,
                 TechnicalLevelId = createUserRequest.TechnicalLevelId,
+                Roles = userRoleMaps
             };
             await _userRepository.Create(user);
-            //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
-            //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
-            //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+            await _userRepository.Save();
+            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
+            string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
+            return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+
         }
 
 
 
-        private async Task UserValidation(IUserRequest userRequest, int? id=null)
+        private async Task UserValidation(IUserRequest userRequest, int? id = null)
         {
             var existingUser = await _userRepository.Get(userRequest.Email);
-            if(userRequest is EditUserRequestModel)
+            if (userRequest is EditUserRequestModel)
             {
                 if (existingUser != null && existingUser.Id != id)
                 {
                     ModelState.AddModelError(userRequest.Email, "User with the same email is already exists");
                 }
             }
-            
+
 
             List<int> notValidUserRoles = new List<int>();
             foreach (var item in userRequest.RoleIds)
@@ -230,7 +241,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.LastName = editedUser.LastName;
             user.TeamId = editedUser.TeamId;
             user.TechnicalLevelId = editedUser.TechnicalLevelId;
-            _userRepository.Update(editedUser.RoleIds,user.Id);
+            _userRepository.Update(editedUser.RoleIds, user.Id);
         }
 
     }
