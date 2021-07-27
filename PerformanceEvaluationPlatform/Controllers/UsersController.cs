@@ -18,6 +18,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private const int ActiveState = 1;
         private readonly IUserRepository _userRepository;
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
@@ -115,8 +116,14 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
+            var existingUser = await _userRepository.Get(editedUser.Email);
+            if(existingUser.Id != id)
+            {
+                ModelState.AddModelError(editedUser.Email, "User with the same email is already exists");
+                return Conflict(ModelState);
+            }
 
-            await UserValidation(editedUser, id);
+            await ValidateUser(editedUser);
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
@@ -133,19 +140,22 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
-            await UserValidation(createUserRequest);
+            var existingUser = await _userRepository.Get(createUserRequest.Email);
+
+            if (existingUser != null)
+            {
+                ModelState.AddModelError(createUserRequest.Email, "User with the same email is already exists");
+                return Conflict(ModelState);
+            }
+
+            await ValidateUser(createUserRequest);
             if (ModelState.IsValid == false)
             {
                 return BadRequest(ModelState);
             }
-            List<UserRoleMap> userRoleMaps = new List<UserRoleMap>();
-            foreach (var item in createUserRequest.RoleIds)
-            {
-                userRoleMaps.Add(new UserRoleMap() { RoleId = item });
-            }
-            {
 
-            }
+
+            var userRoleMaps = createUserRequest.RoleIds.Select(s => new UserRoleMap { RoleId = s }).ToList();
             var user = new User()
             {
                 Email = createUserRequest.Email,
@@ -154,7 +164,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 FirstDayInIndustry = createUserRequest.FirstDayInIndustry,
                 FirstName = createUserRequest.FirstName,
                 LastName = createUserRequest.LastName,
-                StateId = 1,
+                StateId = ActiveState,
                 TeamId = createUserRequest.TeamId,
                 TechnicalLevelId = createUserRequest.TechnicalLevelId,
                 Roles = userRoleMaps
@@ -169,16 +179,9 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
 
-        private async Task UserValidation(IUserRequest userRequest, int? id = null)
+        private async Task ValidateUser(IUserRequest userRequest)
         {
-            var existingUser = await _userRepository.Get(userRequest.Email);
-            if (userRequest is EditUserRequestModel)
-            {
-                if (existingUser != null && existingUser.Id != id)
-                {
-                    ModelState.AddModelError(userRequest.Email, "User with the same email is already exists");
-                }
-            }
+         
 
 
             List<int> notValidUserRoles = new List<int>();
