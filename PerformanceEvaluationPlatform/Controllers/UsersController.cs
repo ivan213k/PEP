@@ -188,14 +188,14 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        //[HttpPost]
-        //public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
-        //{
+        [HttpPost]
+        public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
+        {
 
-        //    //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
-        //    //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
-        //    //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
-        //}
+            //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
+            //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
+            //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+        }
 
         private void UpdateUser(User user, EditUserRequestModel editedUser)
         {

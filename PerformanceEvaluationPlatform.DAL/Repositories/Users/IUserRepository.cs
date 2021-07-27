@@ -16,6 +16,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
         public Task<User> Get(string email);
         public Task<User> Get(int id);
         public Task<List<User>> GetList(ICollection<int> userIds);
+        public Task Create(User user);
         public Task Save();
 
     }
