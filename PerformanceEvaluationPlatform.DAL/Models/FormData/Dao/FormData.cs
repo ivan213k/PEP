@@ -14,8 +14,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
 
         public FormDataState FormDataState { get; set; }
 
-        public ICollection<UserModel> User { get; set; }
-        public Survey Survey { get; set; }
+        //public ICollection<UserModel> User { get; set; }
+        //public Survey Survey { get; set; }
 
 
 
@@ -24,8 +24,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
             var formDataTypeBuilder = modelBuilder.Entity<FormData>();
             formDataTypeBuilder.ToTable("FormData");
             formDataTypeBuilder.HasKey(fd => fd.Id);
-            formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
-            formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
+            //formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
+            //formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
             formDataTypeBuilder.Property(fd => fd.FormDataStateId).IsRequired();
 
             formDataTypeBuilder.HasOne(fd => fd.FormDataState)

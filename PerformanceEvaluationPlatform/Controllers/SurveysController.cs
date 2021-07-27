@@ -107,12 +107,12 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest("Form template does not exists.");
             }
-            var assignee = await _userRepository.GetUserForSurvey(surveyRequestModel.AssigneeId);
+            var assignee = await _userRepository.Get(surveyRequestModel.AssigneeId);
             if (assignee is null)
             {
                 return BadRequest("Assignee does not exists.");
             }
-            var supervisor = await _userRepository.GetUserForSurvey(surveyRequestModel.SupervisorId);
+            var supervisor = await _userRepository.Get(surveyRequestModel.SupervisorId);
             if (supervisor is null)
             {
                 return BadRequest("Supervisor does not exists.");
@@ -126,7 +126,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest($"{nameof(surveyRequestModel.AssignedUserIds)} contains same user id");
             }
-            var assignedUsers = await _userRepository.GetUsers(surveyRequestModel.AssignedUserIds);
+            var assignedUsers = await _userRepository.GetList(surveyRequestModel.AssignedUserIds);
             foreach (var assignedUserId in surveyRequestModel.AssignedUserIds)
             {
                 var assignedUser = assignedUsers.Find(r => r.Id == assignedUserId);

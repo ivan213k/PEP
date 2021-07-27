@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
+using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
-using PerformanceEvaluationPlatform.Models.User.Domain;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -16,38 +19,15 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private static List<User> users = new List<User>()
-            {
-                new User(){Id = 1,Email = "userExample@gor.com",FirstName ="Artur",LastName = "Grugon",LevelName = "Junior",
-                LevelId =1,PreviousPEDate = new DateTime(2020,12,03),StateName = "Active",StateId=1,TeamName = "Sharks",RoleName = "Dev", RoleId = 1,
-                 EnglishLevelId=1,EnglishLevelName ="Proficiency",FirstDayInCompany = new DateTime(2020,03,07),ProjectName="PO for Progars",ProjectId=1,NextPEDate = new DateTime(2021,08,21),
-                        YearsOfExpirience=6,PreviousPEs = new List<DateTime>(){
-                            new DateTime(2020,06,20),
-                            new DateTime(2020,12,03)
-                } },
-
-                    new User(){Id =2,Email = "KodKiller@gmail.com",FirstName ="Kiril",LastName = "Krigan",LevelName = "Senior",
-                LevelId =3,PreviousPEDate = new DateTime(2021,04,10),StateName = "Active",StateId=1,TeamName = "Gnomes",RoleName = "Architector", RoleId = 2,
-                EnglishLevelId=1,EnglishLevelName ="Advanced",FirstDayInCompany = new DateTime(2019,03,07),ProjectName="PO for Progars",ProjectId=1,NextPEDate = new DateTime(2022,06,21),
-                        YearsOfExpirience=6,PreviousPEs = new List<DateTime>(){
-                            new DateTime(2020,06,20),
-                            new DateTime(2021,04,10)
-                        } },
-
-                        new User(){Id=3,Email = "bestmanager@ukr.net",FirstName ="Kristina",LastName = "Lavruk",LevelName = "Junior",
-                LevelId =1,PreviousPEDate = new DateTime(2021,03,07),StateName = "Active",StateId=1,TeamName = "Sharks",RoleName = "Dev", RoleId = 1,
-                        EnglishLevelId=1,EnglishLevelName ="Intermidiate",FirstDayInCompany = new DateTime(2016,03,07),ProjectName="PO for Progars",ProjectId=1,NextPEDate = new DateTime(2022,03,07),
-                        YearsOfExpirience=6,PreviousPEs = new List<DateTime>(){
-                            new DateTime(2017,03,07),
-                            new DateTime(2018,03,07),
-                            new DateTime(2019,03,07),
-                            new DateTime(2020,03,07),
-                            new DateTime(2021,03,07)
-                        } }
-            };
-        public UsersController(IUserRepository userRepository)
+        private readonly IRolesRepository _roleRepository;
+        private readonly ITeamsRepository _teamRepository;
+        private readonly ISurveysRepository _surveysRepository;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository)
         {
-            _userRepository = userRepository ??throw new ArgumentNullException(nameof(userRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
+            _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
+            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
         }
 
 
@@ -68,7 +48,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 UserPreviousPE = userSorting.UserPreviousPE
             };
 
-            var itemsDto = await _userRepository.GetUsers(parameters);
+            var itemsDto = await _userRepository.GetList(parameters);
 
             var itemViewModel = itemsDto.Select(s => new UserViewModel()
             {
@@ -90,7 +70,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("userstate")]
         public async Task<IActionResult> GetUserStates()
         {
-            var userStateDtos = await _userRepository.GetUserStates();
+            var userStateDtos = await _userRepository.GetStates();
             var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
             return Ok(userStatesviewModel);
         }
@@ -99,7 +79,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _userRepository.GetUser(id);
+            var user = await _userRepository.GetDetail(id);
 
             if (user is null)
             {
@@ -127,78 +107,108 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
         
         [HttpPut("{id:int}")]
-        public IActionResult EditUser(int id, [FromBody] EditUserRequestModel editedUser)
+        public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest();
-            }
-
-            var user = users.FirstOrDefault(s => s.Id == id);
+           
+            var user =await  _userRepository.Get(id);
             if (user is null)
             {
                 return NotFound();
             }
-            UpdateUser(user, editedUser);
-            return Ok($"{user.Id} user with this Id was updated success");
-        }
 
-        [HttpPost]
-        public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
-        {
-            if (createUserRequest == null)
+            var existingUser =await  _userRepository.Get(editedUser.Email);
+            if (existingUser != null&& existingUser.Id != id)
             {
-                ModelState.AddModelError("", "You didnt create user");
-                return BadRequest(ModelState);
-            }
-
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest();
-            }
-
-            var validation = users.Any(s => string.Equals(s.Email, createUserRequest.Email, StringComparison.InvariantCultureIgnoreCase));
-            if (validation is true)
-            {
-                ModelState.AddModelError("", "User with the same email is already exists");
+                ModelState.AddModelError(editedUser.Email,"User with the same email is already exists");
                 return Conflict(ModelState);
             }
 
-            var user = new User()
+            List<int> notValidUserRoles = new List<int>();
+            foreach (var item in editedUser.RoleIds)
             {
-                Id = users.Count + 1,
-                Email = createUserRequest.Email,
-                FirstName = createUserRequest.FirstName,
-                LastName = createUserRequest.LastName,
-                NextPEDate = createUserRequest.NextPEDate,
-                FirstDayInCompany = createUserRequest.FirstDayInCompany,
-                YearsOfExpirience = createUserRequest.YearsOfExpirience,
-                EnglishLevelId = createUserRequest.EnglishLevelId,
-                LevelId = createUserRequest.LevelId,
-                ProjectId = createUserRequest.ProjectId,
-                RoleId = createUserRequest.RoleId,
-                StateId = createUserRequest.StateId,
-                TeamId = createUserRequest.TeamId
-            };
-            users.Add(user);
-            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
-            string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
-            return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+                var role = await _roleRepository.Get(item);
+                if(role == null)
+                {
+                    notValidUserRoles.Add(item);
+                }
+            }
+            if(notValidUserRoles.Any())
+            {
+                foreach (var item in notValidUserRoles)
+                {
+                    ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
+                }
+                return BadRequest(ModelState);
+            }
+
+            var userTeam = await _teamRepository.Get(editedUser.TeamId);
+            if(userTeam is null)
+            {
+                ModelState.AddModelError(editedUser.TeamId.ToString(), "Team with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
+
+            var userTechnicalLevel =await  _surveysRepository.GetLevel(editedUser.TechnicalLevelId);
+            if(userTechnicalLevel is null)
+            {
+                ModelState.AddModelError(editedUser.TechnicalLevelId.ToString(), "Level with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
+            var userEnglishLevel = await _surveysRepository.GetLevel(editedUser.EnglishLevelId);
+            if(userEnglishLevel is null)
+            {
+                ModelState.AddModelError(editedUser.EnglishLevelId.ToString(), "Level with this Id doesn't exists");
+                return BadRequest(ModelState);
+            }
+
+             if(editedUser.FirstDayInCompany < editedUser.FirstDayInIndustry)
+             {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), "User couldn't worked In company before he  was in industry");
+                return BadRequest(ModelState);
+             }
+
+            var yearInCompany = DateTime.Now.Year - editedUser.FirstDayInCompany.Year;
+             if (yearInCompany > 60)
+             {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could work In company for {yearInCompany} years");
+                return BadRequest(ModelState);
+             }
+            var yearInIndustry = DateTime.Now.Year - editedUser.FirstDayInIndustry.Year;
+            if (yearInIndustry > 60)
+            {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could be In Industry for {yearInIndustry} years");
+                return BadRequest(ModelState);
+            }
+
+            UpdateUser(user,editedUser);
+            await _userRepository.Save();
+            
+
+            return Ok($"{user.Id} user with this Id was updated success");
         }
+
+
+        //[HttpPost]
+        //public IActionResult CreateUser([FromBody] CreateUserRequestModel createUserRequest)
+        //{
+
+        //    //var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
+        //    //string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
+        //    //return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+        //}
 
         private void UpdateUser(User user, EditUserRequestModel editedUser)
         {
             user.Email = editedUser.Email;
+            user.EnglishLevelId = editedUser.EnglishLevelId;
+            user.FirstDayInCompany = editedUser.FirstDayInCompany;
+            user.FirstDayInIndustry = editedUser.FirstDayInIndustry;
             user.FirstName = editedUser.FirstName;
             user.LastName = editedUser.LastName;
-            user.LevelName = editedUser.LevelName;
-            user.NextPEDate = editedUser.NextPEDate;
-            user.TeamName = editedUser.TeamName;
-            user.RoleName = editedUser.RoleName;
-            user.EnglishLevelName = editedUser.EnglishLevelName;
-            user.FirstDayInCompany = editedUser.FirstDayInCompany;
-            user.ProjectName = editedUser.ProjectName;
-
+            user.TeamId = editedUser.TeamId;
+            user.TechnicalLevelId = editedUser.TechnicalLevelId;
+            _userRepository.Update(editedUser.RoleIds,user.Id);
         }
+
     }
 }

@@ -9,23 +9,24 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
     public class EditUserRequestModel
     {
         [Required]
+        [MaxLength(70)]
         public string FirstName { get; set; }
         [Required]
+        [MaxLength(120)]
         public string LastName { get; set; }
         [EmailAddress]
+        [MaxLength(40)]
         public string Email { get; set; }
         [Required]
-        public string TeamName { get; set; }
+        public List<int> RoleIds { get; set; }
         [Required]
-        public string LevelName { get; set; }
+        public int TeamId{ get; set; }
         [Required]
-        public string RoleName { get; set; }
-        [Required]
-        public string ProjectName { get; set; }
-        public string EnglishLevelName { get; set; }
-        [Required]
-        public DateTime NextPEDate { get; set; }
+        public int TechnicalLevelId{ get; set; }
+        public int EnglishLevelId { get; set; }
         [Required]
         public DateTime FirstDayInCompany { get; set; }
+        [Required]
+        public DateTime FirstDayInIndustry { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             :base(databaseOptions,dbContext)
         {
         }
-        public async Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter)
+        public async Task<ICollection<UserListItemDto>> GetList(UserFilterDto filter)
         {
             var paramaters = new
             {
@@ -36,7 +36,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
         }
 
 
-        public async Task<UserDetailDto> GetUser(int id)
+        public async Task<UserDetailDto> GetDetail(int id)
         {
             var user =await DbContext.Set<User>()
                 .Include(s => s.TechnicalLevel)
@@ -71,21 +71,45 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             };
             return userDetailDto;
         }
-        public async Task<ICollection<UserStateListItemDto>> GetUserStates()
+        public async Task<ICollection<UserStateListItemDto>> GetStates()
         {
             var userStates = await DbContext.Set<UserState>().Select(s => new UserStateListItemDto() { Id = s.Id, Name = s.Name }).ToListAsync(); ;
 
             return userStates;
         }
 
-        public Task<User> GetUserForSurvey(int id)
+        public Task<User> Get(int id)
         {
             return Get<User>(id);
         }
 
-        public Task<List<User>> GetUsers(ICollection<int> userIds)
+        public Task<List<User>> GetList(ICollection<int> userIds)
         {
             return DbContext.Set<User>().Where(r => userIds.Contains(r.Id)).ToListAsync();
+        }
+
+
+        public async Task<User> Get(string email)
+        {
+            var userValidation = await DbContext.Set<User>().FirstOrDefaultAsync(s => s.Email.Trim().ToLower() == email.ToLower().Trim());
+            return userValidation;
+        }
+
+        public async Task Update(List<int> roleIds,int id)
+        {
+            var roleToDelteFromUser = DbContext.Set<UserRoleMap>().Where(s => s.UserId == id);
+            DbContext.Set<UserRoleMap>().RemoveRange(roleToDelteFromUser);
+            List<UserRoleMap> roleUserToCreate = new List<UserRoleMap>();
+            for (int i = 0; i < roleIds.Count; i++)
+            {
+                roleUserToCreate.Add(new UserRoleMap { RoleId = roleIds[i], UserId = id });
+            }
+            await DbContext.Set<UserRoleMap>().AddRangeAsync(roleUserToCreate);
+        }
+
+        public Task Save()
+        {
+            return SaveChanges();
         }
     }
 }
