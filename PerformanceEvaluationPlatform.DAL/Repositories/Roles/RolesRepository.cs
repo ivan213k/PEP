@@ -58,9 +58,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
             return details;
         }
 
-        public async Task<ICollection<Role>> GetRolesValidation(ICollection<int> roleIds)
+        public async Task<Role> Get(int roleId)
         {
-            return await DbContext.Set<Role>().Where(s => roleIds.Contains(s.Id)).ToListAsync();
+            return await DbContext.Set<Role>().FirstOrDefaultAsync(s => s.Id == roleId);
         }
     }
 }

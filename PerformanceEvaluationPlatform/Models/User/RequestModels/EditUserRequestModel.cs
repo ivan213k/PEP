@@ -9,10 +9,13 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
     public class EditUserRequestModel
     {
         [Required]
+        [MaxLength(70)]
         public string FirstName { get; set; }
         [Required]
+        [MaxLength(120)]
         public string LastName { get; set; }
         [EmailAddress]
+        [MaxLength(40)]
         public string Email { get; set; }
         [Required]
         public List<int> RoleIds { get; set; }

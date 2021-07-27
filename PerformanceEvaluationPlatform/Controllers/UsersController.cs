@@ -48,7 +48,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 UserPreviousPE = userSorting.UserPreviousPE
             };
 
-            var itemsDto = await _userRepository.GetUsers(parameters);
+            var itemsDto = await _userRepository.GetList(parameters);
 
             var itemViewModel = itemsDto.Select(s => new UserViewModel()
             {
@@ -70,7 +70,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("userstate")]
         public async Task<IActionResult> GetUserStates()
         {
-            var userStateDtos = await _userRepository.GetUserStates();
+            var userStateDtos = await _userRepository.GetStates();
             var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
             return Ok(userStatesviewModel);
         }
@@ -79,7 +79,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _userRepository.GetUser(id);
+            var user = await _userRepository.GetDetail(id);
 
             if (user is null)
             {
@@ -110,45 +110,76 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
            
-            var user =await  _userRepository.GetUserValidation(id);
+            var user =await  _userRepository.Get(id);
             if (user is null)
             {
                 return NotFound();
             }
 
-            var userEmailValidation =await  _userRepository.UserEmailValidation(editedUser.Email, id);
-            if (userEmailValidation != false)
+            var userEmailValidation =await  _userRepository.Get(editedUser.Email);
+            if (userEmailValidation != null&& userEmailValidation.Id != id)
             {
-                ModelState.AddModelError("","User with the same email is already exists");
+                ModelState.AddModelError(editedUser.Email,"User with the same email is already exists");
                 return Conflict(ModelState);
             }
 
-            var userRoles = await _roleRepository.GetRolesValidation(editedUser.RoleIds);
-            if(userRoles is null)
+            List<int> NotValidUserRoles = new List<int>();
+            foreach (var item in editedUser.RoleIds)
             {
-                ModelState.AddModelError("", "Role with this Id doesn't exists");
+                var role = await _roleRepository.Get(item);
+                if(role == null)
+                {
+                    NotValidUserRoles.Add(item);
+                }
+            }
+            if(NotValidUserRoles.Count!=0)
+            {
+                foreach (var item in NotValidUserRoles)
+                {
+                    ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
+                }
                 return BadRequest(ModelState);
             }
 
-            var userTeam = await _teamRepository.GetTeamValidation(editedUser.TeamId);
+            var userTeam = await _teamRepository.Get(editedUser.TeamId);
             if(userTeam is null)
             {
-                ModelState.AddModelError("", "Team with this Id doesn't exists");
+                ModelState.AddModelError(editedUser.TeamId.ToString(), "Team with this Id doesn't exists");
                 return BadRequest(ModelState);
             }
 
             var userTechnicalLevel =await  _surveysRepository.GetLevel(editedUser.TechnicalLevelId);
             if(userTechnicalLevel is null)
             {
-                ModelState.AddModelError("", "Level with this Id doesn't exists");
+                ModelState.AddModelError(editedUser.TechnicalLevelId.ToString(), "Level with this Id doesn't exists");
                 return BadRequest(ModelState);
             }
             var userEnglishLevel = await _surveysRepository.GetLevel(editedUser.EnglishLevelId);
             if(userEnglishLevel is null)
             {
-                ModelState.AddModelError("", "Level with this Id doesn't exists");
+                ModelState.AddModelError(editedUser.EnglishLevelId.ToString(), "Level with this Id doesn't exists");
                 return BadRequest(ModelState);
             }
+
+             if(editedUser.FirstDayInCompany < editedUser.FirstDayInIndustry)
+             {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), "User couldn't worked In company before he  was in industry");
+                return BadRequest(ModelState);
+             }
+
+            var yearInCompany = DateTime.Now.Year - editedUser.FirstDayInCompany.Year;
+             if (yearInCompany > 60)
+             {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could work In company for {yearInCompany} years");
+                return BadRequest(ModelState);
+             }
+            var yearInIndustry = DateTime.Now.Year - editedUser.FirstDayInIndustry.Year;
+            if (yearInIndustry > 60)
+            {
+                ModelState.AddModelError(editedUser.FirstDayInCompany.ToString(), $"User haven't could be In Industry for {yearInIndustry} years");
+                return BadRequest(ModelState);
+            }
+
             UpdateUser(user,editedUser);
             await _userRepository.Save();
             
@@ -176,7 +207,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.LastName = editedUser.LastName;
             user.TeamId = editedUser.TeamId;
             user.TechnicalLevelId = editedUser.TechnicalLevelId;
-            _userRepository.UpdateUser(editedUser.RoleIds,user.Id);
+            _userRepository.Update(editedUser.RoleIds,user.Id);
         }
 
     }

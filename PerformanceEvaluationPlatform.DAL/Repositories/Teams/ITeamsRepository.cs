@@ -10,6 +10,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Teams
     public interface ITeamsRepository
     {
         Task<IList<TeamListItemDto>> GetList(TeamListFilterDto filter);
-        Task<Team> GetTeamValidation(int id);
+        Task<Team> Get(int id);
     }
 }

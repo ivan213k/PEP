@@ -9,13 +9,13 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
 {
     public interface IUserRepository
     {
-        public Task<ICollection<UserListItemDto>> GetUsers(UserFilterDto filter);
-        public Task<ICollection<UserStateListItemDto>>GetUserStates();
-        public Task<UserDetailDto> GetUser(int id);
-        public Task UpdateUser(List<int> roleIds,int userId);
-        public Task<bool> UserEmailValidation(string email, int id);
-        public Task<User> GetUserValidation(int id);
-        public Task<List<User>> GetUsersValidation(ICollection<int> userIds);
+        public Task<ICollection<UserListItemDto>> GetList(UserFilterDto filter);
+        public Task<ICollection<UserStateListItemDto>>GetStates();
+        public Task<UserDetailDto> GetDetail(int id);
+        public Task Update(List<int> roleIds,int userId);
+        public Task<User> Get(string email);
+        public Task<User> Get(int id);
+        public Task<List<User>> GetList(ICollection<int> userIds);
         public Task Save();
 
     }
