@@ -165,6 +165,70 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
         }
 
         [Test]
+        public async Task Request_should_return_valid_items_when_filtering_by_usersCountFrom()
+        {
+            //Arrange
+            var requestModel = new RoleListFilterRequestModel
+            {
+                UsersCountFrom = 1
+            };
+            var request = CreateGetHttpRequest(requestModel);
+
+            //Act
+            HttpResponseMessage response = await SendRequest(request);
+
+            //Assert
+            CustomAssert.IsSuccess(response);
+
+            var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
+
+            Assert.NotNull(content);
+
+            if (content.Count > 0)
+            {
+                foreach (RoleListItemViewModel contentElement in content)
+                {
+                    Assert.IsTrue(contentElement.UsersCount >= 1);
+                }
+            }
+            else
+            {
+                Assert.IsTrue(content.Count == 0);
+            }
+        }
+
+        [Test]
+        public async Task Request_should_return_valid_items_when_filtering_by_usersCountTo()
+        {
+            //Arrange
+            var requestModel = new RoleListFilterRequestModel
+            {
+                UsersCountTo = 3
+            };
+            var request = CreateGetHttpRequest(requestModel);
+
+            //Act
+            HttpResponseMessage response = await SendRequest(request);
+
+            //Assert
+            CustomAssert.IsSuccess(response);
+
+            var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
+
+            if (content.Count > 0)
+            {
+                foreach (RoleListItemViewModel contentElement in content)
+                {
+                    Assert.IsTrue(contentElement.UsersCount <= 3);
+                }
+            }
+            else
+            {
+                Assert.IsTrue(content.Count == 0);
+            }
+        }
+
+        [Test]
         public async Task Request_should_return_valid_items_when_searching_by_Title()
         {
             //Arrange
