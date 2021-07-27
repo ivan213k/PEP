@@ -6,33 +6,30 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
-    public class CreateUserRequestModel
+    public class CreateUserRequestModel: IUserRequest
     {
         [Required]
-        [MaxLength(50)]
+        [MaxLength(70)]
         public string FirstName { get; set; }
         [Required]
-        [MaxLength(80)]
+        [MaxLength(120)]
         public string LastName { get; set; }
         [EmailAddress]
+        [MaxLength(40)]
         public string Email { get; set; }
         [Required]
         public int TeamId { get; set; }
         [Required]
-        public int StateId { get; set; }
+        public int TechnicalLevelId { get; set; }
         [Required]
-        public int LevelId { get; set; }
-        [Required]
-        public int RoleId { get; set; }
-        [Required]
-        public int ProjectId { get; set; }
+        public List<int> RoleIds { get; set; }
         [Required]
         public int EnglishLevelId { get; set; }
-        [Required]
-        public int YearsOfExpirience { get; set; }
         [Required]
         public DateTime NextPEDate { get; set; }
         [Required]
         public DateTime FirstDayInCompany { get; set; }
+        [Required]
+        public DateTime FirstDayInIndustry { get; set; }
     }
 }

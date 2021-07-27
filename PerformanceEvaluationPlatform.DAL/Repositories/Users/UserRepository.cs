@@ -105,11 +105,20 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 roleUserToCreate.Add(new UserRoleMap { RoleId = roleIds[i], UserId = id });
             }
             await DbContext.Set<UserRoleMap>().AddRangeAsync(roleUserToCreate);
+
+
         }
 
+        public Task Create(User user)
+        {
+            return Create<User>(user);
+        }
+        
         public Task Save()
         {
             return SaveChanges();
         }
+
+       
     }
 }
