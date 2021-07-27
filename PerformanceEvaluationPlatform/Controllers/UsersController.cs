@@ -116,25 +116,25 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return NotFound();
             }
 
-            var userEmailValidation =await  _userRepository.Get(editedUser.Email);
-            if (userEmailValidation != null&& userEmailValidation.Id != id)
+            var existingUser =await  _userRepository.Get(editedUser.Email);
+            if (existingUser != null&& existingUser.Id != id)
             {
                 ModelState.AddModelError(editedUser.Email,"User with the same email is already exists");
                 return Conflict(ModelState);
             }
 
-            List<int> NotValidUserRoles = new List<int>();
+            List<int> notValidUserRoles = new List<int>();
             foreach (var item in editedUser.RoleIds)
             {
                 var role = await _roleRepository.Get(item);
                 if(role == null)
                 {
-                    NotValidUserRoles.Add(item);
+                    notValidUserRoles.Add(item);
                 }
             }
-            if(NotValidUserRoles.Count!=0)
+            if(notValidUserRoles.Any())
             {
-                foreach (var item in NotValidUserRoles)
+                foreach (var item in notValidUserRoles)
                 {
                     ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
                 }
