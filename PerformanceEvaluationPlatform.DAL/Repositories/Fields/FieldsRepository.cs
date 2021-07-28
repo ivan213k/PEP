@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
 {
@@ -82,11 +83,31 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         {
             return Get<Field>(id);
         }
+        public bool GetAnyReferenceToFormTemplate(int id)
+        {
+            return DbContext.Set<FormTemplateFieldMap>().Any(t => t.FieldId == id);
+        }
 
         public async Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds)
         {
             var fields = await DbContext.Set<Field>().Where(f => fieldIds.Contains(f.Id)).ToListAsync();
             return fields;
+        }
+
+        public async Task<IList<FieldAssesmentGroupListItemDto>> GetFieldAssesmentGroupList()
+        {
+            return await DbContext.Set<FieldAssesmentGroup>()
+                 .Select(t => new FieldAssesmentGroupListItemDto
+                 {
+                     Id = t.Id,
+                     Name = t.Name
+                 })
+                 .ToListAsync();
+        }
+
+        public void Delete(Field field)
+        {
+            Delete<Field>(field);
         }
     }
 }

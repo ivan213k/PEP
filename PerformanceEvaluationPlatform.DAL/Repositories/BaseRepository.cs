@@ -51,6 +51,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
         {
             return DbContext.SaveChangesAsync();
         }
+        protected void Delete<TEntity>(TEntity entity)
+        {
+            DbContext.Remove(entity);
+        }
 
         private DynamicParameters MapParameters(object model) 
         {

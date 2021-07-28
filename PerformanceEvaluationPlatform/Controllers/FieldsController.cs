@@ -54,30 +54,28 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPost("fields/{id:int}")]
-        public IActionResult Copy(int id)
+        public async Task<IActionResult> Copy(int id)
         {
-            var items = GetFieldListItemViewModels();
-            var item = items.SingleOrDefault(t => t.Id == id);
-            if (item == null)
+            var entity = await _fieldsRepository.Get(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            var MaxId = items.Max(t => t.Id);
-            var newField = new FieldListItemViewModel
+            var field = new Field
             {
-                Id = MaxId + 1,
-                Name = item.Name,
-                Type = item.Type,
-                TypeId = item.TypeId,
-                AssesmentGroupName = item.AssesmentGroupName,
-                AssesmentGroupId = item.AssesmentGroupId,
-                IsRequired = item.IsRequired
+                Name = entity.Name,
+                FieldTypeId = entity.FieldTypeId,
+                AssesmentGroupId = entity.AssesmentGroupId,
+                IsRequired = entity.IsRequired,
+                Description = entity.Description
             };
 
-            items = items.Append(newField);
+            await _fieldsRepository.Create(field);
+            await _fieldsRepository.SaveChanges();
 
-            return Ok(newField);
+            var result = new ObjectResult(new { Id = field.Id }) { StatusCode = 201 };
+            return result;
         }
 
         [HttpPut("fields/{id:int}")]
@@ -110,17 +108,24 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok();
         }
         [HttpDelete("fields/{id:int}")]
-        public IActionResult DeleteField(int id)
+        public async Task<IActionResult> DeleteField(int id)
         {
-            var items = GetFieldListItemViewModels();
-            var item = items.SingleOrDefault(t => t.Id == id);
-            if (item == null)
+            var entity = await _fieldsRepository.Get(id);
+            if (entity == null)
             {
                 return NotFound();
             }
-            items = items.Where(t => t.Id != item.Id).ToList();
+            var anyReferenceToFormTemplate = _fieldsRepository.GetAnyReferenceToFormTemplate(id);
+            if (anyReferenceToFormTemplate == false)
+            {
+                _fieldsRepository.Delete(entity);
+                await _fieldsRepository.SaveChanges();
 
-            return NoContent();
+                return NoContent();
+            }
+
+            //soft delete
+            return BadRequest("The field is already referenced in the form template and could not be deleted!");
         }
 
         [HttpGet("fields")]

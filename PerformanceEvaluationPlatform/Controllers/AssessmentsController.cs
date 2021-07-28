@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 
 namespace PerformanceEvaluationPlatform.Controllers
@@ -7,23 +11,23 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class AssessmentsController : ControllerBase
     {
+        private readonly IFieldsRepository _fieldsRepository;
+
+        public AssessmentsController(IFieldsRepository fieldsRepository)
+        {
+            _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
+        }
 
         [HttpGet("assessments/groups")]
-        public IActionResult GetAssesmentGroup()
+        public async Task<IActionResult> GetAssesmentGroup()
         {
-            var items = new List<FieldAssesmentGroupListItemViewModel>
-            {
-                new FieldAssesmentGroupListItemViewModel
+            var itemsDto = await _fieldsRepository.GetFieldAssesmentGroupList();
+            var items = itemsDto
+                .Select(t => new FieldTypeListItemViewModel
                 {
-                    Id = 1,
-                    Name = "NoAssesment"
-                },
-                new FieldAssesmentGroupListItemViewModel
-                {
-                    Id = 2,
-                    Name = "A-F Group"
-                },
-            };
+                    Id = t.Id,
+                    Name = t.Name
+                });
 
             return Ok(items);
         }
