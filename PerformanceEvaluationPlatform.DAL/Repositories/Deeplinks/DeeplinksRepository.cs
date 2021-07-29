@@ -63,7 +63,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks
 
                var details = new DeeplinkDetailsDto
                {
-           /*        Id = deeplink.Id,
+           /*      Id = deeplink.Id,
                    SentToFirstName = 
                    SentToEmail 
                    SentAt 
@@ -75,8 +75,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks
                 };            
             return details;
          
-        }
-     
-      
+        } 
     }
 }

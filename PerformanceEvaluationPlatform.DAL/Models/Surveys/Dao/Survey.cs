@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using System;
+using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 {
@@ -16,6 +18,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 
         public SurveyState SurveyState { get; set; }
         public Level RecomendedLevel { get; set; }
+
+        public ICollection<Deeplink> DeepLinks { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -37,6 +41,11 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
             surveyTypeBuilder.HasOne(t => t.RecomendedLevel)
                 .WithMany()
                 .HasForeignKey(t => t.RecommendedLevelId)
+                .IsRequired();
+
+            surveyTypeBuilder.HasMany(t=>t.DeepLinks)
+                .WithOne()
+                .HasForeignKey(t => t.SurveyId)
                 .IsRequired();
         }
     }

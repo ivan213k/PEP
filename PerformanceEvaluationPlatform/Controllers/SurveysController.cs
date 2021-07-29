@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
@@ -24,7 +25,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
             _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository)); 
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpGet("surveys")]
@@ -94,7 +95,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok(detailsViewModel);
         }
-     
+
         [HttpPost("surveys")]
         public async Task<IActionResult> CreateSurvey([FromBody] CreateSurveyRequestModel surveyRequestModel)
         {
@@ -143,12 +144,20 @@ namespace PerformanceEvaluationPlatform.Controllers
                 RecommendedLevelId = surveyRequestModel.RecommendedLevelId,
                 AppointmentDate = surveyRequestModel.AppointmentDate,
                 StateId = GetNewSurveyStateId(),
+                DeepLinks = surveyRequestModel.AssignedUserIds
+                .Select(userId => new Deeplink
+                {
+                    Code = Guid.NewGuid(),
+                    UserId = userId,
+                    StateId = GetDeepLinkStateDraftId(),
+
+                }).ToList()
             };
 
             await _surveysRepository.Create(survey);
             await _surveysRepository.SaveChanges();
 
-            return CreatedAtAction(nameof(GetSurveyDetails), new {Id = survey.Id }, survey);
+            return CreatedAtAction(nameof(GetSurveyDetails), new { Id = survey.Id }, survey);
         }
 
         private bool ContainsSameAssignedUserIds(ICollection<int> assignedUserIds)
@@ -157,6 +166,10 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         private int GetNewSurveyStateId()
+        {
+            return 1;
+        }
+        private int GetDeepLinkStateDraftId() 
         {
             return 1;
         }
