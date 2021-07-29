@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.Models.Role.RequestModels;
 using PerformanceEvaluationPlatform.Models.Role.ViewModels;
-using PerformanceEvaluationPlatform.Models.Shared.Enums;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -72,150 +71,41 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         [Route("roles")]
         [HttpPost]
-        public IActionResult Create([FromBody] CreateRoleRequestModel role)
+        public async Task<IActionResult> Create([FromBody] CreateRoleRequestModel requestModel)
         {
-            var items = GetRoleListItemViewModels();
-
-            if (role == null)
+            if (!requestModel.IsTitleValid())
             {
-                return BadRequest();
+                return BadRequest("Title is not valid");
             }
 
-            bool roleAlreadyExists = items.Any(t => t.Title.Trim().ToLower() == role.Title.ToLower().Trim()
-                || t.Id == role.Id);
-
-            if (roleAlreadyExists)
+            var role = new Role
             {
-                ModelState.AddModelError("", "This Role already exists");
-                return Conflict(ModelState);
-            }
-
-            var newRole = new RoleListItemViewModel
-            {
-                Id = role.Id,
-                Title = role.Title,
-                IsPrimary = role.IsPrimary,
-                UsersCount = role.UsersCount
+                Title = requestModel.Title,
+                IsPrimary = requestModel.IsPrimary
             };
 
-            items = items.Append(newRole);
+            await _rolesRepository.Create(role);
+            await _rolesRepository.SaveChanges();
 
-            return Ok(newRole);
+            var result = new ObjectResult(new { Id = role.Id }) { StatusCode = 201 };
+            return result;
         }
 
-        [Route("roles/{id}")]
+        [Route("roles/{id:int}")]
         [HttpPut]
-        public IActionResult EditUser(int id, [FromBody] EditRoleRequestModel role)
+        public async Task<IActionResult> Edit(int id, [FromBody] EditRoleRequestModel requestModel)
         {
-            var items = GetRoleListItemViewModels();
-
-            if (role is null)
-            {
-                return BadRequest();
-            }
-
-            var currentRole = items.FirstOrDefault(t => t.Id == role.Id);
-            if (currentRole is null)
+            var entity = await _rolesRepository.Get(id);
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            currentRole.Title = role.Title;
-            currentRole.IsPrimary = role.IsPrimary;
+            entity.Title = requestModel.Title;
+            entity.IsPrimary = requestModel.IsPrimary;
 
-            items = items.Where(t => t.Id != currentRole.Id).Append(currentRole);
-
+            await _rolesRepository.SaveChanges();
             return Ok();
-        }
-
-        private IEnumerable<RoleListItemViewModel> GetFilteredItems(IEnumerable<RoleListItemViewModel> items,
-            RoleListFilterRequestModel filter)
-        {
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                items = items
-                    .Where(t => t.Title.Contains(filter.Search));
-            }
-
-            if (filter.IsPrimary != null)
-            {
-                items = items
-                    .Where(t => t.IsPrimary == filter.IsPrimary);
-            }
-
-            if (filter.UsersCountFrom != null)
-            {
-                items = items
-                    .Where(t => t.UsersCount >= filter.UsersCountFrom);
-            }
-
-            if (filter.UsersCountTo != null)
-            {
-                items = items
-                    .Where(t => t.UsersCount <= filter.UsersCountTo);
-            }
-
-            items = items
-                .Skip(filter.Skip.Value)
-                .Take(filter.Take.Value);
-
-            return items;
-        }
-
-        private IEnumerable<RoleListItemViewModel> SortItems(IEnumerable<RoleListItemViewModel> items, RoleListFilterRequestModel filter)
-        {
-            if (filter.TitleSortOrder != null)
-            {
-                if (filter.TitleSortOrder == SortOrder.Ascending)
-                    items = items.OrderBy(t => t.Title);
-                else
-                    items = items.OrderByDescending(t => t.Title);
-            }
-            if (filter.IsPrimarySortOrder != null)
-            {
-                if (filter.IsPrimarySortOrder == SortOrder.Ascending)
-                    items = items.OrderBy(t => t.IsPrimary);
-                else
-                    items = items.OrderByDescending(t => t.IsPrimary);
-            }
-
-            return items;
-        }
-
-        private static IEnumerable<RoleListItemViewModel> GetRoleListItemViewModels()
-        {
-            var items = new List<RoleListItemViewModel>
-            {
-                new RoleListItemViewModel
-                {
-                    Id = 1,
-                    Title = "Backend",
-                    IsPrimary = true,
-                    UsersCount = 30
-                },
-                new RoleListItemViewModel
-                {
-                    Id = 2,
-                    Title = "Frontend",
-                    IsPrimary = true,
-                    UsersCount = 15
-                },
-                new RoleListItemViewModel
-                {
-                    Id = 3,
-                    Title = "QA",
-                    IsPrimary = true,
-                    UsersCount = 2
-                },
-                new RoleListItemViewModel
-                {
-                    Id = 4 ,
-                    Title = "Team Lead",
-                    IsPrimary = false,
-                    UsersCount = 1
-                }
-            };
-            return items;
         }
     }
 }

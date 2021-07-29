@@ -58,9 +58,14 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
             return details;
         }
 
-        public async Task<Role> Get(int roleId)
+        public Task<Role> Get(int id)
         {
-            return await DbContext.Set<Role>().FirstOrDefaultAsync(s => s.Id == roleId);
+            return Get<Role>(id);
+        }
+
+        public Task Create(Role role)
+        {
+            return Create<Role>(role);
         }
     }
 }
