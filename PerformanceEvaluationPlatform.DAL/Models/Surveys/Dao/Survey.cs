@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using System;
 using System.Collections.Generic;
+using UserDao = PerformanceEvaluationPlatform.DAL.Models.User.Dao.User;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 {
@@ -18,6 +20,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 
         public SurveyState SurveyState { get; set; }
         public Level RecomendedLevel { get; set; }
+
+        public UserDao Asignee { get; set; }
+        public UserDao Supervisor { get; set; }
+        public FormTemplate FormTemplate { get; set; }
 
         public ICollection<Deeplink> DeepLinks { get; set; }
 
@@ -46,6 +52,21 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
             surveyTypeBuilder.HasMany(t=>t.DeepLinks)
                 .WithOne()
                 .HasForeignKey(t => t.SurveyId)
+                .IsRequired();
+
+            surveyTypeBuilder.HasOne(t => t.Asignee)
+                .WithMany()
+                .HasForeignKey(t => t.AssigneeId)
+                .IsRequired();
+
+            surveyTypeBuilder.HasOne(t => t.Supervisor)
+                .WithMany()
+                .HasForeignKey(t => t.SupervisorId)
+                .IsRequired();
+
+            surveyTypeBuilder.HasOne(t => t.FormTemplate)
+                .WithMany()
+                .HasForeignKey(t => t.FormTemplateId)
                 .IsRequired();
         }
     }

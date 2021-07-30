@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,6 +51,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             var survey = await DbContext.Set<Survey>()
                 .Include(r => r.SurveyState)
                 .Include(r => r.RecomendedLevel)
+                .Include(r=>r.FormTemplate)
+                .Include(r=>r.Asignee)
+                .Include(r=>r.Supervisor)
+                .Include(r=>r.DeepLinks).ThenInclude(t=>t.User)
                 .SingleOrDefaultAsync(r => r.Id == id);
 
             if (survey is null)
@@ -60,7 +62,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 return null;
             }
 
-            // TODO: Add Assignee, Supervisor, FormName, AssigneIds
             var details = new SurveyDetailsDto
             {
                 AppointmentDate = survey.AppointmentDate,
@@ -68,7 +69,15 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 StateId = survey.StateId,
                 RecommendedLevel = survey.RecomendedLevel.Name,
                 RecommendedLevelId = survey.RecommendedLevelId,
-                Summary = survey.Summary
+                Summary = survey.Summary,
+                Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
+                Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
+                FormName = survey.FormTemplate.Name,
+                AssignedUsers = survey.DeepLinks.Select(d=>new SurveyAssigneeDto 
+                {
+                    Id = d.UserId,
+                    Name = $"{d.User.FirstName} {d.User.LastName}"
+                }).ToList()
             };
             return details;
         }

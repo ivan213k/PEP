@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using UserDao = PerformanceEvaluationPlatform.DAL.Models.User.Dao.User;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
 {
@@ -17,19 +18,27 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
        
         public DeeplinkState DeeplinkState { get; set; }
 
+        public UserDao User { get; set; }
+
         public int SurveyId { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
-            var DeeplinkTypeBuilder = modelBuilder.Entity<Deeplink>();
-            DeeplinkTypeBuilder.ToTable(nameof(Deeplink));
-            DeeplinkTypeBuilder.HasKey(t => t.Id);
-            DeeplinkTypeBuilder.Property(t => t.ExpireDate).IsRequired();
-            DeeplinkTypeBuilder.Property(t => t.UserId).IsRequired();
-            DeeplinkTypeBuilder.Property(t => t.StateId).IsRequired();
-            DeeplinkTypeBuilder.HasOne(t => t.DeeplinkState)
+            var deeplinkTypeBuilder = modelBuilder.Entity<Deeplink>();
+            deeplinkTypeBuilder.ToTable(nameof(Deeplink));
+            deeplinkTypeBuilder.HasKey(t => t.Id);
+            deeplinkTypeBuilder.Property(t => t.ExpireDate).IsRequired();
+            deeplinkTypeBuilder.Property(t => t.UserId).IsRequired();
+            deeplinkTypeBuilder.Property(t => t.StateId).IsRequired();
+
+            deeplinkTypeBuilder.HasOne(t => t.DeeplinkState)
                 .WithMany()
                 .HasForeignKey(t => t.StateId)
+                .IsRequired();
+
+            deeplinkTypeBuilder.HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
                 .IsRequired();
         }
 
