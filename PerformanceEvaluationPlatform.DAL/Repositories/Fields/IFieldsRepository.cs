@@ -18,6 +18,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         Task Create(Field field);
         Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds);
         void Delete(Field field);
-        bool GetAnyReferenceToFormTemplate(int id);
+        Task<bool> GetAnyReferenceToFormTemplate(int id);
     }
 }

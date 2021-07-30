@@ -44,7 +44,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Fields
 
             var content = await response.Content.DeserializeAsAsync<ICollection<FieldListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(4, content.Count);
         }
 
         [Test]
@@ -86,9 +86,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Fields
 
             var content = await response.Content.DeserializeAsAsync<IList<FieldListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
-            Assert.AreEqual("Full-bleed divider", content[0].Name);
-            Assert.AreEqual("Written communication", content[1].Name);
+            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual("Communication skills", content[0].Name);
+            Assert.AreEqual("Full-bleed divider", content[1].Name);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Fields
 
             var content = await response.Content.DeserializeAsAsync<ICollection<FieldListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
         }
 
         [Test]
@@ -169,10 +169,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Fields
 
             var content = await response.Content.DeserializeAsAsync<IList<FieldListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
-            Assert.AreEqual("Communication skills", content[0].Name);
-            Assert.AreEqual("Full-bleed divider", content[1].Name);
-            Assert.AreEqual("Written communication", content[2].Name);
+            Assert.AreEqual(4, content.Count);
+            Assert.AreEqual("Active listening", content[0].Name);
+            Assert.AreEqual("Communication skills", content[1].Name);
         }
 
         [Test]
@@ -192,10 +191,9 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Fields
 
             var content = await response.Content.DeserializeAsAsync<IList<FieldListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(4, content.Count);
             Assert.AreEqual("Written communication", content[0].Name);
             Assert.AreEqual("Full-bleed divider", content[1].Name);
-            Assert.AreEqual("Communication skills", content[2].Name);
         }
 
     }

@@ -115,7 +115,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
-            var anyReferenceToFormTemplate = _fieldsRepository.GetAnyReferenceToFormTemplate(id);
+            var anyReferenceToFormTemplate = await _fieldsRepository.GetAnyReferenceToFormTemplate(id);
             if (anyReferenceToFormTemplate == false)
             {
                 _fieldsRepository.Delete(entity);
@@ -146,8 +146,8 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 Id = t.Id,
                 Name = t.Name,
-                AssesmentGroupName = t.AssesmentGroupName,
-                Type = t.TypeName,
+                AssesmentGroupName = t.AssesmentGroup,
+                Type = t.Type,
                 IsRequired = t.IsRequired
             });
             return Ok(items);

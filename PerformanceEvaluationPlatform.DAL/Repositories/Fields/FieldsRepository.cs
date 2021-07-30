@@ -17,7 +17,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         {
         }
 
-        public Task<IList<FieldListItemDto>> GetList(FieldListFilterDto filter)
+        public async Task<IList<FieldListItemDto>> GetList(FieldListFilterDto filter)
         {
             var parameters = new
             {
@@ -29,7 +29,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
                 TitleSortOrder = filter.TitleSortOrder
             };
 
-            return ExecuteSp<FieldListItemDto>("[dbo].[spGetFieldListItems]", parameters);
+            return await ExecuteSp<FieldListItemDto>("[dbo].[spGetFieldListItems]", parameters);
         }
         public async Task<IList<FieldTypeListItemDto>> GetTypesList()
         {
@@ -83,9 +83,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         {
             return Get<Field>(id);
         }
-        public bool GetAnyReferenceToFormTemplate(int id)
+        public async Task<bool> GetAnyReferenceToFormTemplate(int id)
         {
-            return DbContext.Set<FormTemplateFieldMap>().Any(t => t.FieldId == id);
+            return await DbContext.Set<FormTemplateFieldMap>().AnyAsync(t => t.FieldId == id);
         }
 
         public async Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds)

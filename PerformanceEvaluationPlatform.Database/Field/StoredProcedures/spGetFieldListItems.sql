@@ -61,8 +61,8 @@ BEGIN
 		[F].[Id],
 		[F].[Name],
 		[FT].[Name] AS [Type],
-		[AG].[Name] AS [Assesment Group],
-		[F].[IsRequired] AS [Is required]
+		[AG].[Name] AS [AssesmentGroup],
+		[F].[IsRequired] AS [IsRequired]
 
 	FROM [dbo].[Field] [F]
 		INNER JOIN [dbo].[AssesmentGroup] [AG] ON [AG].[Id] = [F].[AssesmentGroupId]
