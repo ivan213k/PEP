@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.User.Dto
+namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dto
 {
     public class UserDetailDto
     {

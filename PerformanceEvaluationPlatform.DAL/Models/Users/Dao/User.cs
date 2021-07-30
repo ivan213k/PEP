@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
+namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
 {
    public class User
     {
@@ -13,10 +13,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public DateTime FirstDayInIndustry { get; set; }
         public DateTime FirstDayInCompany { get; set; }
-        public int TeamId { get; set; }
         public Team Team { get; set; }
+        public DateTime FirstDayInIndustry { get; set; }
+        public int TeamId { get; set; }
         public int StateId { get; set; }
         public UserState UserState { get; set; }
         public int TechnicalLevelId { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using UserDao = PerformanceEvaluationPlatform.DAL.Models.User.Dao.User;
+using  PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
 {
@@ -18,7 +18,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
        
         public DeeplinkState DeeplinkState { get; set; }
 
-        public UserDao User { get; set; }
+        public User User { get; set; }
 
         public int SurveyId { get; set; }
 

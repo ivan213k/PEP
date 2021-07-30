@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using System;
 using System.Collections.Generic;
 using System.Linq;

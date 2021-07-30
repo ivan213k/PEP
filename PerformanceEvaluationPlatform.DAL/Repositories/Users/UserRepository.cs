@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

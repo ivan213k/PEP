@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;

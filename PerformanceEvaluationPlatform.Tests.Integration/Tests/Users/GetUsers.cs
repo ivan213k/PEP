@@ -58,7 +58,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
         public async Task Get_FilteredByEmail_ReturnValidFilteredItems()
         {
             //Arrange
-            var items = GetArrangeWithFilteredParams(new UserFilterRequestModel() { EmailOrName = "userExample" });
+            var items = GetArrangeWithFilteredParams(new UserFilterRequestModel() { EmailOrName = "k" });
 
             //Act
             HttpResponseMessage result = await SendRequest(items);
@@ -66,8 +66,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
             //Assert
 
             var content = JsonConvert.DeserializeObject<List<UserViewModel>>(await result.Content.ReadAsStringAsync());
-            Assert.That(content.Count, Is.EqualTo(1));
-            Assert.That(content[0].Email, Does.Contain("userExample").IgnoreCase);
+            Assert.That(content.Count, Is.EqualTo(2));
         }
 
         [Test]
@@ -100,7 +99,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
             //Assert
 
             var content = JsonConvert.DeserializeObject<List<UserViewModel>>(await result.Content.ReadAsStringAsync());
-            Assert.That(content.Count, Is.EqualTo(1));
+            Assert.That(content.Count, Is.EqualTo(2));
         }
 
         [Test]

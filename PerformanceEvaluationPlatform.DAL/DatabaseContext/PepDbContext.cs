@@ -6,7 +6,7 @@ using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
