@@ -25,8 +25,8 @@ namespace PerformanceEvaluationPlatform.Models.User.ViewModels
        
         public int YearsOfExpirience { get; set; }
 
-        public DateTime PreviousPEDate { get; set; }
-        public DateTime NextPEDate { get; set; }
+        public DateTime? PreviousPEDate { get; set; }
+        public DateTime? NextPEDate { get; set; }
         public DateTime FirstDayInCompany { get; set; }
         public ICollection<DateTime> PreviousPEs { get; set; }
     }

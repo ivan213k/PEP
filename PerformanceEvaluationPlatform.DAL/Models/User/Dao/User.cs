@@ -24,6 +24,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public int EnglishLevelId { get; set; }
         public Level EnglishLevel { get; set; }
         public IEnumerable<UserRoleMap> Roles { get; set; }
+        public IEnumerable<Survey> Surveys { get; set; }
 
 
         public static void Configure(ModelBuilder modelBuilder)
@@ -68,6 +69,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
             userTableBuilder.HasOne(t => t.EnglishLevel)
                 .WithMany()
                 .HasForeignKey(T => T.EnglishLevelId)
+                .IsRequired();
+
+            userTableBuilder.HasMany(s => s.Surveys)
+                .WithOne(s => s.Asignee)
                 .IsRequired();
 
         }
