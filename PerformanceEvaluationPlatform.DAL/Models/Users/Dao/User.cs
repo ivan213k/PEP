@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
+namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
 {
    public class User
     {
@@ -13,10 +13,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public DateTime FirstDayInIndustry { get; set; }
         public DateTime FirstDayInCompany { get; set; }
-        public int TeamId { get; set; }
         public Team Team { get; set; }
+        public DateTime FirstDayInIndustry { get; set; }
+        public int TeamId { get; set; }
         public int StateId { get; set; }
         public UserState UserState { get; set; }
         public int TechnicalLevelId { get; set; }
@@ -24,6 +24,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
         public int EnglishLevelId { get; set; }
         public Level EnglishLevel { get; set; }
         public IEnumerable<UserRoleMap> Roles { get; set; }
+        public IEnumerable<Survey> Surveys { get; set; }
 
 
         public static void Configure(ModelBuilder modelBuilder)
@@ -68,6 +69,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
             userTableBuilder.HasOne(t => t.EnglishLevel)
                 .WithMany()
                 .HasForeignKey(T => T.EnglishLevelId)
+                .IsRequired();
+
+            userTableBuilder.HasMany(s => s.Surveys)
+                .WithOne(s => s.Asignee)
                 .IsRequired();
 
         }

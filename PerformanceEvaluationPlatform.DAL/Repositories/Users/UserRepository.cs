@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 .Include(s => s.Team)
                 .Include(s => s.UserState)
                 .Include(s=>s.Roles).ThenInclude(s=>s.Role)
+                .Include(s=>s.Surveys)
                 .SingleOrDefaultAsync(s=>s.Id == id);
 
             if(user is null)
@@ -59,15 +61,15 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
                 FirstDayInCompany = user.FirstDayInCompany,
                 Team = user.Team.Title,
                 Project = user.Team.ProjectId.ToString(),
-                Role = user.Roles.Select(s=>s.Role.Title).ToList(),
+                Role = user.Roles.Select(s => s.Role.Title).ToList(),
                 State = user.UserState.Name,
                 TechnicalLevel = user.TechnicalLevel.Name,
                 EnglishLevel = user.EnglishLevel.Name,
                 YearsInCompany = DateTime.Now.Year - user.FirstDayInCompany.Year,
                 YearsOfExpirience = DateTime.Now.Year - user.FirstDayInIndustry.Year,
-                NextPeDate = new DateTime(2001, 01, 01),
-                PreviousPEDate = new DateTime(2001, 01, 01),
-                PreviousPes = new DateTime[] { new DateTime(2001,01,01) }
+                NextPeDate = user.Surveys.Select(s => s.AppointmentDate).FirstOrDefault(s => s > DateTime.Now),
+                PreviousPEDate = user.Surveys.Select(s => s.AppointmentDate).OrderBy(s => s).Skip(1).Take(1).FirstOrDefault(),
+                PreviousPes = user.Surveys.Select(s => s.AppointmentDate).Where(s=>s<DateTime.Now).ToList()
             };
             return userDetailDto;
         }

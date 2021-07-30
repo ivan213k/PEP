@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using System.Collections.Generic;
-using UserModel = PerformanceEvaluationPlatform.DAL.Models.User.Dao.User;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
 {

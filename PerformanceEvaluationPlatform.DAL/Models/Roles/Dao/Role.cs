@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PerformanceEvaluationPlatform.DAL.Models.User.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using System;
 using System.Collections.Generic;
 using System.Text;

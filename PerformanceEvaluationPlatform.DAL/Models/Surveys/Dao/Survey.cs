@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using System;
 using System.Collections.Generic;
-using UserDao = PerformanceEvaluationPlatform.DAL.Models.User.Dao.User;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 {
@@ -21,8 +21,8 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
         public SurveyState SurveyState { get; set; }
         public Level RecomendedLevel { get; set; }
 
-        public UserDao Asignee { get; set; }
-        public UserDao Supervisor { get; set; }
+        public User Asignee { get; set; }
+        public User Supervisor { get; set; }
         public FormTemplate FormTemplate { get; set; }
 
         public ICollection<Deeplink> DeepLinks { get; set; }

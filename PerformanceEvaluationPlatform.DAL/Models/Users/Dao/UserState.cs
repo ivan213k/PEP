@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.User.Dao
+namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
 {
     public class UserState
     {
