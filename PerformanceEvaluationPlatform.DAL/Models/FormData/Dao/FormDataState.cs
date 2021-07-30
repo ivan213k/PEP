@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
 {
@@ -8,17 +7,17 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public ICollection<FormData> FormData { get; set; }
-
         public static void Configure(ModelBuilder modelBuilder)
         {
-            var FormDataTypeBuilder = modelBuilder.Entity<FormDataState>();
-            FormDataTypeBuilder.ToTable("FormDataState");
-            FormDataTypeBuilder.HasKey(fds => fds.Id);
-            FormDataTypeBuilder.Property(fds => fds.Name).IsRequired().HasMaxLength(128);
+            var formDataTypeBuilder = modelBuilder.Entity<FormDataState>();
+            formDataTypeBuilder.ToTable("FormDataState");
+            formDataTypeBuilder.HasKey(fds => fds.Id);
+            formDataTypeBuilder.Property(fds => fds.Name).IsRequired().HasMaxLength(128);
 
-            FormDataTypeBuilder.HasMany<FormData>().WithOne(td => td.FormDataState)
-                .HasForeignKey(td => td.FormDataStateId).IsRequired();
+            formDataTypeBuilder.HasMany<FormData>()
+                .WithOne(td => td.FormDataState)
+                .HasForeignKey(td => td.FormDataStateId)
+                .IsRequired();
         }
     }
 }

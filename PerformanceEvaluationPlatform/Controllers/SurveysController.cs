@@ -5,6 +5,7 @@ using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Models.Survey.Enums;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
 using System;
@@ -17,6 +18,10 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class SurveysController : ControllerBase
     {
+        private const int FormDataSubmittedStateId = 2;
+        private const int NewSurveyStateId = 1;
+        private const int DeepLinkStateDraftId = 1;
+
         private readonly ISurveysRepository _surveysRepository;
         private readonly IFormTemplatesRepository _formTemplatesRepository;
         private readonly IUserRepository _userRepository;
@@ -86,14 +91,27 @@ namespace PerformanceEvaluationPlatform.Controllers
                 SupervisorId = detailsDto.SupervisorId,
                 Summary = detailsDto.Summary,
                 AssignedUsers = detailsDto.AssignedUsers?
-                    .Select(t => new SurveyAssigneeViewModel
+                    .Select(a => new SurveyAssigneeViewModel
                     {
-                        Id = t.Id,
-                        Name = t.Name
+                        Id = a.Id,
+                        Name = a.Name,
+                        Status = GetFormDataFillStatus(detailsDto.FormData, a.Id)
                     }).ToList()
             };
 
             return Ok(detailsViewModel);
+        }
+
+        private SurveyAssignedUserStatus GetFormDataFillStatus(ICollection<SurveyFormDataDto> formData, int assigneId)
+        {
+            var formDataRecord = formData.SingleOrDefault(f => f.AssignedUserId == assigneId);
+    
+            return formDataRecord?.StateId switch
+            {
+                null => SurveyAssignedUserStatus.NoData,
+                FormDataSubmittedStateId => SurveyAssignedUserStatus.Done,
+                _ => SurveyAssignedUserStatus.InProgress
+            };
         }
 
         [HttpPost("surveys")]
@@ -143,13 +161,13 @@ namespace PerformanceEvaluationPlatform.Controllers
                 SupervisorId = surveyRequestModel.SupervisorId,
                 RecommendedLevelId = surveyRequestModel.RecommendedLevelId,
                 AppointmentDate = surveyRequestModel.AppointmentDate,
-                StateId = GetNewSurveyStateId(),
+                StateId = NewSurveyStateId,
                 DeepLinks = surveyRequestModel.AssignedUserIds
                 .Select(userId => new Deeplink
                 {
                     Code = Guid.NewGuid(),
                     UserId = userId,
-                    StateId = GetDeepLinkStateDraftId(),
+                    StateId = DeepLinkStateDraftId,
 
                 }).ToList()
             };
@@ -163,15 +181,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         private bool ContainsSameAssignedUserIds(ICollection<int> assignedUserIds)
         {
             return assignedUserIds.Count() != assignedUserIds.Distinct().Count();
-        }
-
-        private int GetNewSurveyStateId()
-        {
-            return 1;
-        }
-        private int GetDeepLinkStateDraftId() 
-        {
-            return 1;
         }
 
         [HttpPut("surveys/{id}")]

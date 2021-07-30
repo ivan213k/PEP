@@ -11,10 +11,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
 {
     public class SurveysRepository : BaseRepository, ISurveysRepository
     {
-        public SurveysRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext) 
+        public SurveysRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext)
             : base(databaseOptions, dbContext)
         {
-            
+
         }
 
         public async Task<IList<SurveyListItemDto>> GetList(SurveyListFilterDto filter)
@@ -51,10 +51,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             var survey = await DbContext.Set<Survey>()
                 .Include(r => r.SurveyState)
                 .Include(r => r.RecomendedLevel)
-                .Include(r=>r.FormTemplate)
-                .Include(r=>r.Asignee)
-                .Include(r=>r.Supervisor)
-                .Include(r=>r.DeepLinks).ThenInclude(t=>t.User)
+                .Include(r => r.FormTemplate)
+                .Include(r => r.Asignee)
+                .Include(r => r.Supervisor)
+                .Include(r => r.DeepLinks).ThenInclude(t => t.User)
+                .Include(r => r.FormData).ThenInclude(f => f.FormDataState)
                 .SingleOrDefaultAsync(r => r.Id == id);
 
             if (survey is null)
@@ -71,12 +72,20 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 RecommendedLevelId = survey.RecommendedLevelId,
                 Summary = survey.Summary,
                 Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
+                AssigneeId = survey.AssigneeId,
                 Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
+                SupervisorId = survey.SupervisorId,
                 FormName = survey.FormTemplate.Name,
-                AssignedUsers = survey.DeepLinks.Select(d=>new SurveyAssigneeDto 
+                FormId = survey.FormTemplateId,
+                AssignedUsers = survey.DeepLinks.Select(d => new SurveyAssigneeDto
                 {
                     Id = d.UserId,
                     Name = $"{d.User.FirstName} {d.User.LastName}"
+                }).ToList(),
+                FormData = survey.FormData.Select(fd => new SurveyFormDataDto
+                {
+                    AssignedUserId = fd.UserId,
+                    StateId = fd.FormDataStateId
                 }).ToList()
             };
             return details;
@@ -100,6 +109,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
         public Task Create(Survey survey)
         {
             return Create<Survey>(survey);
-        } 
+        }
     }
 }

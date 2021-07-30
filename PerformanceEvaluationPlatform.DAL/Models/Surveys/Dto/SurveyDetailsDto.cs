@@ -17,6 +17,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
         public string RecommendedLevel { get; set; }
         public int RecommendedLevelId { get; set; }
         public ICollection<SurveyAssigneeDto> AssignedUsers { get; set; }
+        public ICollection<SurveyFormDataDto> FormData { get; set; }
         public string Summary { get; set; }
     }
 }

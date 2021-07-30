@@ -4,6 +4,7 @@ using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using System;
 using System.Collections.Generic;
+using FormDataDao = PerformanceEvaluationPlatform.DAL.Models.FormData.Dao.FormData;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
 {
@@ -26,6 +27,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
         public FormTemplate FormTemplate { get; set; }
 
         public ICollection<Deeplink> DeepLinks { get; set; }
+        public ICollection<FormDataDao> FormData { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -67,6 +69,11 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
             surveyTypeBuilder.HasOne(t => t.FormTemplate)
                 .WithMany()
                 .HasForeignKey(t => t.FormTemplateId)
+                .IsRequired();
+
+            surveyTypeBuilder.HasMany(t => t.FormData)
+                .WithOne()
+                .HasForeignKey(t => t.SurveyId)
                 .IsRequired();
         }
     }
