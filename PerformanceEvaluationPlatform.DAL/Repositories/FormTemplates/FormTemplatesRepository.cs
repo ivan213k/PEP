@@ -19,7 +19,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
 
         public Task<FormTemplate> Get(int id)
         {
-            return Get<FormTemplate>(id);
+            return DbContext.Set<FormTemplate>().Include(t=>t.FormTemplateFieldMaps).SingleOrDefaultAsync(t=>t.Id == id);
         }
 
         public async Task<FormTemplateDetailsDto> GetDetailsAsync(int id)

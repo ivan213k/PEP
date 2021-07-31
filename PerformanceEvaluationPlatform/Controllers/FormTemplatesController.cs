@@ -6,18 +6,23 @@ using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared.Enums;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.Models.FormTemplates.Interfaces;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class FormTemplatesController: ControllerBase
+    public class FormTemplatesController : ControllerBase
     {
         private readonly IFormTemplatesRepository _formTemplatesRepository;
         private readonly IFieldsRepository _fieldsRepository;
+
+        private const int DraftStateId = 2;
+        private const int DefaultVersion = 1;
 
         public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository)
         {
@@ -26,7 +31,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("formtemplates")]
-        public async Task<IActionResult> GetAsync([FromQuery]FormTemplateListFilterOrderRequestModel filter)
+        public async Task<IActionResult> GetAsync([FromQuery] FormTemplateListFilterOrderRequestModel filter)
         {
             var filterDto = new FormTemplateListFilterOrderDto
             {
@@ -36,6 +41,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Skip = (int)filter.Skip,
                 Take = (int)filter.Take
             };
+
             var itemsDto = await _formTemplatesRepository.GetList(filterDto);
             var items = itemsDto.Select(f => new FormTemplateListItemViewModel
             {
@@ -46,6 +52,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 StatusId = f.StatusId,
                 CreatedAt = f.CreatedAt
             });
+
             return Ok(items);
         }
 
@@ -59,17 +66,19 @@ namespace PerformanceEvaluationPlatform.Controllers
                     Id = s.Id,
                     Name = s.Name
                 });
+
             return Ok(items);
         }
 
-       [HttpGet("formtemplates/{id:int}")]
-       public async Task<IActionResult> DetailsAsync(int id)
-       {
+        [HttpGet("formtemplates/{id:int}")]
+        public async Task<IActionResult> DetailsAsync(int id)
+        {
             var itemDto = await _formTemplatesRepository.GetDetailsAsync(id);
-            if(itemDto == null)
+            if (itemDto == null)
             {
                 return NotFound();
             }
+
             var item = new FormTemplateDetailsViewModel
             {
                 Id = itemDto.Id,
@@ -90,34 +99,21 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
 
             return Ok(item);
-       }
+        }
+
         [HttpPost("formtemplates")]
-        public async Task<IActionResult> CreateAsync([FromBody]CreateFormTemplateRequestModel requestModel)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateFormTemplateRequestModel requestModel)
         {
-            var fieldIds = requestModel.Fields.GroupBy(f => f.Id).Any(f => f.Count() > 1);
-            if (fieldIds)
-            {
-                return BadRequest("Fields can't repeat!");
-            }
-
-            var orders = requestModel.Fields.GroupBy(f => f.Order).Any(f => f.Count() > 1);
-            if (orders)
-            {
-                return BadRequest("Orders can't repeat!");
-            }
-
             var existName = await _formTemplatesRepository.ExistByName(requestModel.Name);
             if (existName)
             {
-                return BadRequest("This name is exist");
+                ModelState.AddModelError<CreateFormTemplateRequestModel>(t => t.Name, $"Name = {requestModel.Name} exists!");
+                return Conflict(ModelState);
             }
 
-            var ids = requestModel.Fields.Select(x => x.Id);
-
-            var fields = await _fieldsRepository.GetListByIds(ids);
-
-            if (fields.Count() != ids.Count())
-                return BadRequest("Not all fields exist!");
+            await ValidateFormTemplate(requestModel);
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
 
             var formTemplate = new FormTemplate
             {
@@ -133,10 +129,69 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             await _formTemplatesRepository.Create(formTemplate);
             await _formTemplatesRepository.SaveChanges();
+
             return Redirect("/formtemplates/" + formTemplate.Id);
         }
 
-        private const int DraftStateId = 2;
-        private const int DefaultVersion = 1;
+        [HttpPut("formtemplates/{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFormTemplateRequestModel requestModel)
+        { 
+            var formTemplate = await _formTemplatesRepository.Get(id);
+            if (formTemplate == null)
+                return NotFound();
+
+            await ValidateFormTemplate(requestModel);
+            if (ModelState.IsValid == false)
+                return BadRequest(ModelState);
+
+            formTemplate.FormTemplateFieldMaps.Clear();
+            formTemplate.FormTemplateFieldMaps = requestModel.Fields.Select(m => new FormTemplateFieldMap
+            {
+                FieldId = m.Id,
+                Order = m.Order
+            }).ToList();
+
+            await _formTemplatesRepository.SaveChanges();
+
+            return Redirect("/formtemplates/" + formTemplate.Id);
+        }
+
+        private async Task ValidateFormTemplate(IFormTemplateRequest request)
+        {
+            var hasDuplicatedFields = request.Fields.GroupBy(f => f.Id).Where(f => f.Count() > 1).ToList();
+            var hasDuplicatedOrder = request.Fields.GroupBy(f => f.Order).Where(f => f.Count() > 1).ToList();
+
+            if(hasDuplicatedFields.Any()||hasDuplicatedOrder.Any())
+            {
+                for (int i = 0; i < request.Fields.Count(); i++)
+                {
+                    if (hasDuplicatedFields.Any(t => t.Key == request.Fields[i].Id))
+                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields[i].Id, $"Field with id={request.Fields[i].Id} is repeated!");
+                    if (hasDuplicatedOrder.Any(t => t.Key == request.Fields[i].Order))
+                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields[i].Id, $"Field with order={request.Fields[i].Order} is repeated!");
+                }
+            }
+
+            var expectedOrder = Enumerable.Range(1, request.Fields.Count);
+            var actualOrder = request.Fields
+                    .Select(t => t.Order)
+                    .OrderBy(t => t);
+
+            var isOrderValid = expectedOrder.SequenceEqual(actualOrder);
+            if (!isOrderValid)
+                ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields, "Missing order elements!");
+
+            var ids = request.Fields.Select(x => x.Id).Distinct();
+            var existedFields = await _fieldsRepository.GetListByIds(ids);
+
+            if (existedFields.Count() != ids.Count())
+            {
+                foreach (var item in ids)
+                {
+                    if (!existedFields.Any(t => t.Id == item))
+                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields, $"Field with {item} does not exist!");
+                }
+            }
+        }
     }
 }

@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel
 {
-    public class CreateFormTemplateRequestModel: IFormTemplateRequest
+    public class UpdateFormTemplateRequestModel: IFormTemplateRequest
     {
-        [Required]
-        [MaxLength(128)]
-        public string Name { get; set; }
         [Required]
         public IList<FormTemplateFieldRequestModel> Fields { get; set; }
     }
