@@ -177,7 +177,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
         }
 
-        [HttpPut("activate/{id:int}")]
+        [HttpPut("{id:int}/activate")]
         public async Task<IActionResult> ActivateUser(int id)
         {
             var user = await _userRepository.Get(id);
@@ -195,7 +195,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Save();
             return Ok("User successfully change his state, now its active!");
         }
-        [HttpPut("suspend/{id:int}")]
+        [HttpPut("{id:int}/suspend")]
         public async Task<IActionResult> SuspendUser(int id)
         {
             var user = await _userRepository.Get(id);
