@@ -32,7 +32,34 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 Skip = filter.Skip,
                 Take = filter.Take,
             };
-            return await ExecuteSp<SurveyListItemDto>("[dbo].spGetSurveyListItems", parameters);
+
+            var splitOn = $"{nameof(SurveyListItemAssignedUserDto.AssignedUserId)}, {nameof(SurveyListItemFormDataDto.FormDataAssignedUserId)}";
+            var rawSurveys = await ExecuteSp<SurveyListItemDto, SurveyListItemAssignedUserDto, SurveyListItemFormDataDto, SurveyListItemDto>("[dbo].spGetSurveyListItems", parameters, MapResultFunc, splitOn: splitOn);
+            var groupedSurveys = GroupSurveys(rawSurveys);
+            return groupedSurveys;
+        }
+
+        private IList<SurveyListItemDto> GroupSurveys(ICollection<SurveyListItemDto> surveys)
+        {
+            return surveys.GroupBy(s => s.Id)
+                .Select(g =>
+                {
+                    var groupedSurvey = g.First();
+                    groupedSurvey.AssignedUsers = g.Select(p => p.AssignedUsers.Single()).Distinct().ToList();
+                    groupedSurvey.FormData = g.Select(p => p.FormData.Single()).Distinct().ToList();
+                    return groupedSurvey;
+                }).ToList();
+        }
+
+        private SurveyListItemDto MapResultFunc(SurveyListItemDto surveyListItemDto, SurveyListItemAssignedUserDto assignedUserDto, SurveyListItemFormDataDto formDataDto)
+        {
+            surveyListItemDto.AssignedUsers ??= new List<SurveyListItemAssignedUserDto>();
+            surveyListItemDto.AssignedUsers.Add(assignedUserDto);
+
+            surveyListItemDto.FormData ??= new List<SurveyListItemFormDataDto>();
+            surveyListItemDto.FormData.Add(formDataDto);
+
+            return surveyListItemDto;
         }
 
         public async Task<IList<SurveyStateListItemDto>> GetStatesList()
@@ -77,7 +104,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 SupervisorId = survey.SupervisorId,
                 FormName = survey.FormTemplate.Name,
                 FormId = survey.FormTemplateId,
-                AssignedUsers = survey.DeepLinks.Select(d => new SurveyAssigneeDto
+                AssignedUsers = survey.DeepLinks.Select(d => new SurveyDetailsAssignedUserDto
                 {
                     Id = d.UserId,
                     Name = $"{d.User.FirstName} {d.User.LastName}"

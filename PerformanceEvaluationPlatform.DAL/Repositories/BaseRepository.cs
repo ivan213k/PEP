@@ -37,6 +37,16 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
             }
         }
 
+        protected async Task<IList<TResult>> ExecuteSp<TFirst, TSecond, TThird, TResult>(string spName, object parameters, Func<TFirst, TSecond, TThird, TResult> resultMappingFunc, string splitOn)
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_databaseOptions.SqlConnectionString))
+            {
+                var mappedParameters = MapParameters(parameters);
+                var result = await dbConnection.QueryAsync<TFirst, TSecond, TThird, TResult>(spName, resultMappingFunc, mappedParameters, splitOn: splitOn, commandType: CommandType.StoredProcedure);
+                return result.AsList();
+            }
+        }
+
         protected async Task<TEntity> Get<TEntity>(int id) where TEntity: class
         {
             return await DbContext.Set<TEntity>().FindAsync(id);

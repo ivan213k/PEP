@@ -51,20 +51,44 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
             var surveysDto = await _surveysRepository.GetList(filterDto);
 
-            var surveys = surveysDto.Select(t => new SurveyListItemViewModel
+            var surveys = surveysDto.Select(s => new SurveyListItemViewModel
             {
-                Id = t.Id,
-                AppointmentDate = t.AppointmentDate,
-                Assignee = $"{t.AssigneeFirstName} {t.AssigneeLastName}",
-                AssigneeId = t.AssigneeId,
-                Supervisor = $"{t.SupervisorFirstName} {t.SupervisorLastName}",
-                SupervisorId = t.SupervisorId,
-                FormName = t.FormName,
-                FormId = t.FormId,
-                State = t.StateName,
-                StateId = t.StateId,
+                Id = s.Id,
+                AppointmentDate = s.AppointmentDate,
+                Assignee = $"{s.AssigneeFirstName} {s.AssigneeLastName}",
+                AssigneeId = s.AssigneeId,
+                Supervisor = $"{s.SupervisorFirstName} {s.SupervisorLastName}",
+                SupervisorId = s.SupervisorId,
+                FormName = s.FormName,
+                FormId = s.FormId,
+                State = s.StateName,
+                StateId = s.StateId,
+                ProgressInPercenteges = GetSurveyProgressInPercenteges(s)
             });
             return Ok(surveys);
+        }
+
+        private double GetSurveyProgressInPercenteges(SurveyListItemDto survey)
+        {
+            double totalScore = survey.AssignedUsers.Count;
+            if (totalScore == 0)
+            {
+                return 0;
+            }
+            double score = 0;
+            foreach (var assignedUser in survey.AssignedUsers)
+            {
+                var formDataRecord = survey.FormData
+                    .SingleOrDefault(r => r != null && r.FormDataAssignedUserId == assignedUser.AssignedUserId);
+                if (formDataRecord != null)
+                {
+                    if (formDataRecord.AssignedUserStateId == FormDataSubmittedStateId)
+                        score += 1;
+                    else
+                        score += 0.5;
+                }
+            }
+            return score / totalScore * 100;
         }
 
         [HttpGet("surveys/{id}")]
@@ -175,7 +199,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _surveysRepository.Create(survey);
             await _surveysRepository.SaveChanges();
 
-            return CreatedAtAction(nameof(GetSurveyDetails), new { Id = survey.Id }, survey);
+            return CreatedAtAction(nameof(GetSurveyDetails), new { id = survey.Id }, new {Id = survey.Id });
         }
 
         private bool ContainsSameAssignedUserIds(ICollection<int> assignedUserIds)

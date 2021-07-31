@@ -14,5 +14,6 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
         public DateTime AppointmentDate { get; set; }
         public string State { get; set; }
         public int StateId { get; set; }
+        public double ProgressInPercenteges { get; set; }
     }
 }

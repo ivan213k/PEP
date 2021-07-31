@@ -87,12 +87,17 @@ BEGIN
 			[SU].[Id] AS [SupervisorId],
 			[S].[AppointmentDate],
 			[SS].[Name] AS [StateName],
-			[SS].[Id] AS [StateId]
+			[SS].[Id] AS [StateId],
+			[Dl].UserId AS [AssignedUserId],
+			[FD].[UserId] AS [FormDataAssignedUserId],
+			[FD].[FormDataStateId] AS [AssignedUserStateId]
 		FROM [dbo].Survey [S]
 		INNER JOIN [dbo].[SurveyState] [SS] ON [S].[StateId] = [SS].[Id]
 		INNER JOIN [dbo].[FormTemplate] [FT] ON [S].[FormTemplateId] = [FT].[Id]
 		INNER JOIN [dbo].[User] [AU] ON [S].[AssigneeId] = [AU].[Id]
 		INNER JOIN [dbo].[User] [SU] ON [S].[SupervisorId] = [SU].[Id]
+		LEFT JOIN [dbo].[Deeplink] [DL] ON [S].[Id] = [DL].[SurveyId]
+		LEFT JOIN [dbo].[FormData] [FD] ON [S].[Id] = [FD].[SurveyId]
 		'+ @JoinClause + ' 
 		'+ @WhereClause + ' 
 		ORDER BY ' + @OrderClause + '
