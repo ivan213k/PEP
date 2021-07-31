@@ -16,28 +16,40 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
     class ActivateUser:IntegrationTestBase
     {
         [Test]
-        public async Task SuspendUser_WhenCalled_ReturnOkAndChangeUserState()
+        public async Task ActivateUser_WhenCalled_ShouldChangeUserState()
         {
             var item = BaseAddress
                 .AppendPathSegment("users")
-                .AppendPathSegment(1)
+                .AppendPathSegment(3)
                 .AppendPathSegment("activate")
                 .WithHttpMethod(HttpMethod.Put);
 
             var user = BaseAddress
                 .AppendPathSegment("users")
-                .AppendPathSegment(1)
+                .AppendPathSegment(3)
                 .WithHttpMethod(HttpMethod.Get);
 
-            HttpResponseMessage responseItem = await SendRequest(item);
+             await SendRequest(item);
 
             HttpResponseMessage responseUser = await SendRequest(user);
             var content = JsonConvert.DeserializeObject<UserDetailViewModel>(await responseUser.Content.ReadAsStringAsync());
 
             Assert.That(content.StateName, Is.EqualTo("Active"));
         }
+
         [Test]
-        public async Task SuspendUser_NotExistingId_ReturnNOtFound()
+        public async Task ActivateUser_UserIdWichhasActivateState_ShouldreturnOkWithWords()
+        {
+            var item = BaseAddress
+               .AppendPathSegment("users")
+               .AppendPathSegment(2)
+               .AppendPathSegment("activate")
+               .WithHttpMethod(HttpMethod.Put);
+            HttpResponseMessage response = await SendRequest(item);
+            Assert.That(response.Content.ReadAsStringAsync, Is.EqualTo("User is already with active state"));
+        }
+        [Test]
+        public async Task ActivateUser_NotExistingId_ReturnNOtFound()
         {
             var item = BaseAddress
                 .AppendPathSegment("users")
