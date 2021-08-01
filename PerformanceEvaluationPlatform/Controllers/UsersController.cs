@@ -19,6 +19,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class UsersController : ControllerBase
     {
         private const int ActiveState = 1;
+        private const int SuspendState = 2;
         private readonly IUserRepository _userRepository;
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
@@ -174,7 +175,43 @@ namespace PerformanceEvaluationPlatform.Controllers
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+        }
 
+        [HttpPut("{id:int}/activate")]
+        public async Task<IActionResult> ActivateUser(int id)
+        {
+            var user = await _userRepository.Get(id);
+
+            if(user is null)
+            {
+                return NotFound();
+            }
+
+            if(user.StateId == ActiveState)
+            {
+                return Ok("User is already with active state");
+            }
+            user.StateId = ActiveState;
+            await _userRepository.Save();
+            return Ok("User successfully change his state, now its active!");
+        }
+        [HttpPut("{id:int}/suspend")]
+        public async Task<IActionResult> SuspendUser(int id)
+        {
+            var user = await _userRepository.Get(id);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (user.StateId == SuspendState)
+            {
+                return Ok("User is already with suspend state");
+            }
+            user.StateId = SuspendState;
+            await _userRepository.Save();
+            return Ok("User successfully change his state, now its ");
         }
 
 

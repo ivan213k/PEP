@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
+namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integration
 {
     [TestFixture]
     class GetDetails : IntegrationTestBase
