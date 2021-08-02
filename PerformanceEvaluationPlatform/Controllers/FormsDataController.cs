@@ -87,7 +87,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 RecommendedLevel = detailsDto.RecommendedLevel,
                 RecommendedLevelId = detailsDto.RecommendedLevelId,
                 State = detailsDto.State,
-                StateId = detailsDto.FormDataStateId,
+                StateId = DraftStateId,
                 Project = detailsDto.Project,
                 ProjectId = detailsDto.ProjectId,
                 Team = detailsDto.Team,
@@ -108,5 +108,55 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
             return Ok(detailsViewModel);
         }
+
+        [HttpPut("forms/{formDataId:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFieldDataRequestModel requestModel)
+        {
+            var entity = await _formDataRepository.GetFieldData(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var field = await _formDataRepository.GetField(requestModel.FieldId);
+            if (field == null)
+            {
+                return BadRequest("Field does not exists.");
+            }
+
+            var assessment = await _formDataRepository.GetAssessment(requestModel.AssesmentId);
+            if (assessment == null)
+            {
+                return BadRequest("Assesment does not exists.");
+            }
+
+            if (assessment.Name != entity.Field.AssesmentGroup.Name)
+            {
+                return BadRequest("Assessment is not related to the field");
+            }
+            
+            var comment = await _formDataRepository.GetComment(requestModel.Comment);
+            if (entity.Assesment.IsCommentRequired && comment == null)
+            {
+                return BadRequest("Comment is required, but not set");
+            }
+
+            if (entity.FormsData.FormDataStateId == SubmittedStateId)
+            {
+                return UnprocessableEntity("This form already complited");
+            }
+
+            entity.Comment = requestModel.Comment;
+            entity.FieldId = requestModel.FieldId;
+            entity.AssesmentId = requestModel.AssesmentId;
+            entity.FormsData.FormDataStateId = InProgressStateId;
+
+            await _formDataRepository.SaveChanges();
+            return Ok("State was changed on In Progress");
+        }
+
+        private const int DraftStateId = 1;
+        private const int InProgressStateId = 2;
+        private const int SubmittedStateId = 3;
     }
 }

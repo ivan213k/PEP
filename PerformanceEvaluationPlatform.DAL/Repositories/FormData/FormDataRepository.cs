@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
 {
@@ -112,5 +112,30 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         {
             return $"{formData.User.FirstName} {formData.User.LastName}";
         }
+
+        public Task<FieldData> GetFieldData(int id)
+        {
+            return Get<FieldData>(id);
+        }
+
+        public Task<Field> GetField(int id)
+        {
+            return Get<Field>(id);
+        }
+
+        public Task<Assesment> GetAssessment(int id)
+        {
+            return Get<Assesment>(id);
+        }
+        public Task<FormDataState> GetState(int id)
+        {
+            return Get<FormDataState>(id);
+        }
+
+        public async Task<FieldData> GetComment(string comment)
+        {
+            return await DbContext.Set<FieldData>().FirstOrDefaultAsync(fd => fd.Comment == comment);
+        }
+
     }
 }
