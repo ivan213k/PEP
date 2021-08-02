@@ -33,7 +33,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
 
             ICollection<DeeplinkListItemViewModel> content = JsonConvert.DeserializeObject<ICollection<DeeplinkListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(5, content.Count);
       
         }
 
@@ -80,10 +80,13 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
 
             var content = await response.Content.DeserializeAsAsync<IList<DeeplinkListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
-            Assert.AreEqual(content[0].SentTo, "Artur Grugon");
-            Assert.AreEqual(content[1].SentTo, "Kiril Krigan");
-            Assert.AreEqual(content[2].SentTo, "Kristina Lavruk");
+            Assert.AreEqual(5, content.Count);
+            Assert.AreEqual(content[4].SentTo, "FirstName345 LastName123");
+            Assert.AreEqual(content[1].SentTo, "Kristina Lavruk");
+            Assert.AreEqual(content[0].SentTo, "Kiril Krigan");
+
+            Assert.AreEqual(content[2].SentTo, "FirstName123 LastName123");
+            Assert.AreEqual(content[3].SentTo, "FirstName234 LastName123");
         }
     }
 }
