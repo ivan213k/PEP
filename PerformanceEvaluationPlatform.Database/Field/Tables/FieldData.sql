@@ -5,6 +5,7 @@
 	[FieldId] INT NOT NULL,
 	[AssesmentId] INT NOT NULL,
 	[Comment] NVARCHAR (MAX),
+	[Order] INT NOT NULL,
 
 	CONSTRAINT [PK_FieldData] PRIMARY KEY([Id]),
 	CONSTRAINT [FK_Field_FieldId_Data] FOREIGN KEY ([FieldId]) REFERENCES [dbo].[Field]([Id]),

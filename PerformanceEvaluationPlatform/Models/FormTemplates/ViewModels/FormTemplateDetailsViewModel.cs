@@ -13,6 +13,6 @@ namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
         public DateTime CreatedAt { get; set; }
         public string Status { get; set; }
         public int StatusId { get; set; }
-        public ICollection<FormTemplateFieldViewModel>Fields { get; set; }
+        public IEnumerable<FormTemplateFieldViewModel>Fields { get; set; }
     }
 }

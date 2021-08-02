@@ -43,7 +43,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
             //Assert
             CustomAssert.IsSuccess(response);
 
-            var content = JsonConvert.DeserializeObject<FormDataDetailsViewModel>(await response.Content.ReadAsStringAsync());
+            var content = JsonConvert.DeserializeObject<FormDataDetailViewModel>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
         }
     }

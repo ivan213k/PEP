@@ -13,11 +13,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
             formDataTypeBuilder.ToTable("FormDataState");
             formDataTypeBuilder.HasKey(fds => fds.Id);
             formDataTypeBuilder.Property(fds => fds.Name).IsRequired().HasMaxLength(128);
-
-            formDataTypeBuilder.HasMany<FormData>()
-                .WithOne(td => td.FormDataState)
-                .HasForeignKey(td => td.FormDataStateId)
-                .IsRequired();
         }
     }
 }

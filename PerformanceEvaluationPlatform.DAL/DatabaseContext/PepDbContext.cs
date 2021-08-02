@@ -46,6 +46,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             SurveyState.Configure(modelBuilder);
             Level.Configure(modelBuilder);
 
+            Assesment.Configure(modelBuilder);
+            FieldData.Configure(modelBuilder);
             Field.Configure(modelBuilder);
             FieldType.Configure(modelBuilder);
             FieldAssesmentGroup.Configure(modelBuilder);

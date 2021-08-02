@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Models.FormData.RequestModels;
 using System.Linq;
-using PerformanceEvaluationPlatform.Models.FormData.Enums;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormData;
+using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
 using System.Threading.Tasks;
 
@@ -27,7 +25,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var filterDto = new FormDataListFilterDto
             {
                 Search = filter.Search,
-                StateId = filter.StateId, 
+                StateId = filter.StateId,
                 AssigneeSortOrder = (int?)filter.AssigneeSortOrder,
                 FormNameSortOrder = (int?)filter.FormNameSortOrder,
                 AssigneeIds = filter.AssigneeIds,
@@ -70,75 +68,45 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("forms/{id:int}")]
-        public IActionResult GetDetailsPage([FromRoute] int id)
+        public async Task<IActionResult> GetDetailsPage([FromRoute] int id)
         {
-            var items = new FormDataDetailsViewModel
+            var detailsDto = await _formDataRepository.GetDetails(id);
+            if (detailsDto == null)
             {
-                Detail = GetFormDataDetailViewModels(),
-                Answers = GetFormDataAnswersItemViewModels(),
-            };
-            return Ok(items);
-        }
-
-        private static FormDataDetailViewModel GetFormDataDetailViewModels()
-        {
-            var items = new FormDataDetailViewModel
+                return NotFound();
+            }
+            var detailsViewModel = new FormDataDetailViewModel
             {
-                FormName = "ManualQA",
-                FormId = 1,
-                Assignee = "Test User 1",
-                AssigneeId = 1,
-                Reviewer = "Admin User 1",
-                ReviewerId = 1,
-                State = StateEnum.Draft,
-                AppointmentDate = DateTime.Today.AddDays(-4),
-                RecommendedLevel = "Middle",
-                RecommendedLevelId = 1,
-                Project = "Hello Flex",
-                ProjectId = 1,
-                Team = "Platform",
-                TeamId = 1,
-                Period = "01.02.2021-01.08.2021",
-                ExperienceInCompany = "1 year",
-                EnglishLevel = EnglishLevelEnum.B1,
-                CurrentPosition = "Junior",
+                FormId = detailsDto.FormId,
+                FormName = detailsDto.FormName,
+                Assignee = detailsDto.Assignee,
+                AssigneeId = detailsDto.AssigneeId,
+                Reviewer = detailsDto.Reviewer,
+                ReviewerId = detailsDto.ReviewerId,
+                AppointmentDate = detailsDto.AppointmentDate,
+                RecommendedLevel = detailsDto.RecommendedLevel,
+                RecommendedLevelId = detailsDto.RecommendedLevelId,
+                State = detailsDto.State,
+                StateId = detailsDto.FormDataStateId,
+                Project = detailsDto.Project,
+                ProjectId = detailsDto.ProjectId,
+                Team = detailsDto.Team,
+                TeamId = detailsDto.TeamId,
+                Period = detailsDto.Period,
+                ExperienceInCompany = detailsDto.ExperienceInCompany,
+                EnglishLevel = detailsDto.EnglishLevel,
+                CurrentPosition = detailsDto.CurrentPosition,
+                Answers = detailsDto.Answers?
+                .Select(fd => new FormDataAnswersItemViewModel
+                {
+                    Assessment = fd.Assessment,
+                    Comment = fd.Comment,
+                    TypeId = fd.TypeId,
+                    TypeName = fd.TypeName,
+                    Order = fd.Order,
+                }).ToList()
             };
-            return items;
-        }
-
-        private static ICollection<FormDataAnswersItemViewModel> GetFormDataAnswersItemViewModels()
-        {
-            var items = new List<FormDataAnswersItemViewModel>
-            {
-                new FormDataAnswersItemViewModel
-                {
-                    Skills = "Communication skills",
-                    Assessment = "B",
-                    Comment = "Any comment",
-                    TypeId = 1,
-                    TypeName = "Header",
-                    Order = 1,
-                },
-                new FormDataAnswersItemViewModel
-                {
-                    Skills = "Written communication",
-                    Assessment = "C",
-                    Comment = "Test comment",
-                    TypeId = 2,
-                    TypeName = "Row",
-                    Order = 2,
-                },
-                new FormDataAnswersItemViewModel
-                {
-                    Skills = "Soft skills",
-                    Assessment = "B",
-                    Comment = "My comment",
-                    TypeId = 2,
-                    TypeName = "Row",
-                    Order = 3,
-                }
-            };
-            return items;
+            return Ok(detailsViewModel);
         }
     }
 }
