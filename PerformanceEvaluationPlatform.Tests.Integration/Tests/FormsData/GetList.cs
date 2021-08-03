@@ -54,7 +54,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             var content = JsonConvert.DeserializeObject<ICollection<FormDataListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(1, content.Count);
         }
 
         [Test]

@@ -123,10 +123,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             return Get<Survey>(id);
         }
 
-        public Task<Survey> GetSurveyWithAssignedUsers(int id)
+        public Task<Survey> GetSurveyWithDeeplinksAndFormData(int id)
         {
             return DbContext.Set<Survey>()
                 .Include(s => s.DeepLinks)
+                .Include(s => s.FormData)
                 .SingleOrDefaultAsync(s => s.Id == id);
         }
 

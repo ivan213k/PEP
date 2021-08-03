@@ -11,7 +11,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
         Task<IList<SurveyStateListItemDto>> GetStatesList();
         Task<SurveyDetailsDto> GetDetails(int id);
         Task<Survey> Get(int id);
-        Task<Survey> GetSurveyWithAssignedUsers(int id);
+        Task<Survey> GetSurveyWithDeeplinksAndFormData(int id);
         Task<SurveyState> GetState(int id);
         Task<Level> GetLevel(int id);
         Task Create(Survey survey);
