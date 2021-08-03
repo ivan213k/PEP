@@ -6,17 +6,22 @@ using System.Linq;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
 using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class FormsDataController : ControllerBase
     {
+        private const int InProgressStateId = 2;
+        private const int SubmittedStateId = 3;
         private readonly IFormDataRepository _formDataRepository;
+        private readonly IFieldsRepository _fieldsRepository;
 
-        public FormsDataController(IFormDataRepository formDataRepository)
+        public FormsDataController(IFormDataRepository formDataRepository, IFieldsRepository fieldsRepository)
         {
             _formDataRepository = formDataRepository ?? throw new ArgumentNullException(nameof(formDataRepository));
+            _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
         }
 
         [HttpGet("forms")]
@@ -87,7 +92,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 RecommendedLevel = detailsDto.RecommendedLevel,
                 RecommendedLevelId = detailsDto.RecommendedLevelId,
                 State = detailsDto.State,
-                StateId = DraftStateId,
+                StateId = detailsDto.FormDataStateId,
                 Project = detailsDto.Project,
                 ProjectId = detailsDto.ProjectId,
                 Team = detailsDto.Team,
@@ -117,35 +122,33 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return NotFound();
             }
-
-            var field = await _formDataRepository.GetField(requestModel.FieldId);
-            if (field == null)
-            {
-                return BadRequest("Field does not exists.");
-            }
-
-            var assessment = await _formDataRepository.GetAssessment(requestModel.AssesmentId);
-            if (assessment == null)
-            {
-                return BadRequest("Assesment does not exists.");
-            }
-
-            if (assessment.Name != entity.Field.AssesmentGroup.Name)
-            {
-                return BadRequest("Assessment is not related to the field");
-            }
-            
-            var comment = await _formDataRepository.GetComment(requestModel.Comment);
-            if (entity.Assesment.IsCommentRequired && comment == null)
-            {
-                return BadRequest("Comment is required, but not set");
-            }
-
             if (entity.FormsData.FormDataStateId == SubmittedStateId)
             {
                 return UnprocessableEntity("This form already complited");
             }
 
+            var field = await _fieldsRepository.GetField(requestModel.FieldId);
+            if (field == null)
+            {
+                return BadRequest("Field does not exists.");
+            }
+
+            var assessment = await _fieldsRepository.GetField(requestModel.AssesmentId);
+            if (assessment == null)
+            {
+                return BadRequest("Assesment does not exists.");
+            }
+
+            if (assessment.AssesmentGroupId != entity.Field.AssesmentGroupId)
+            {
+                return BadRequest("Assessment is not related to the field");
+            }
+            
+            if (entity.Assesment.IsCommentRequired && (entity.Comment == null || entity.Comment == ""))
+            {
+                return BadRequest("Comment is required, but not set");
+            }
+        
             entity.Comment = requestModel.Comment;
             entity.FieldId = requestModel.FieldId;
             entity.AssesmentId = requestModel.AssesmentId;
@@ -153,10 +156,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             await _formDataRepository.SaveChanges();
             return Ok("State was changed on In Progress");
-        }
-
-        private const int DraftStateId = 1;
-        private const int InProgressStateId = 2;
-        private const int SubmittedStateId = 3;
+        }  
     }
 }

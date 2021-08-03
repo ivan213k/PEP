@@ -26,8 +26,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
             formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
             formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
             formDataTypeBuilder.Property(fd => fd.FormDataStateId).IsRequired();
-            formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
-            formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
 
             formDataTypeBuilder.HasOne(fd => fd.FormDataState)
                 .WithMany()
@@ -36,6 +34,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
             formDataTypeBuilder.HasOne(fd => fd.User)
                 .WithMany()
                 .HasForeignKey(fd => fd.UserId)
+                .IsRequired();
+            formDataTypeBuilder.HasOne(fd => fd.Survey)
+                .WithMany()
+                .HasForeignKey(fd => fd.SurveyId)
                 .IsRequired();
         }
     }

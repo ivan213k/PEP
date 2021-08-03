@@ -12,10 +12,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         Task<IList<FormDataStateListItemDto>> GetStatesList();
         Task<FormDataDetailsDto> GetDetails(int id);
         Task<FieldData> GetFieldData(int id);
-        Task<Field> GetField(int id);
-        Task<Assesment> GetAssessment(int id);
         Task<FormDataState> GetState(int id);
-        Task<FieldData> GetComment(string comment);
 
     }
 }

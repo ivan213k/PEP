@@ -56,7 +56,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost("fields/{id:int}")]
         public async Task<IActionResult> Copy(int id)
         {
-            var entity = await _fieldsRepository.Get(id);
+            var entity = await _fieldsRepository.GetField(id);
             if (entity == null)
             {
                 return NotFound();
@@ -81,7 +81,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPut("fields/{id:int}")]
         public async Task<IActionResult> EditField([FromRoute] int id, [FromBody] EditFieldRequestModel requestModel)
         {
-            var entity = await _fieldsRepository.Get(id);
+            var entity = await _fieldsRepository.GetField(id);
             if (entity == null)
             {
                 return NotFound();
@@ -110,7 +110,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpDelete("fields/{id:int}")]
         public async Task<IActionResult> DeleteField(int id)
         {
-            var entity = await _fieldsRepository.Get(id);
+            var entity = await _fieldsRepository.GetField(id);
             if (entity == null)
             {
                 return NotFound();

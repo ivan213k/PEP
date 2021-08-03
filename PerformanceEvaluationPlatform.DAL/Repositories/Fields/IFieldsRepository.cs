@@ -12,7 +12,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         Task<IList<FieldTypeListItemDto>> GetTypesList();
         Task<IList<FieldAssesmentGroupListItemDto>> GetFieldAssesmentGroupList();
         Task<FieldDetailsDto> GetDetails(int id);
-        Task<Field> Get(int id);
+        Task<Field> GetField(int id);
         Task<FieldType> GetType(int id);
         Task<FieldAssesmentGroup> GetAssesmentGroup(int id);
         Task Create(Field field);

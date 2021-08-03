@@ -118,24 +118,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
             return Get<FieldData>(id);
         }
 
-        public Task<Field> GetField(int id)
-        {
-            return Get<Field>(id);
-        }
-
-        public Task<Assesment> GetAssessment(int id)
-        {
-            return Get<Assesment>(id);
-        }
         public Task<FormDataState> GetState(int id)
         {
             return Get<FormDataState>(id);
         }
-
-        public async Task<FieldData> GetComment(string comment)
-        {
-            return await DbContext.Set<FieldData>().FirstOrDefaultAsync(fd => fd.Comment == comment);
-        }
-
     }
 }
