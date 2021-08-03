@@ -1,2 +1,5 @@
-﻿INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (1, 'Active')
-INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (2, 'Blocked')
+﻿INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (1, 'Draft')
+INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (2, 'Ready')
+INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (3, 'Sent')
+INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (4, 'Ready for review')
+INSERT INTO [dbo].[SurveyState]([Id], [Name]) VALUES (5, 'Archived')

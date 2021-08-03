@@ -19,7 +19,8 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class SurveysController : ControllerBase
     {
         private const int FormDataSubmittedStateId = 2;
-        private const int NewSurveyStateId = 1;
+        private const int DraftSurveyStateId = 1;
+        private const int ReadySurveyStateId = 2;
         private const int DeepLinkStateDraftId = 1;
 
         private readonly ISurveysRepository _surveysRepository;
@@ -185,7 +186,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 SupervisorId = surveyRequestModel.SupervisorId,
                 RecommendedLevelId = surveyRequestModel.RecommendedLevelId,
                 AppointmentDate = surveyRequestModel.AppointmentDate,
-                StateId = NewSurveyStateId,
+                StateId = DraftSurveyStateId,
                 DeepLinks = surveyRequestModel.AssignedUserIds
                 .Select(userId => new Deeplink
                 {
@@ -232,6 +233,32 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             await _surveysRepository.SaveChanges();
             return Ok();
+        }
+
+        [HttpPut("surveys/{id}/ready")]
+        public async Task<IActionResult> ChangeSurveyStateToReady(int id) 
+        {
+            var survey = await _surveysRepository.GetSurveyWithAssignedUsers(id);
+            if (survey is null)
+            {
+                return NotFound();
+            }
+            if (survey.StateId != DraftSurveyStateId)
+            {
+                return UnprocessableEntity("Survey not in a Draft state");
+            }
+            if (survey.FormTemplateId == default)
+            {
+                return UnprocessableEntity("Form template is not assigned");
+            }
+            if (survey.DeepLinks is null || survey.DeepLinks.Count == 0)
+            {
+                return UnprocessableEntity("Users are not assigned");
+            }
+            survey.StateId = ReadySurveyStateId;
+            await _surveysRepository.SaveChanges();
+
+            return NoContent();
         }
 
         [HttpGet("surveys/states")]
