@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
+using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Deeplink.RequestModels;
 using PerformanceEvaluationPlatform.Models.Deeplink.ViewModels;
 using System;
@@ -13,10 +17,16 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class DeeplinksController : ControllerBase
     {
         private readonly IDeeplinksRepository _deeplinksRepository;
+        private readonly IUserRepository _usersRepository;
+        private readonly ISurveysRepository _surveysRepository;
+        private readonly IFormTemplatesRepository _formTemplatesRepository;
 
-        public DeeplinksController(IDeeplinksRepository deeplinkRepository)
+        public DeeplinksController(IDeeplinksRepository deeplinkRepository, IUserRepository userRepository, ISurveysRepository surveysRepository, IFormTemplatesRepository formTemplatesRepository)
         {
             _deeplinksRepository = deeplinkRepository ?? throw new ArgumentNullException(nameof(deeplinkRepository));
+            _usersRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
         }
 
         [HttpGet("deeplinks")]
@@ -62,49 +72,114 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-     /*   [HttpGet("deeplinks/{id:int}")]
+        [HttpGet("deeplinks/{id:int}")]
         public async Task<IActionResult> Details(int id)
         {
-            var detailsDto = await _deeplinksRepository.GetDetails(id);
-            if (detailsDto == null)
+
+            // Deeplink Data
+            var detailsDeeplinkDto = await _deeplinksRepository.GetDetails(id);
+            if (detailsDeeplinkDto == null)
             {
                 return NotFound();
             }
 
+
             var detailsVm = new DeeplinkDetailsViewModel
             {
-                Id = detailsDto.Id,
-                SentTo = $"{detailsDto.SentToFirstName} {detailsDto.SentToSecondtName}",
-                SentToEmail = detailsDto.SentToEmail,
-                SentAt = detailsDto.SentAt,
-                SentBy = detailsDto.SentBy,
-                State = detailsDto.StateName,
-                ExpiresAt = detailsDto.ExpiresAt,
-                FormTemplateName = detailsDto.FormTemplateName
+                Id = detailsDeeplinkDto.Id,
+                SentTo = $"{detailsDeeplinkDto.SentTo.FirstName} {detailsDeeplinkDto.SentTo.LastName}",
+                SentToEmail = detailsDeeplinkDto.SentTo.Email,
+                SentAt = detailsDeeplinkDto.SentAt,
+                SentBy = $"{detailsDeeplinkDto.SentBy.FirstName} {detailsDeeplinkDto.SentBy.LastName}",
+                State = detailsDeeplinkDto.StateName,
+                ExpiresAt = detailsDeeplinkDto.ExpiresAt,
+                FormTemplateName = detailsDeeplinkDto.FormTemplateName
             };
 
             return Ok(detailsVm);
         }
-      */
-       
-        
-        [HttpGet("deeplinks/{id}")]
-        public IActionResult GetDeeplinkDetails([FromRoute] int id)
+
+
+
+
+
+        [HttpPut("deeplinks/{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateDeeplinkRequestModel requestModel)
         {
-            var DeeplinkDetails = new DeeplinkDetailsViewModel
+            var entity = await _deeplinksRepository.Get(id);
+            if (entity == null)
             {
-                SentTo = "User Test",
-                SentToEmail = "Test@gmail.com",
-                SentAt = new DateTime(2021,07,11),
-                SentBy = "Another user",
-                State = "InProgrees",
-                ExpiresAt = new DateTime(2022,2,26),
-                FormTemplateName = "Form 1"
+                return NotFound();
+            }
+
+
+
+            entity.ExpireDate = requestModel.ExpiresAt;
+
+            await _deeplinksRepository.SaveChanges();
+            return Ok();
+        }
+
+
+        [HttpPost("deeplinks")]
+        public async Task<IActionResult> Create([FromBody] CreateDeeplinkRequestModel requestModel)
+        {
+            if(requestModel == null)
+            {
+                return BadRequest();
+            }
+            //Exist?
+            // User To
+            var userTo = await _usersRepository.Get(requestModel.UserId);
+            if(userTo == null)
+            {
+                return BadRequest("User does not exists");
+            }
+            // User by
+            var userBy = await _usersRepository.Get(requestModel.SentById);
+            if (userBy == null)
+            {
+                return BadRequest("User does not exists");
+            }
+
+            //  Survey
+            var survey = await _surveysRepository.Get(requestModel.SurveyId);
+            if (survey == null)
+            {
+                return BadRequest("Survey does not exists");
+            }
+            // ID Users
+            if (ContainsSameUserIds(requestModel.UserId,requestModel.SentById))
+            {
+                return BadRequest("Contains same user id");
+            }
+
+            var deeplink = new Deeplink
+            {
+                StateId= GetNewStateId(),
+                UserId = requestModel.UserId,
+                SentById = requestModel.SentById,
+                ExpireDate = requestModel.ExpiresDate,
+                SurveyId = requestModel.SurveyId,
+                Code = Guid.NewGuid(),
+                SentAt =DateTime.Today
+
             };
 
-            return Ok(DeeplinkDetails);
+            await _deeplinksRepository.Create(deeplink);
+            await _deeplinksRepository.SaveChanges();
+
+            var result = new ObjectResult(new { Id = deeplink.Id }) { StatusCode = 201 };
+            return result;
+
         }
-        
-        
+        private bool ContainsSameUserIds(int SentToId, int SentById)
+        {
+            return (SentToId == SentById);
+        }
+        private int GetNewStateId()
+        {
+            return 1;
+        }
     }
 }
