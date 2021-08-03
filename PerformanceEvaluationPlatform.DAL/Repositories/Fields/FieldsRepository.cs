@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dto;
+using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
@@ -108,6 +109,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         public void Delete(Field field)
         {
             Delete<Field>(field);
+        }
+
+        public Task<FieldData> GetFieldData(int id)
+        {
+            return Get<FieldData>(id);
         }
     }
 }

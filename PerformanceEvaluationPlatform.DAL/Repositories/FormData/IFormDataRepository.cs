@@ -11,8 +11,5 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         Task<IList<FormDataListItemDto>> GetList(FormDataListFilterDto filter);
         Task<IList<FormDataStateListItemDto>> GetStatesList();
         Task<FormDataDetailsDto> GetDetails(int id);
-        Task<FieldData> GetFieldData(int id);
-        Task<FormDataState> GetState(int id);
-
     }
 }

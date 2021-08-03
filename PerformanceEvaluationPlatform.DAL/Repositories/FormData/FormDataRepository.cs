@@ -112,15 +112,5 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         {
             return $"{formData.User.FirstName} {formData.User.LastName}";
         }
-
-        public Task<FieldData> GetFieldData(int id)
-        {
-            return Get<FieldData>(id);
-        }
-
-        public Task<FormDataState> GetState(int id)
-        {
-            return Get<FormDataState>(id);
-        }
     }
 }

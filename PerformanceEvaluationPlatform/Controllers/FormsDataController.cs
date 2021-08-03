@@ -117,7 +117,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPut("forms/{formDataId:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFieldDataRequestModel requestModel)
         {
-            var entity = await _formDataRepository.GetFieldData(id);
+            var entity = await _fieldsRepository.GetFieldData(id);
             if (entity == null)
             {
                 return NotFound();
