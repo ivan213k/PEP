@@ -72,7 +72,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao
                 .IsRequired();
             surveyTypeBuilder.HasMany(t => t.FormData)
                 .WithOne()
-                .HasForeignKey(t => t.Id)
+                .HasForeignKey(t => t.SurveyId)
                 .IsRequired();
         }
     }
