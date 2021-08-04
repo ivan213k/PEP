@@ -112,5 +112,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         {
             return $"{formData.User.FirstName} {formData.User.LastName}";
         }
+
+        public Task<FormData> Get(int id)
+        {
+            return DbContext.Set<FormData>().Include(t => t.FieldData).SingleOrDefaultAsync(t => t.Id == id);
+        }
     }
 }
