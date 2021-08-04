@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Flurl;
 using NUnit.Framework;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure;
+using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Base
 {
@@ -22,10 +24,29 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Base
 
         protected async Task<HttpResponseMessage> SendRequest(HttpRequestMessage request)
         {
-
             HttpResponseMessage response = await _client.SendAsync(request);
 
             return response;
+        }
+
+        protected HttpRequestMessage CreatePutHttpRequest(params object[] segmentPaths)
+        {
+            Url url = BaseAddress;
+            foreach (var segmentPath in segmentPaths)
+            {
+                url.AppendPathSegment(segmentPath);
+            }
+            return url.WithHttpMethod(HttpMethod.Put);
+        }
+
+        protected HttpRequestMessage CreateGetHttpRequest(params object[] segmentPaths)
+        {
+            Url url = BaseAddress;
+            foreach (var segmentPath in segmentPaths)
+            {
+                url.AppendPathSegment(segmentPath);
+            }
+            return url.WithHttpMethod(HttpMethod.Get);
         }
 
         public void Dispose()

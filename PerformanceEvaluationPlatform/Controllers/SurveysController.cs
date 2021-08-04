@@ -19,7 +19,12 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class SurveysController : ControllerBase
     {
         private const int FormDataSubmittedStateId = 2;
-        private const int NewSurveyStateId = 1;
+        private const int DraftSurveyStateId = 1;
+        private const int ReadySurveyStateId = 2;
+        private const int SentSurveyStateId = 3;
+        private const int ReadyForReviewSurveyStateId = 4;
+        private const int ArchivedSurveyStateId = 5;
+
         private const int DeepLinkStateDraftId = 1;
 
         private readonly ISurveysRepository _surveysRepository;
@@ -185,7 +190,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 SupervisorId = surveyRequestModel.SupervisorId,
                 RecommendedLevelId = surveyRequestModel.RecommendedLevelId,
                 AppointmentDate = surveyRequestModel.AppointmentDate,
-                StateId = NewSurveyStateId,
+                StateId = DraftSurveyStateId,
                 DeepLinks = surveyRequestModel.AssignedUserIds
                 .Select(userId => new Deeplink
                 {
@@ -232,6 +237,118 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             await _surveysRepository.SaveChanges();
             return Ok();
+        }
+
+        [HttpPut("surveys/{id}/ready")]
+        public async Task<IActionResult> ChangeSurveyStateToReady(int id) 
+        {
+            var survey = await _surveysRepository.GetSurveyWithDeeplinksAndFormData(id);
+            if (survey is null)
+            {
+                return NotFound();
+            }
+            if (survey.StateId != DraftSurveyStateId)
+            {
+                return UnprocessableEntity("Survey not in a Draft state");
+            }
+            if (survey.FormTemplateId == default)
+            {
+                return UnprocessableEntity("Form template is not assigned");
+            }
+            if (survey.DeepLinks is null || survey.DeepLinks.Count == 0)
+            {
+                return UnprocessableEntity("Users are not assigned");
+            }
+            survey.StateId = ReadySurveyStateId;
+            await _surveysRepository.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut("surveys/{id}/sent")]
+        public async Task<IActionResult> ChangeSurveyStateToSent(int id)
+        {
+            var survey = await _surveysRepository.GetSurveyWithDeeplinksAndFormData(id);
+            if (survey is null)
+            {
+                return NotFound();
+            }
+            if (survey.StateId != DraftSurveyStateId && survey.StateId != ReadySurveyStateId)
+            {
+                return UnprocessableEntity("Survey not in a Draft or Ready state");
+            }
+            if (survey.StateId == DraftSurveyStateId)
+            {
+                if (survey.FormTemplateId == default)
+                {
+                    return UnprocessableEntity("Form template is not assigned");
+                }
+                if (survey.DeepLinks is null || survey.DeepLinks.Count == 0)
+                {
+                    return UnprocessableEntity("Users are not assigned");
+                }
+            }
+            
+            survey.StateId = SentSurveyStateId;
+            await _surveysRepository.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut("surveys/{id}/readyForReview")]
+        public async Task<IActionResult> ChangeSurveyStateToReadyForReview(int id)
+        {
+            var survey = await _surveysRepository.GetSurveyWithDeeplinksAndFormData(id);
+            if (survey is null)
+            {
+                return NotFound();
+            }
+            if (survey.StateId != SentSurveyStateId)
+            {
+                return UnprocessableEntity("Survey not in a Sent state");
+            }
+            if (HasUnsubmittedFormData(survey))
+            {
+                return UnprocessableEntity("Not all assigned users submitted form data");
+            }
+            survey.StateId = ReadyForReviewSurveyStateId;
+            await _surveysRepository.SaveChanges();
+
+            return NoContent();
+        }
+
+        private static bool HasUnsubmittedFormData(Survey survey)
+        {
+            return survey.FormData is null || 
+                survey.FormData.Count != survey.DeepLinks.Count || 
+                survey.FormData.Any(fd => fd.FormDataStateId != FormDataSubmittedStateId);
+        }
+
+        [HttpPut("surveys/{id}/archived")]
+        public async Task<IActionResult> ChangeSurveyStateToArchived(int id)
+        {
+            var survey = await _surveysRepository.Get(id);
+            if (survey is null)
+            {
+                return NotFound();
+            }
+            if (survey.StateId != ReadyForReviewSurveyStateId)
+            {
+                return UnprocessableEntity("Survey not in a Ready for review state");
+            }
+            if (!HasSummary(survey))
+            {
+                return UnprocessableEntity("Survey summary is not filled in");
+            }
+            survey.StateId = ArchivedSurveyStateId;
+            await _surveysRepository.SaveChanges();
+
+            return NoContent();
+        }
+
+        private bool HasSummary(Survey survey)
+        {
+            return !string.IsNullOrWhiteSpace(survey.Summary);
         }
 
         [HttpGet("surveys/states")]
