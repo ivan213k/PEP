@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,11 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-       
+        [Authorize]
+        [HttpGet("SomeAction")]
+       public IActionResult SomeAction()
+        {
+            return Ok("Authorized user!!");
+        }
     }
 }
