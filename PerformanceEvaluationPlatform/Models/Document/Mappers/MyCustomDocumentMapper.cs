@@ -1,89 +1,82 @@
-﻿using PerformanceEvaluationPlatform.Models.Document.BaseModels;
+﻿using PerformanceEvaluationPlatform.DAL.Models.Documents.Dto;
 using PerformanceEvaluationPlatform.Models.Document.RequestModels;
 using PerformanceEvaluationPlatform.Models.Document.ViewModels;
-using PerformanceEvaluationPlatform.Repositories.Document;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.Document.Mappers
 {
     public static class MyCustomDocumentMapper
     {
-        //TODO: Refactor after UserModel
-        //refactor after addingUserModel
-        public static DocumentListItemViewModel MappListItem(DocumentModel modeldoc, TypeViewModel typedoc) {
-            DocumentListItemViewModel item = new DocumentListItemViewModel()
+        public static DocumentListFilterDto AsDocumentListFilterDTO(this DocumentRequestModel request) {
+            var documentListFilterDto = new DocumentListFilterDto()
             {
-                Id = modeldoc.Id,
-                FirstName = $"testUser {modeldoc.UserId}",//refactor after created UserModel
-                LastName = $"testUser {modeldoc.UserId+5}",//refactor after created UserModel
-                DocumentTypeName = typedoc.TypeName,
-                ValidToDate = modeldoc.ValidToDate,
-                FileName = modeldoc.FileName
+                UserIds=request.UserIds,
+                TypeIds=request.TypeIds,
+                ValidTo=request.ValidTo,
+                Skip=request.Skip,
+                Take=request.Take,
+                Search=request.Search
             };
-            return item;
-        }
-        //TODO: Remake Mapper
-        public static DocumentDetailViewModel MappDetailDocument(DocumentModel modeldoc, TypeModel typedoc) {
-            DocumentDetailViewModel item = new DocumentDetailViewModel() {
-                Id = modeldoc.Id,
-                FirstName = $"testUser {modeldoc.UserId}",//refactor after created UserModel
-                LastName= $"testUser {modeldoc.UserId + 5}",//refactor after created UserModel
-                DocumentType = typedoc.Name,
-                ValidTo = modeldoc.ValidToDate,
-                FileName = modeldoc.FileName,
-                CreatedByFirstName = $"User {modeldoc.CreatedById}",
-                CreatedByLastName= $"User {modeldoc.CreatedById+5}",
-                CreatedAt = modeldoc.CreatedAt,
-                LastUpdatesByFirstName = $"User {modeldoc.LastUpdateById}",
-                LastUpdatesByLastName = $"User {modeldoc.LastUpdateById+5}",
-                LastUpdatesAt = modeldoc.LastUpdatesAt.Value
-                //TODO: parsing and converting Metadata from json
-
-            };
-            return item;
-        }
-        public static IEnumerable<DocumentListItemViewModel> GetListOfMappedDocumentsItemViewModels(IEnumerable<DocumentModel> documents, IEnumerable<TypeModel> types) {
-            List<DocumentListItemViewModel> models = new List<DocumentListItemViewModel>();
-            foreach (var document in documents)
-            {
-                var type = types.FirstOrDefault(x => x.Id == document.TypeId);
-                models.Add(MyCustomDocumentMapper.MappListItem(document, MyCustomDocumentMapper.TypeViewModelFromType(type)));
+            if (request.TypeSortOrder.HasValue) {
+                documentListFilterDto.TypeSortOrder = ((int)request.TypeSortOrder.Value);
             }
-            return models;
+            if (request.NameSortOrder.HasValue) {
+                documentListFilterDto.NameSortOrder = ((int)request.NameSortOrder.Value);
+            }
+            return documentListFilterDto;
         }
 
-        public static TypeViewModel TypeViewModelFromType(TypeModel type) {
-            if (type == null) {
-                return null;
-            }
-            return new TypeViewModel { 
-                Id=type.Id,
-                TypeName = type.Name 
+        public static DocumentListItemViewModel AsDocumentListItemViewModel( this DocumentListItemDto modelDto) {
+            var documentListItemViewModel = new DocumentListItemViewModel()
+            {
+                Id=modelDto.Id,
+                FileName=modelDto.FileName,
+                LastName=modelDto.LastName,
+                DocumentTypeName=modelDto.DocumentTypeName,
+                ValidToDate=modelDto.ValidToDate,
+                FirstName=modelDto.FirstName
             };
-        }
-        public static IEnumerable<TypeViewModel> GetTypeViewModelsfromTypes(IEnumerable<TypeModel> types) {
-            List<TypeViewModel> typesViewModels = new List<TypeViewModel>();
-            foreach (var type in types) {
-                typesViewModels.Add(MyCustomDocumentMapper.TypeViewModelFromType(type));
-            }
-            return typesViewModels;
+            return documentListItemViewModel;
         }
 
-        public static DocumentModel ConvertRequestAddDocumentModelToBaseModel(RequestAddDocumentModel model) {
-            return new DocumentModel
-            {
-                Id = model.Id,
-                UserId = model.UserId,
-                TypeId = model.TypeId,
-                ValidToDate = model.ValidToDate,
-                FileName = model.FileName,
-                CreatedById = model.CreatedById,
-                CreatedAt = model.CreatedByAt,
-                MetaData = model.MetaDate,
-            };
+        public static IList<DocumentListItemViewModel> ConvertToIenumerableDocumentListItemViewModelFromIenumerableDocumentListItemDto(IList<DocumentListItemDto> documentDtoItems) {
+            var converterList = documentDtoItems.Select(t => t.AsDocumentListItemViewModel()).ToList();
+            return converterList;
         }
+
+        public static DocumentDetailViewModel AsDocumentDetailViewModel( this DocumentDetailDto documentDto) {
+            var documentitemdetailItem = new DocumentDetailViewModel()
+            {
+                Id = documentDto.Id,
+                FileName = documentDto.FileName,
+                FirstName = documentDto.FirstName,
+                LastName = documentDto.LastName,
+                DocumentType = documentDto.DocumentType,
+                ValidTo = documentDto.ValidToDate,
+                CreatedByFirstName = documentDto.CreatedByFirstName,
+                CreatedByLastName = documentDto.CreatedByLastName,
+                CreatedAt = documentDto.CreatedAt,
+                LastUpdatesByFirstName = documentDto.LastUpdatesByFirstName,
+                LastUpdatesByLastName = documentDto.LastUpdatesByLastName,
+                LastUpdatesAt = documentDto.LastUpdatesAt
+            };
+            return documentitemdetailItem;
+        }
+
+        public static TypeViewModel AsTypeViewModel( this DocumentTypeDto doctype) {
+            var typeViewModel = new TypeViewModel()
+            {
+                Id = doctype.Id,
+                TypeName = doctype.Name
+            };
+            return typeViewModel;
+        }
+
+        public static IList<TypeViewModel> ConvertToIEnumerableTypeViewModelFromIEnumerableDocumentDetailDto(IList<DocumentTypeDto> documentTypesDtos) {
+            var typeViewModels = documentTypesDtos.Select(t => t.AsTypeViewModel()).ToList();
+            return typeViewModels;
+        }
+
     }
 }

@@ -10,7 +10,7 @@ namespace PerformanceEvaluationPlatform.Models.Document.RequestModels
         public ICollection<int> UserIds { get; set; }
         public ICollection<int> TypeIds { get; set; }
         public DateTime? ValidTo { get; set; }
-        public SortOrder? SortOrder { get; set; }
-        public SortCategy? SortCategy { get; set; }
+        public SortOrder? NameSortOrder { get; set; }
+        public SortOrder? TypeSortOrder { get; set; }
     }
 }

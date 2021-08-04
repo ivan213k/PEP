@@ -1,13 +1,18 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using PerformanceEvaluationPlatform.DAL.Models.Documents.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Shared;
+using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
@@ -62,6 +67,17 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 
             Role.Configure(modelBuilder);
 
+            Document.Configure(modelBuilder);
+            DocumentType.Configure(modelBuilder);
+
+            var allEntityies = modelBuilder.Model.GetEntityTypes();
+            foreach (var entity in allEntityies) {
+                var baseType = entity.ClrType;
+                if (baseType.GetInterfaces().Contains(typeof(IUpdatebleCreateable))) {
+                    entity.AddProperty("CreatedAt", typeof(DateTime));
+                    entity.AddProperty("LastUpdatesAt", typeof(DateTime?));
+                }
+            }
             FieldGroup.Configure(modelBuilder);
             Deeplink.Configure(modelBuilder);
             DeeplinkState.Configure(modelBuilder);
@@ -71,6 +87,30 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             Project.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
+        }
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker
+                            .Entries()
+                            .Where(e =>
+                                 e.State == EntityState.Added||
+                                 e.State == EntityState.Modified||
+                                 e.Entity.GetType()
+                                         .GetInterfaces()
+                                         .Contains(typeof(IUpdatebleCreateable)));
+
+            foreach (var entityEntry in entries)
+            {
+                if (entityEntry.State == EntityState.Modified)
+                {
+                    entityEntry.Property("LastUpdatesAt").CurrentValue = DateTime.Now;
+                }
+                if (entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                }
+            }
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }

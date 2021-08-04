@@ -2,14 +2,12 @@
 using NUnit.Framework;
 using PerformanceEvaluationPlatform.Models.Document.RequestModels;
 using PerformanceEvaluationPlatform.Models.Document.ViewModels;
-using PerformanceEvaluationPlatform.Models.Example.RequestModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
@@ -31,7 +29,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             CustomAssert.IsSuccess(response);
             Assert.IsNotNull(documentlist);
             Assert.IsNotEmpty(documentlist);
-            Assert.AreEqual(30,documentlist.Count);
+            
 
         }
         [Test]
@@ -41,8 +39,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                 .AppendPathSegment("documents")
                 .SetQueryParams(new DocumentRequestModel
                 {
-                    Skip = 10,
-                    Take =10
+                    Skip = 0,
+                    Take =3
                 })
                 .WithHttpMethod(HttpMethod.Get);
 
@@ -54,8 +52,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             CustomAssert.IsSuccess(responseMessage);
             Assert.IsNotNull(documentlist);
             Assert.IsNotEmpty(documentlist);
-            Assert.AreEqual(10,documentlist.Count);
-            Assert.AreEqual(11,documentlist[0].Id);
+            Assert.AreEqual(3,documentlist.Count);
+            Assert.AreEqual(1,documentlist[0].Id);
         }
         [Test]
         public async Task Request_should_return_valid_items_after_default_pagination_behavior()
@@ -74,7 +72,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             CustomAssert.IsSuccess(responseMessage);
             Assert.IsNotNull(documentlist);
             Assert.IsNotEmpty(documentlist);
-            Assert.AreEqual(30,documentlist.Count);
             Assert.AreEqual(1,documentlist[0].Id);
         }
         [Test]
@@ -192,7 +189,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   ValidTo=DateTime.Now.AddDays(1)
+                   ValidTo=DateTime.Now.AddDays(2)
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
@@ -211,7 +208,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   ValidTo = DateTime.Now.AddDays(-5)
+                   ValidTo = new DateTime(1970, 6, 15)
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
@@ -229,8 +226,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   SortCategy=Models.Shared.Enums.SortCategy.Name,
-                   SortOrder=Models.Shared.Enums.SortOrder.Ascending
+                   TypeSortOrder=Models.Shared.Enums.SortOrder.Ascending,
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
@@ -239,8 +235,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             var documentlist = JsonConvert.DeserializeObject<IList<DocumentListItemViewModel>>(await response.Content.ReadAsStringAsync());
             CustomAssert.IsSuccess(response);
             Assert.IsNotEmpty(documentlist);
-            Assert.True(documentlist[0].FirstName.Contains("2"));
-            Assert.True(documentlist[29].FirstName.Contains("31"));
+            
         }
         [Test]
         public async Task Request_should_return_ordered_descending_list_of_document_by_username()
@@ -250,8 +245,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   SortCategy = Models.Shared.Enums.SortCategy.Name,
-                   SortOrder = Models.Shared.Enums.SortOrder.Descending
+                   NameSortOrder = Models.Shared.Enums.SortOrder.Descending
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
@@ -260,8 +254,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             var documnetlist = JsonConvert.DeserializeObject<IList<DocumentListItemViewModel>>(await response.Content.ReadAsStringAsync());
             CustomAssert.IsSuccess(response);
             Assert.IsNotEmpty(documnetlist);
-            Assert.True(documnetlist[0].FirstName.Contains("51"));
-            Assert.True(documnetlist[29].FirstName.Contains("22"));
+            
         }
         [Test]
         public async Task Request_should_return_ordered_ascendeing_list_of_document_by_typername()
@@ -271,8 +264,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   SortCategy = Models.Shared.Enums.SortCategy.Type,
-                   SortOrder = Models.Shared.Enums.SortOrder.Ascending
+                   TypeSortOrder = Models.Shared.Enums.SortOrder.Descending,
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
@@ -281,7 +273,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             var DocumentList = JsonConvert.DeserializeObject<IList<DocumentListItemViewModel>>(await response.Content.ReadAsStringAsync());
             CustomAssert.IsSuccess(response);
             Assert.IsNotEmpty(DocumentList);
-            Assert.True(DocumentList[0].DocumentTypeName.Contains("1"));
+           
         }
         [Test]
         public async Task Request_should_return_ordered_descending_list_of_document_by_typename()
@@ -291,8 +283,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                .AppendPathSegment("documents")
                .SetQueryParams(new DocumentRequestModel
                {
-                   SortCategy = Models.Shared.Enums.SortCategy.Type,
-                   SortOrder = Models.Shared.Enums.SortOrder.Descending
+                   NameSortOrder = Models.Shared.Enums.SortOrder.Ascending
                })
                .WithHttpMethod(HttpMethod.Get);
             //Act
