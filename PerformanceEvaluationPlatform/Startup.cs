@@ -55,29 +55,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-                .AddCookie()
-                .AddOpenIdConnect("Auth0", options =>
-                {
-                    options.Authority = $"https://{Configuration["Auth0:Domain"]}";
-                    options.ClientId = Configuration["Auth0:ClientId"];
-                    options.ClientSecret = Configuration["Auth0:ClientSecret"];
-
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-
-                    options.Scope.Clear();
-                    options.Scope.Add("openid");
-
-                    options.CallbackPath = new PathString("/callback");
-
-                    options.ClaimsIssuer = "Auth0";
-                });
-
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
