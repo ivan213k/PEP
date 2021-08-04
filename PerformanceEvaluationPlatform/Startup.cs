@@ -21,6 +21,8 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -55,6 +57,23 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+            };
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options=> 
+            {
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+                options.Audience = Configuration["Auth0:Audience"];
+                options.TokenValidationParameters = tokenValidationParameters;
+            });
+
             
         }
 
@@ -74,6 +93,7 @@ namespace PerformanceEvaluationPlatform
 
             app.UseRouting();
 
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
