@@ -5,6 +5,7 @@ using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Models.Shared;
 using PerformanceEvaluationPlatform.Models.Survey.Enums;
 using PerformanceEvaluationPlatform.Models.Survey.RequestModels;
 using PerformanceEvaluationPlatform.Models.Survey.ViewModels;
@@ -153,22 +154,22 @@ namespace PerformanceEvaluationPlatform.Controllers
             var formTemplate = await _formTemplatesRepository.Get(surveyRequestModel.FormId);
             if (formTemplate is null)
             {
-                return BadRequest("Form template does not exists.");
+                return BadRequest("Form template does not exist.");
             }
             var assignee = await _userRepository.Get(surveyRequestModel.AssigneeId);
             if (assignee is null)
             {
-                return BadRequest("Assignee does not exists.");
+                return BadRequest("Assignee does not exist.");
             }
             var supervisor = await _userRepository.Get(surveyRequestModel.SupervisorId);
             if (supervisor is null)
             {
-                return BadRequest("Supervisor does not exists.");
+                return BadRequest("Supervisor does not exist.");
             }
             var level = await _surveysRepository.GetLevel(surveyRequestModel.RecommendedLevelId);
             if (level is null)
             {
-                return BadRequest("Level does not exists.");
+                return BadRequest("Level does not exist.");
             }
             if (ContainsSameAssignedUserIds(surveyRequestModel.AssignedUserIds))
             {
@@ -204,7 +205,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _surveysRepository.Create(survey);
             await _surveysRepository.SaveChanges();
 
-            return CreatedAtAction(nameof(GetSurveyDetails), new { id = survey.Id }, new {Id = survey.Id });
+            return CreatedAtAction(nameof(GetSurveyDetails), new { id = survey.Id }, new IdViewModel {Id = survey.Id });
         }
 
         private bool ContainsSameAssignedUserIds(ICollection<int> assignedUserIds)

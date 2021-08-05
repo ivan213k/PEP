@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
-using PerformanceEvaluationPlatform.Models.Document.BaseModels;
-using PerformanceEvaluationPlatform.Models.Document.ViewModels;
+using PerformanceEvaluationPlatform.DAL.Models.Documents.Dto;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
@@ -26,11 +23,12 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             HttpResponseMessage response = await SendRequest(request);
 
             //Asserts
-            var typeslist = JsonConvert.DeserializeObject<IList<TypeModel>>(await response.Content.ReadAsStringAsync());
+            var responce = await response.Content.ReadAsStringAsync();
+            var typeslist = JsonConvert.DeserializeObject<IList<DocumentTypeDto>>(responce);
             CustomAssert.IsSuccess(response);
             Assert.IsNotNull(typeslist);
             Assert.IsNotEmpty(typeslist);
-            Assert.AreEqual(5,typeslist.Count);
+            Assert.AreEqual(3,typeslist.Count);
 
         }
         

@@ -6,8 +6,8 @@
 	[UserId] INT NOT NULL,
 	[ExpireDate] DATETIME2 NOT NULL,
 	[StateId] INT NOT NULL,
-	[SentById] INT NOT NULL,
-	[SentAt] DATETIME2 NOT NULL
+	[SentById] INT,
+	[SentAt] DATETIME2
 
 	CONSTRAINT [PK_Deeplink] PRIMARY KEY([Id]),
 	CONSTRAINT [FK_Deeplink_DeeplinkStateId] FOREIGN KEY ([StateId]) REFERENCES [dbo].[DeeplinkState]([Id]),

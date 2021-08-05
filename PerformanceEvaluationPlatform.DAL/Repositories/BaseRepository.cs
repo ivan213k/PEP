@@ -53,7 +53,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories
         }
 
         protected async Task Create<TEntity>(TEntity entity)
-        {
+        {  
             await DbContext.AddAsync(entity);
         }
 
