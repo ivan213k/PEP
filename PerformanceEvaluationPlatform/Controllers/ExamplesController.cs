@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
@@ -21,6 +22,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("examples")]
+        [Authorize]
         public async Task<IActionResult> Get([FromQuery]ExampleListFilterRequestModel filter)
         {
             var filterDto = new ExampleListFilterDto
@@ -45,6 +47,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("examples/types")]
+        [Authorize]
         public async Task<IActionResult> GetTypes()
         {
             var itemsDto = await _examplesRepository.GetTypesList();
@@ -59,6 +62,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("examples/states")]
+        [Authorize]
         public async Task<IActionResult> GetStates()
         {
             var itemsDto = await _examplesRepository.GetStatesList();
@@ -73,6 +77,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("examples/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var detailsDto = await _examplesRepository.GetDetails(id);
@@ -93,6 +98,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("examples/{id:int}")]
+        [Authorize]
         public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateExampleRequestModel requestModel)
         {
             var entity = await _examplesRepository.Get(id);
@@ -123,6 +129,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPost("examples")]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody]CreateExampleRequestModel requestModel)
         {
             var exampleType = await _examplesRepository.GetType(requestModel.TypeId);

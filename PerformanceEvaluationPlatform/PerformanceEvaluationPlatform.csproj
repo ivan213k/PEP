@@ -6,24 +6,23 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	</ItemGroup>
-	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
-		<ExternalConsole>true</ExternalConsole>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\PerformanceEvaluationPlatform.DAL\PerformanceEvaluationPlatform.DAL.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Document\Interfaces\" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PerformanceEvaluationPlatform.DAL\PerformanceEvaluationPlatform.DAL.csproj" />
+  </ItemGroup>
 </Project>
