@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Models.Projects;
+using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Projects.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,6 +29,16 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Projects
             };
 
             return ExecuteSp<ProjectListItemDto>("[dbo].[spGetProjectListItems]", parameters);
+        }
+
+        public Task<Project> Get(int id)
+        {
+            return Get<Project>(id);
+        }
+
+        public Task Create(Project project)
+        {
+            return Create<Project>(project);
         }
     }
 }

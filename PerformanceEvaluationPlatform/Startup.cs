@@ -10,11 +10,11 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
-
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
+using PerformanceEvaluationPlatform.DAL.Repositories.Document;
+using PerformanceEvaluationPlatform.Models.Document.Validator;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
-using PerformanceEvaluationPlatform.Repositories.Document;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
@@ -35,7 +35,7 @@ namespace PerformanceEvaluationPlatform
         {
             services.AddControllers();
             services.AddSwaggerGen();
-            services.AddSingleton<IDocumentReposotory, MockDataRepository>();
+            
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
@@ -46,6 +46,9 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
             services.AddTransient<ISurveysRepository, SurveysRepository>();
+
+            services.AddTransient<IDocumentReposotory, DocumentRepository>();
+            services.AddTransient<IDocumentValidator, DocumentRequestModelsValidator>();
             services.AddTransient<IFieldsGroupRepository, FieldsGroupRepository>();
             services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
             services.AddTransient<ITeamsRepository, TeamsRepository>();

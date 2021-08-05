@@ -70,7 +70,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks
             {
                 Id = deeplink.Id,
                // SentToId = deeplink.UserId,
-                SentAt = deeplink.SentAt,
+                SentAt = deeplink.SentAt.GetValueOrDefault(),
                // SentById = deeplink.SentById,
                 StateName = deeplink.DeeplinkState.Name,
                 ExpiresAt = deeplink.ExpireDate,

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Flurl;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
@@ -47,6 +49,16 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Base
                 url.AppendPathSegment(segmentPath);
             }
             return url.WithHttpMethod(HttpMethod.Get);
+        }
+
+        protected HttpRequestMessage CreatePostHttpRequest(string segmentPath, object requestModel) 
+        {
+            var requestMessage = BaseAddress.AppendPathSegment(segmentPath).WithHttpMethod(HttpMethod.Post);
+            var json = JsonConvert.SerializeObject(requestModel);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            requestMessage.Content = stringContent;
+
+            return requestMessage;
         }
 
         public void Dispose()

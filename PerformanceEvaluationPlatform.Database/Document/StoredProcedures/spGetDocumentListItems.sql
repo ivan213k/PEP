@@ -3,8 +3,8 @@
 @UserListIds [dbo].[IntList] READONLY,
 @TypeListIds [dbo].[IntList] READONLY,
 @ValidUpToDate DATETIME2,
-@TypeFieldOfSorting INT,
-@SortOrder INT,
+@NameSortOrder INT,
+@TypeSortOrder INT,
 @Skip INT,
 @Take INT
 
@@ -41,35 +41,36 @@ IF (@ValidUpToDate IS NOT NULL)
  
 		SET @WhereClause = @WhereClause + ' [D].[ValidToDate] < @ValidUpToDate '
 	END
-IF(@TypeFieldOfSorting IS NOT NULL AND @SortOrder IS NOT NULL)
+IF(@NameSortOrder IS NOT NULL)
 	BEGIN
-		if(@TypeFieldOfSorting=1)
-			BEGIN
-				IF(@SortOrder=1)
-					SET @OrderClause=' [U].[FirstName] ASC , [U].[LastName] ASC '
-				IF(@SortOrder=2)
-					SET @OrderClause=' [U].[FirstName] DESC, [U].[LastName] DESC '
-			END
-		if(@TypeFieldOfSorting=2)
-			BEGIN
-				IF(@SortOrder=1)
-					SET @OrderClause=' [DT].[Name] ASC '
-				IF(@SortOrder=2)
-					SET @OrderClause=' [DT].[Name] DESC '
-			END
+		IF(@NameSortOrder=1)
+			SET @OrderClause=' [U].[FirstName] ASC , [U].[LastName] ASC '
+		ELSE
+			SET @OrderClause=' [U].[FirstName] DESC, [U].[LastName] DESC '
 	END
-ELSE
+IF(@TypeSortOrder IS NOT NULL)
+	BEGIN
+		IF(@TypeSortOrder=1)
+			SET @OrderClause=' [DT].[Name] ASC '
+		ELSE
+			SET @OrderClause=' [DT].[Name] DESC '
+	END
+IF(@OrderClause='')
 	SET @OrderClause=' [U].[FirstName] ASC , [U].[LastName] ASC '
 	
-DECLARE @SqlQuery NVARCHAR(MAX)='SELECT [D].[Id],
-[U].FirstName,
-[U].[LastName],
-[DT].[Name] AS [DocumentTypeName],
-[D].[ValidToDate],[D].[FileName] 
+DECLARE @SqlQuery NVARCHAR(MAX)='
+SELECT 
+	[D].[Id],
+	[U].[FirstName],
+	[U].[LastName],
+	[DT].[Name] AS [DocumentTypeName],
+	[D].[ValidToDate],
+	[D].[FileName] 
 
 FROM [dbo].[Document] AS [D]
-INNER JOIN [dbo].[User] [U] ON [U].[Id]=[D].[UserId]
-INNER JOIN [dbo].[DocumentType] [DT] ON [DT].Id=[D].[TypeId] '
+
+	INNER JOIN [dbo].[User] [U] ON [U].[Id]=[D].[UserId]
+	INNER JOIN [dbo].[DocumentType] [DT] ON [DT].Id=[D].[TypeId] '
 + @JoinClause + '
 ' + @WhereClause +'
 ORDER BY ' + @OrderClause + '
@@ -81,8 +82,8 @@ DECLARE @Params NVARCHAR(MAX) = '
 		@UserListIds [dbo].[IntList] READONLY,
 		@TypeListIds [dbo].[IntList] READONLY,
 		@ValidUpToDate DATETIME2,
-		@TypeFieldOfSorting INT,
-		@SortOrder INT,
+		@NameSortOrder INT,
+		@TypeSortOrder INT,
 		@Skip INT,
 		@Take INT
 	';
@@ -92,8 +93,8 @@ DECLARE @Params NVARCHAR(MAX) = '
 		@UserListIds ,
 		@TypeListIds ,
 		@ValidUpToDate ,
-		@TypeFieldOfSorting ,
-		@SortOrder ,
+		@NameSortOrder ,
+		@TypeSortOrder ,
 		@Skip ,
 		@Take 
 
