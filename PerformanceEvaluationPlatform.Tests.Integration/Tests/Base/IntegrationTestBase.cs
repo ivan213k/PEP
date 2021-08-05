@@ -22,7 +22,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Base
             _client = _factory.CreateClient();
         }
 
-        protected Flurl.Url BaseAddress => _client.BaseAddress;
+        protected Url BaseAddress => _client.BaseAddress;
 
         protected async Task<HttpResponseMessage> SendRequest(HttpRequestMessage request)
         {
@@ -33,32 +33,53 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Base
 
         protected HttpRequestMessage CreatePutHttpRequest(params object[] segmentPaths)
         {
-            Url url = BaseAddress;
-            foreach (var segmentPath in segmentPaths)
-            {
-                url.AppendPathSegment(segmentPath);
-            }
+            var url = AppendPathSegments(segmentPaths);
             return url.WithHttpMethod(HttpMethod.Put);
+        }
+
+        protected HttpRequestMessage CreatePutHttpRequest(object requestModel, string segmentPath, int entityId)
+        {
+            var url = AppendPathSegments(segmentPath, entityId);
+
+            var requestMessage = url.WithHttpMethod(HttpMethod.Put);
+            requestMessage.Content = CreateStringContent(requestModel);
+
+            return requestMessage;
         }
 
         protected HttpRequestMessage CreateGetHttpRequest(params object[] segmentPaths)
         {
-            Url url = BaseAddress;
-            foreach (var segmentPath in segmentPaths)
-            {
-                url.AppendPathSegment(segmentPath);
-            }
+            var url = AppendPathSegments(segmentPaths);
             return url.WithHttpMethod(HttpMethod.Get);
         }
 
         protected HttpRequestMessage CreatePostHttpRequest(string segmentPath, object requestModel) 
         {
             var requestMessage = BaseAddress.AppendPathSegment(segmentPath).WithHttpMethod(HttpMethod.Post);
-            var json = JsonConvert.SerializeObject(requestModel);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            requestMessage.Content = stringContent;
-
+            requestMessage.Content = CreateStringContent(requestModel);
             return requestMessage;
+        }
+        protected HttpRequestMessage CreatePostHttpRequest(string segmentPath)
+        {
+            var requestMessage = BaseAddress.AppendPathSegment(segmentPath).WithHttpMethod(HttpMethod.Post);
+            return requestMessage;
+        }
+
+        private Url AppendPathSegments(params object[] segmentPaths)
+        {
+            Url url = BaseAddress;
+            foreach (var segmentPath in segmentPaths)
+            {
+                url.AppendPathSegment(segmentPath);
+            }
+
+            return url;
+        }
+
+        private static StringContent CreateStringContent(object requestModel)
+        {
+            var json = JsonConvert.SerializeObject(requestModel);
+            return new StringContent(json, Encoding.UTF8, "application/json");
         }
 
         public void Dispose()

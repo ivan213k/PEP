@@ -6,6 +6,5 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Shared
     {
         public DateTime CreatedAt { get; }
         public DateTime? LastUpdatesAt { get;}
-
     }
 }
