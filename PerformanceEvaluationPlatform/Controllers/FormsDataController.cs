@@ -135,13 +135,13 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return NotFound();
             }
             
-            var field = await _fieldsRepository.GetField(requestModel.Select(fd => fd.FieldId).FirstOrDefault());
+            var field = await _fieldsRepository.Get(requestModel.Select(fd => fd.FieldId).FirstOrDefault());
             if (field == null)
             {
                 return BadRequest("Field does not exists.");
             }
 
-            var assessment = await _fieldsRepository.GetField(requestModel.Select(fd => fd.AssesmentId).FirstOrDefault());
+            var assessment = await _fieldsRepository.Get(requestModel.Select(fd => fd.AssesmentId).FirstOrDefault());
             if (assessment == null)
             {
                 return BadRequest("Assesment does not exists.");

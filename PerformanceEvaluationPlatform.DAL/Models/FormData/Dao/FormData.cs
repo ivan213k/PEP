@@ -39,10 +39,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
                 .WithMany()
                 .HasForeignKey(fd => fd.UserId)
                 .IsRequired();
-            formDataTypeBuilder.HasOne(fd => fd.Survey)
-                .WithMany()
-                .HasForeignKey(fd => fd.Id)
-                .IsRequired();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
             //Arrange
             HttpRequestMessage request = BaseAddress
                 .AppendPathSegment("forms")
-                .AppendPathSegment("wrong path")
+                .AppendPathSegment(100)
                 .WithHttpMethod(HttpMethod.Get);
 
             //Act

@@ -79,7 +79,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
             return Get<FieldType>(id);
         }
 
-        public Task<Field> GetField(int id)
+        public Task<Field> Get(int id)
         {
             return Get<Field>(id);
         }
