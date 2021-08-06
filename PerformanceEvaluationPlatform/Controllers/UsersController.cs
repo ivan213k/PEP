@@ -152,7 +152,8 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 ClientId = _config["Auth0:ClientId"],
                 ClientSecret = _config["Auth0:ClientSecret"],
-                SigningAlgorithm = JwtSignatureAlgorithm.RS256
+                SigningAlgorithm = JwtSignatureAlgorithm.RS256,
+                Audience = _config["Auth0:Audience"]
             });
 
             if (existingUser != null)
