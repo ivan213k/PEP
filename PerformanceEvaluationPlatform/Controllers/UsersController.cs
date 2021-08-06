@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Auth0.AuthenticationApi;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
@@ -24,12 +26,14 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
         private readonly ISurveysRepository _surveysRepository;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository)
+        private readonly IConfiguration _config;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository, IConfiguration config)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
             _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
 
@@ -142,6 +146,9 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
+            var client = new AuthenticationApiClient(_config["Auth0:Domain"]);
+            var token = await client.GetTokenAsync(new Auth0.AuthenticationApi.Models.AuthorizationCodeTokenRequest() 
+            { ClientId = _config["Auth0:ClientId"], ClientSecret = _config["Auth0:ClientSecret"],SigningAlgorithm = JwtSignatureAlgorithm.RS256,Organization="SharpMinds",Code="1234",});
 
             if (existingUser != null)
             {
@@ -154,6 +161,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest(ModelState);
             }
+        
 
 
             var userRoleMaps = createUserRequest.RoleIds.Select(s => new UserRoleMap { RoleId = s }).ToList();
