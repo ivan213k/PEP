@@ -18,6 +18,11 @@ using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -54,6 +59,25 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<ITeamsRepository, TeamsRepository>();
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
+
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+            };
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options=> 
+            {
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+                options.Audience = Configuration["Auth0:Audience"];
+                options.TokenValidationParameters = tokenValidationParameters;
+            });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -71,6 +95,10 @@ namespace PerformanceEvaluationPlatform
             });
 
             app.UseRouting();
+
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

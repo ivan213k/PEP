@@ -71,9 +71,10 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             DocumentType.Configure(modelBuilder);
 
             var allEntityies = modelBuilder.Model.GetEntityTypes();
-            foreach (var entity in allEntityies) {
-                var baseType = entity.ClrType;
-                if (baseType.GetInterfaces().Contains(typeof(IUpdatebleCreateable))) {
+            foreach (var entity in allEntityies) 
+            {
+                if (IsAssignebleFrom(entity.ClrType, typeof(IUpdatebleCreateable))) 
+                {
                     entity.AddProperty("CreatedAt", typeof(DateTime));
                     entity.AddProperty("LastUpdatesAt", typeof(DateTime?));
                 }
@@ -90,14 +91,10 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
         }
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            var entries = ChangeTracker
-                            .Entries()
-                            .Where(e =>
-                                 e.State == EntityState.Added||
-                                 e.State == EntityState.Modified||
-                                 e.Entity.GetType()
-                                         .GetInterfaces()
-                                         .Contains(typeof(IUpdatebleCreateable)));
+            var entries = ChangeTracker.Entries()
+                                        .Where(e => (e.State == EntityState.Added ||
+                                                     e.State == EntityState.Modified) &&
+                                                     IsAssignebleFrom(e.Entity.GetType(), typeof(IUpdatebleCreateable)));
 
             foreach (var entityEntry in entries)
             {
@@ -111,6 +108,10 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
                 }
             }
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+        private bool IsAssignebleFrom(Type entity, Type assigneFromType) 
+        {
+            return assigneFromType.IsAssignableFrom(entity);
         }
     }
 }

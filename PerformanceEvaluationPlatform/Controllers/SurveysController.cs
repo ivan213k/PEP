@@ -229,7 +229,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var recommendedLevel = await _surveysRepository.GetLevel(surveyRequestModel.RecommendedLevelId);
             if (recommendedLevel is null)
             {
-                return BadRequest("Level does not exists.");
+                return BadRequest("Level does not exist.");
             }
 
             entity.AppointmentDate = surveyRequestModel.AppointmentDate;
