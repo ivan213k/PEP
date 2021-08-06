@@ -1,4 +1,5 @@
 ﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
@@ -147,8 +148,12 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
             var client = new AuthenticationApiClient(_config["Auth0:Domain"]);
-            var token = await client.GetTokenAsync(new Auth0.AuthenticationApi.Models.AuthorizationCodeTokenRequest() 
-            { ClientId = _config["Auth0:ClientId"], ClientSecret = _config["Auth0:ClientSecret"],SigningAlgorithm = JwtSignatureAlgorithm.RS256,Organization="SharpMinds",Code="1234",});
+            AccessTokenResponse token = await client.GetTokenAsync(new ClientCredentialsTokenRequest()
+            {
+                ClientId = _config["Auth0:ClientId"],
+                ClientSecret = _config["Auth0:ClientSecret"],
+                SigningAlgorithm = JwtSignatureAlgorithm.RS256
+            });
 
             if (existingUser != null)
             {
