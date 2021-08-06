@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
+using PerformanceEvaluationPlatform.Models.FormData.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,17 +17,15 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData.Integra
         [Test]
         public async Task Update_WhenFillForm_ShouldChangeState()
         {
-            var item = BaseAddress
-                .AppendPathSegment("forms")
-                .AppendPathSegment(2)
-                .WithHttpMethod(HttpMethod.Put);
+            var formDataId = 2;
+            var request = CreatePutHttpRequest(requestModel: GetFieldDataRequestModel(), "forms", formDataId);
 
             var formData = BaseAddress
                 .AppendPathSegment("forms")
                 .AppendPathSegment(2)
                 .WithHttpMethod(HttpMethod.Get);
 
-            await SendRequest(item);
+            await SendRequest(request);
 
             HttpResponseMessage responseFormData = await SendRequest(formData);
             var content = JsonConvert.DeserializeObject<FormDataDetailViewModel>(await responseFormData.Content.ReadAsStringAsync());
@@ -34,16 +34,35 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData.Integra
         }
 
         [Test]
-        public async Task Update_NotExistingId_ReturnNotFound()
+        public async Task Return_not_found_when_wrong_id()
         {
-            var item = BaseAddress
-                .AppendPathSegment("forms")
-                .AppendPathSegment("wrong path")
-                .WithHttpMethod(HttpMethod.Put);
+            var formDataId = 800;
+            var request = CreatePutHttpRequest(requestModel: GetFieldDataRequestModel(), "forms", formDataId);
 
-            HttpResponseMessage response = await SendRequest(item);
+            var response = await SendRequest(request);
 
             CustomAssert.IsNotFound(response);
+        }
+
+
+        private static IList<UpdateFieldDataRequestModel> GetFieldDataRequestModel()
+        {
+            var updateFieldDataRequestModel =  new List<UpdateFieldDataRequestModel>
+            {
+                new UpdateFieldDataRequestModel
+                {
+                    FieldId = 1,
+                    AssesmentId = 1,
+                    Comment = "test comment",
+                },
+                 new UpdateFieldDataRequestModel
+                 {
+                    FieldId = 2,
+                    AssesmentId = 2,
+                    Comment = "my comment",
+                 }
+             };
+            return updateFieldDataRequestModel;
         }
     }
 }

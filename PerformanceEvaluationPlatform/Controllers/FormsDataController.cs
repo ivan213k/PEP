@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using System.Collections.Generic;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
+using PerformanceEvaluationPlatform.Models.FormData.RequestModel;
+using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -117,7 +119,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("forms/{formDataId:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ICollection<UpdateFieldDataRequestModel> requestModel)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] IList<UpdateFieldDataRequestModel> requestModel)
         {
             var entity = await _formDataRepository.Get(id);
             if (entity == null)
@@ -129,32 +131,34 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return UnprocessableEntity("This form already complited");
             }
 
-            var fieldData = await _fieldsRepository.GetFieldData(id);
-            if (fieldData == null)
+            foreach (var item in requestModel)
             {
-                return NotFound();
-            }
-            
-            var field = await _fieldsRepository.Get(requestModel.Select(fd => fd.FieldId).FirstOrDefault());
-            if (field == null)
-            {
-                return BadRequest("Field does not exists.");
+                var field = await _fieldsRepository.Get(item.FieldId);
+                if (field == null)
+                {
+                    return BadRequest("Field does not exists.");
+                }
             }
 
-            var assessment = await _fieldsRepository.Get(requestModel.Select(fd => fd.AssesmentId).FirstOrDefault());
-            if (assessment == null)
+            foreach (var item in requestModel)
             {
-                return BadRequest("Assesment does not exists.");
+                var assessment = await _fieldsRepository.Get(item.AssesmentId);
+                if (assessment == null)
+                {
+                    return BadRequest("Assesment does not exists.");
+                }
+                if (assessment.AssesmentGroupId != entity.FieldData.Select(x=>x.Field.AssesmentGroupId).FirstOrDefault())
+                {
+                    return BadRequest("Assessment is not related to the field");
+                }
             }
 
-            if (assessment.AssesmentGroupId != fieldData.Field.AssesmentGroupId)
+            foreach (var item in entity.FieldData)
             {
-                return BadRequest("Assessment is not related to the field");
-            }
-
-            if (fieldData.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(fieldData.Comment))
-            {
-                return BadRequest("Comment is required, but not set");
+                if (item.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(item.Comment))
+                {
+                    return BadRequest("Comment is required, but not set");
+                }
             }
 
             entity.FieldData.Clear();
@@ -169,6 +173,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             await _formDataRepository.SaveChanges();
             return Ok("State was changed on In Progress");
-        }  
+        }
     }
 }
