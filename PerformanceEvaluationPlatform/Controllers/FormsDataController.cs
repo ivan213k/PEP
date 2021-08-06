@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using System.Collections.Generic;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
-using PerformanceEvaluationPlatform.Models.FormData.RequestModel;
-using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
