@@ -147,16 +147,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
-
-            var authClient = new AuthenticationApiClient(_config["Auth0:Domain"]);
-            AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
-            {
-                ClientId = _config["Auth0:ClientId"],
-                ClientSecret = _config["Auth0:ClientSecret"],
-                SigningAlgorithm = JwtSignatureAlgorithm.RS256,
-                Audience = $"https://{_config["Auth0:Domain"]}/api/v2/"
-            });
-
             var existingUser = await _userRepository.Get(createUserRequest.Email);
             if (existingUser != null)
             {
@@ -241,7 +231,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 ClientId = _config["Auth0:ClientId"],
                 ClientSecret = _config["Auth0:ClientSecret"],
                 SigningAlgorithm = JwtSignatureAlgorithm.RS256,
-                Audience = "https://eU63V466lzj7KRvHpIMng.auth0.com/api/v2/"
+                Audience = $"https://{_config["Auth0:Domain"]}/api/v2/"
             });
             //eU63V466lzj7KRvHpIMng
 
