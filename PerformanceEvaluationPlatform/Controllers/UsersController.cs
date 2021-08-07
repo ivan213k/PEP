@@ -230,7 +230,8 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 ClientId = _config["Auth0:ClientId"],
                 ClientSecret = _config["Auth0:ClientSecret"],
-                SigningAlgorithm = JwtSignatureAlgorithm.RS256
+                SigningAlgorithm = JwtSignatureAlgorithm.RS256,
+                Audience = "https://quotese.eu.auth0.com/api/v2/"
             });
 
             var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config["Auth0:Domain"]}/api/v2"));
