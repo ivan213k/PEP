@@ -178,7 +178,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Create(user);
             await _userRepository.Save();
 
-            await CreateAuth0User(user);
+            await CreateAuth0User(createUserRequest);
            
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
@@ -223,7 +223,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        private async Task CreateAuth0User( User user)
+        private async Task CreateAuth0User(CreateUserRequestModel user)
         {
             var authClient = new AuthenticationApiClient(_config["Auth0:Domain"]);
             AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
@@ -233,7 +233,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 SigningAlgorithm = JwtSignatureAlgorithm.RS256,
                 Audience = $"https://{_config["Auth0:Domain"]}/api/v2/"
             });
-            //eU63V466lzj7KRvHpIMng
 
             var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config["Auth0:Domain"]}/api/v2"));
             await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
