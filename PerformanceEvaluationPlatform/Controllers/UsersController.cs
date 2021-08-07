@@ -1,5 +1,6 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
+using Auth0.ManagementApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
@@ -147,15 +148,6 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
-            var client = new AuthenticationApiClient(_config["Auth0:Domain"]);
-            AccessTokenResponse token = await client.GetTokenAsync(new ClientCredentialsTokenRequest()
-            {
-                ClientId = _config["Auth0:ClientId"],
-                ClientSecret = _config["Auth0:ClientSecret"],
-                SigningAlgorithm = JwtSignatureAlgorithm.RS256,
-                Audience = _config["Auth0:Audience"]
-            });
-
             if (existingUser != null)
             {
                 ModelState.AddModelError(createUserRequest.Email, "User with the same email is already exists");
@@ -167,7 +159,6 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return BadRequest(ModelState);
             }
-        
 
 
             var userRoleMaps = createUserRequest.RoleIds.Select(s => new UserRoleMap { RoleId = s }).ToList();
@@ -186,6 +177,9 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
             await _userRepository.Create(user);
             await _userRepository.Save();
+
+            await CreateAuth0User(user);
+           
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
@@ -229,6 +223,31 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
+        private async Task CreateAuth0User( User user)
+        {
+            var authClient = new AuthenticationApiClient(_config["Auth0:Domain"]);
+            AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
+            {
+                ClientId = _config["Auth0:ClientId"],
+                ClientSecret = _config["Auth0:ClientSecret"],
+                SigningAlgorithm = JwtSignatureAlgorithm.RS256
+            });
+
+            var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config["Auth0:Domain"]}/api/v2"));
+            await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
+            {
+                Email = user.Email,
+                Blocked = false,
+                EmailVerified = true,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NickName = user.FirstName,
+                UserId = Guid.NewGuid().ToString(),
+                Connection = "Username-Password-Authentication",
+                Password = Guid.NewGuid().ToString(),
+                VerifyEmail = false
+            });
+        }
 
         private async Task ValidateUser(IUserRequest userRequest)
         {
