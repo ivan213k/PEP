@@ -154,6 +154,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return Conflict(ModelState);
             }
 
+
             await ValidateUser(createUserRequest);
             if (ModelState.IsValid == false)
             {
