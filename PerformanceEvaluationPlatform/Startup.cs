@@ -20,16 +20,6 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
-using PerformanceEvaluationPlatform.DAL.Repositories.Users;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
-using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
-using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
-using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using PerformanceEvaluationPlatform.Models.User.Options;
 
 namespace PerformanceEvaluationPlatform
