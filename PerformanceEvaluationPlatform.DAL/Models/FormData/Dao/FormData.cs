@@ -26,8 +26,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dao
             formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
             formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
             formDataTypeBuilder.Property(fd => fd.FormDataStateId).IsRequired();
-            formDataTypeBuilder.Property(fd => fd.UserId).IsRequired();
-            formDataTypeBuilder.Property(fd => fd.SurveyId).IsRequired();
 
             formDataTypeBuilder.HasOne(fd => fd.FormDataState)
                 .WithMany()

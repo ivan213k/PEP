@@ -1,17 +1,24 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
+using PerformanceEvaluationPlatform.DAL.Repositories.Document;
 using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
+using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
+using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
-using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
-using PerformanceEvaluationPlatform.DAL.Repositories.Document;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
+using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
@@ -39,6 +46,7 @@ namespace PerformanceEvaluationPlatform
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry();
             services.AddControllers();
             services.AddSwaggerGen();
             

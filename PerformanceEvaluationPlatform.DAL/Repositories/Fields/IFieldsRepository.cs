@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dto;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
 {
@@ -19,5 +20,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds);
         void Delete(Field field);
         Task<bool> GetAnyReferenceToFormTemplate(int id);
+        Task<FieldData> GetFieldData(int id);
     }
 }

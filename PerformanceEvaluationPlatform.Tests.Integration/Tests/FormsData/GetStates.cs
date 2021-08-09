@@ -7,7 +7,6 @@ using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using PerformanceEvaluationPlatform.Models.FormData.Enums;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 {
@@ -31,13 +30,16 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 
             CustomAssert.IsSuccess(response);
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
 
-            Assert.AreEqual(1, (int)StateEnum.Draft);
+            Assert.AreEqual(1, content[0].Id);
             Assert.AreEqual("Draft", content[0].Name);
 
-            Assert.AreEqual(2, (int)StateEnum.Submitted);
-            Assert.AreEqual("Submitted", content[1].Name);
+            Assert.AreEqual(2, content[1].Id);
+            Assert.AreEqual("InProgress", content[1].Name);
+
+            Assert.AreEqual(3, content[2].Id);
+            Assert.AreEqual("Submitted", content[2].Name);
         }
     }
 }
