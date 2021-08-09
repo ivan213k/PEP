@@ -20,7 +20,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
-using PerformanceEvaluationPlatform.Models.User.Options;
+using PerformanceEvaluationPlatform.Models.User.Auth0;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -59,6 +59,9 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
+            services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();
+
+            services.AddMemoryCache();
 
             services.Configure<Auth0Configure>(options => Configuration.GetSection("Auth0Configure").Bind(options));
 

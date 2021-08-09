@@ -10,7 +10,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
-using PerformanceEvaluationPlatform.Models.User.Options;
+using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -31,13 +31,16 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly ITeamsRepository _teamRepository;
         private readonly ISurveysRepository _surveysRepository;
         private readonly Auth0Configure _config;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository, IOptions<Auth0Configure> config)
+        private readonly IAuth0ClientFactory _auth0Factory;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository,
+            ISurveysRepository surveysRepository, IOptions<Auth0Configure> config, IAuth0ClientFactory auth0Factory)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
             _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
             _config = config.Value ?? throw new ArgumentNullException(nameof(config));
+            _auth0Factory = auth0Factory ?? throw new ArgumentNullException(nameof(auth0Factory)); ;
         }
 
 
@@ -181,8 +184,9 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Create(user);
             await _userRepository.Save();
 
-            await CreateAuth0User(user);
-           
+            var client = await _auth0Factory.Create();
+            await CreateAuth0User(user, client);
+
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
@@ -226,20 +230,9 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        private async Task CreateAuth0User(User user)
+        private async Task CreateAuth0User(User user,ManagementApiClient client)
         {
             const string connection = "Username-Password-Authentication";
-
-            var authClient = new AuthenticationApiClient(_config.Domain);
-            AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
-            {
-                ClientId = _config.ClientId,
-                ClientSecret = _config.ClientSecret,
-                SigningAlgorithm = JwtSignatureAlgorithm.RS256,
-                Audience = $"https://{_config.Domain}/api/v2/"
-            });
-
-            var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config.Domain}/api/v2"));
             await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
             {
                 Email = user.Email,

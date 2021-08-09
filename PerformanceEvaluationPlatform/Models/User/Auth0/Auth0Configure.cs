@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Models.User.Options
+namespace PerformanceEvaluationPlatform.Models.User.Auth0
 {
     public class Auth0Configure
     {
