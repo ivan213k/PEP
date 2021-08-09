@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData.Integration
+namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
 {
     [TestFixture]
     class UpdateDetails : IntegrationTestBase
