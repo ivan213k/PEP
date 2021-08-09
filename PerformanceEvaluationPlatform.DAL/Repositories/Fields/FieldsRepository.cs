@@ -109,5 +109,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Fields
         {
             Delete<Field>(field);
         }
+
+        public Task<FieldData> GetFieldData(int id)
+        {
+            return Get<FieldData>(id);
+        }
     }
 }

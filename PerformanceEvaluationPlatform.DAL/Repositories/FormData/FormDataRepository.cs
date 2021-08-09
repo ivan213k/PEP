@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
+using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
 
 namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
 {
@@ -111,6 +111,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData
         private static string GetFormatedName(FormData formData)
         {
             return $"{formData.User.FirstName} {formData.User.LastName}";
+        }
+
+        public Task<FormData> Get(int id)
+        {
+            return DbContext.Set<FormData>().Include(t => t.FieldData).SingleOrDefaultAsync(t => t.Id == id);
         }
     }
 }
