@@ -3,12 +3,14 @@ using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Models.User.Options;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -28,14 +30,14 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
         private readonly ISurveysRepository _surveysRepository;
-        private readonly IConfiguration _config;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository, IConfiguration config)
+        private readonly Auth0Configure _config;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository, IOptions<Auth0Configure> config)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
             _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _config = config.Value ?? throw new ArgumentNullException(nameof(config));
         }
 
 
@@ -226,16 +228,16 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private async Task CreateAuth0User(CreateUserRequestModel user)
         {
-            var authClient = new AuthenticationApiClient(_config["Auth0:Domain"]);
+            var authClient = new AuthenticationApiClient(_config.Domain);
             AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
             {
-                ClientId = _config["Auth0:ClientId"],
-                ClientSecret = _config["Auth0:ClientSecret"],
+                ClientId = _config.ClientId,
+                ClientSecret = _config.ClientSecret,
                 SigningAlgorithm = JwtSignatureAlgorithm.RS256,
-                Audience = $"https://{_config["Auth0:Domain"]}/api/v2/"
+                Audience = $"https://{_config.Domain}/api/v2/"
             });
 
-            var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config["Auth0:Domain"]}/api/v2"));
+            var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config.Domain}/api/v2"));
             await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
             {
                 Email = user.Email,

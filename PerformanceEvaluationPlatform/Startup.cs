@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PerformanceEvaluationPlatform.Models.User.Options;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -33,7 +34,7 @@ namespace PerformanceEvaluationPlatform
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -61,6 +62,8 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
 
+            services.Configure<Auth0Configure>(options => Configuration.GetSection("Auth0Configure").Bind(options));
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -72,8 +75,8 @@ namespace PerformanceEvaluationPlatform
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options=> 
             {
-                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
-                options.Audience = Configuration["Auth0:Audience"];
+                options.Authority = $"https://{Configuration["Auth0Configure:Domain"]}";
+                options.Audience = Configuration["Auth0Configure:Audience"];
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
@@ -83,10 +86,12 @@ namespace PerformanceEvaluationPlatform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseSwagger();
 
             app.UseSwaggerUI(options =>
