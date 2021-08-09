@@ -181,7 +181,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Create(user);
             await _userRepository.Save();
 
-            await CreateAuth0User(createUserRequest);
+            await CreateAuth0User(user);
            
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
@@ -226,8 +226,10 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        private async Task CreateAuth0User(CreateUserRequestModel user)
+        private async Task CreateAuth0User(User user)
         {
+            const string connection = "Username-Password-Authentication";
+
             var authClient = new AuthenticationApiClient(_config.Domain);
             AccessTokenResponse token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
             {
@@ -246,8 +248,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 NickName = user.FirstName,
-                UserId = Guid.NewGuid().ToString(),
-                Connection = "Username-Password-Authentication",
+                UserId = user.Id.ToString(),
+                Connection = connection,
                 Password = Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
