@@ -136,10 +136,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 {
                     return BadRequest("Field does not exists.");
                 }
-            }
-
-            foreach (var item in requestModel)
-            {
                 var assessment = await _fieldsRepository.Get(item.AssesmentId);
                 if (assessment == null)
                 {
@@ -149,11 +145,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 {
                     return BadRequest("Assessment is not related to the field");
                 }
-            }
-
-            foreach (var item in entity.FieldData)
-            {
-                if (item.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(item.Comment))
+                var comment = await _fieldsRepository.GetFieldData(item.FieldId);
+                if (comment.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(comment.Comment))
                 {
                     return BadRequest("Comment is required, but not set");
                 }
