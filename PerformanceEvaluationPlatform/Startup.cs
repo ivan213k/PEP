@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using PerformanceEvaluationPlatform.Application.Interfaces.Examples;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
@@ -19,8 +20,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
-using PerformanceEvaluationPlatform.Application.Services.Example;
-using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Persistence.Repositories.Examples;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -31,7 +31,7 @@ namespace PerformanceEvaluationPlatform
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -43,13 +43,7 @@ namespace PerformanceEvaluationPlatform
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
-
-            services.Configure<PerformanceEvaluationPlatform.Persistence.DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
-            services.AddDbContext<PerformanceEvaluationPlatform.Persistence.DatabaseContext.PepDbContext>();
-
-            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Examples.IExamplesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Examples.ExamplesRepository>();
-            services.AddTransient<IExamplesService, ExamplesService>();
-
+            services.AddTransient<IExamplesRepository, ExamplesRepository>();
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
@@ -65,11 +59,6 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
-            services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();
-
-            services.AddMemoryCache();
-
-            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configure").Bind(options));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -82,8 +71,8 @@ namespace PerformanceEvaluationPlatform
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options=> 
             {
-                options.Authority = $"https://{Configuration["Auth0Configure:Domain"]}";
-                options.Audience = Configuration["Auth0Configure:Audience"];
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+                options.Audience = Configuration["Auth0:Audience"];
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
@@ -93,12 +82,10 @@ namespace PerformanceEvaluationPlatform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSwagger();
 
             app.UseSwaggerUI(options =>

@@ -26,6 +26,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private const int ActiveState = 1;
         private const int SuspendState = 2;
+        private const string connection = "Username-Password-Authentication";
         private readonly IUserRepository _userRepository;
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
@@ -186,6 +187,8 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             var client = await _auth0Factory.Create();
             await CreateAuth0User(user, client);
+            await SendMessageToChangeEmail(client,user.Email);
+            
 
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
@@ -229,10 +232,17 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok("User successfully change his state, now its ");
         }
 
-
+        private async Task SendMessageToChangeEmail(ManagementApiClient client,string email)
+        {
+            await client.Tickets.CreatePasswordChangeTicketAsync(new Auth0.ManagementApi.Models.PasswordChangeTicketRequest()
+            {
+                ConnectionId =connection,
+                ClientId = _config.ClientId,
+                Email = email
+            });
+        }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
         {
-            const string connection = "Username-Password-Authentication";
             await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
             {
                 Email = user.Email,
