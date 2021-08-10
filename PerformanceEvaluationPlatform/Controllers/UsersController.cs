@@ -187,7 +187,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             var client = await _auth0Factory.Create();
             await CreateAuth0User(user, client);
-            await SendMessageToChangeEmail(client,user.Email);
+            await SendMessageToChangeEmail(client,user);
             
 
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
@@ -232,13 +232,14 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok("User successfully change his state, now its ");
         }
 
-        private async Task SendMessageToChangeEmail(ManagementApiClient client,string email)
+        private async Task SendMessageToChangeEmail(ManagementApiClient client,User user)
         {
             await client.Tickets.CreatePasswordChangeTicketAsync(new Auth0.ManagementApi.Models.PasswordChangeTicketRequest()
             {
                 ConnectionId =connection,
                 ClientId = _config.ClientId,
-                Email = email
+                Email = user.Email,
+                UserId = user.Id.ToString()
             });
         }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
