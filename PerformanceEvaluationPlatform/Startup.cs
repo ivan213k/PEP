@@ -40,15 +40,15 @@ namespace PerformanceEvaluationPlatform
             services.AddControllers();
             services.AddSwaggerGen();
 
-            services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();
-
-            services.AddMemoryCache();
-
-            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configure").Bind(options));
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
-            services.AddTransient<IExamplesRepository, ExamplesRepository>();
+
+            services.Configure<PerformanceEvaluationPlatform.Persistence.DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
+            services.AddDbContext<PerformanceEvaluationPlatform.Persistence.DatabaseContext.PepDbContext>();
+
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Examples.IExamplesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Examples.ExamplesRepository>();
+            services.AddTransient<IExamplesService, ExamplesService>();
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
@@ -64,6 +64,11 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFormDataRepository, FormDataRepository>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
+            services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();
+
+            services.AddMemoryCache();
+
+            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configur").Bind(options));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -76,8 +81,8 @@ namespace PerformanceEvaluationPlatform
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options=> 
             {
-                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
-                options.Audience = Configuration["Auth0:Audience"];
+                options.Authority = $"https://{Configuration["Auth0Configur:Domain"]}";
+                options.Audience = Configuration["Auth0Configur:Audience"];
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
