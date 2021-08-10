@@ -39,7 +39,12 @@ namespace PerformanceEvaluationPlatform
             services.AddApplicationInsightsTelemetry();
             services.AddControllers();
             services.AddSwaggerGen();
-            
+
+            services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();
+
+            services.AddMemoryCache();
+
+            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configure").Bind(options));
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
