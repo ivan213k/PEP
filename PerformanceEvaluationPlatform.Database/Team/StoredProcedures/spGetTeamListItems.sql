@@ -2,6 +2,8 @@
 @Search NVARCHAR(256),
 @ProjectIds [dbo].[IntList] READONLY,
 @TitleSortOrder INT,
+@ProjectTitleSortOrder INT,
+@TeamSizeSortOrder INT,
 @Skip INT,
 @Take INT
 AS
@@ -32,6 +34,22 @@ BEGIN
 			SET @OrderClause = '[T].[Title] ASC'
 		ELSE
 			SET @OrderClause = '[T].[Title] DESC'
+	END
+
+	IF (@ProjectTitleSortOrder IS NOT NULL)
+	BEGIN
+		IF (@ProjectTitleSortOrder = 1)
+			SET @OrderClause = '[P].[Title] ASC'
+		ELSE
+			SET @OrderClause = '[P].[Title] DESC'
+	END
+
+	IF (@TeamSizeSortOrder IS NOT NULL)
+	BEGIN
+		IF (@TeamSizeSortOrder = 1)
+			SET @OrderClause = 'COUNT([U].[Id]) ASC'
+		ELSE
+			SET @OrderClause = 'COUNT([U].[Id]) DESC'
 	END
 	
 	IF (@OrderClause = '')

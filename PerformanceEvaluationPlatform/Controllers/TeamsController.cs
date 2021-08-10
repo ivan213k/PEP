@@ -30,6 +30,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Skip = filter.Skip,
                 Take = filter.Take,
                 TitleSortOrder = (int?)filter.OrderByTeamTitle,
+                ProjectTitleSortOrder = (int?)filter.OrderByProjectTitle,
+                TeamSizeSortOrder = (int?)filter.OrderByTeamSize,
                 ProjectIds = filter.ProjectIds
             };
 

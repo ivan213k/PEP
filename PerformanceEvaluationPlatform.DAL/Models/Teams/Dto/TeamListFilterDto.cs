@@ -13,5 +13,9 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Teams.Dto
 
         public string Search { get; set; }
         public int? TitleSortOrder { get; set; }
+
+        public int? ProjectTitleSortOrder { get; set; }
+
+        public int? TeamSizeSortOrder { get; set; }
     }
 }

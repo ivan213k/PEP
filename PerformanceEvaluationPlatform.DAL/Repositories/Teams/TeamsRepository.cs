@@ -26,7 +26,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Teams
                 ProjectIds = filter.ProjectIds,
                 Skip = filter.Skip,
                 Take = filter.Take,
-                TitleSortOrder = filter.TitleSortOrder
+                TitleSortOrder = filter.TitleSortOrder,
+                ProjectTitleSortOrder = filter.ProjectTitleSortOrder,
+                TeamSizeSortOrder = filter.TeamSizeSortOrder
             };
 
             return ExecuteSp<TeamListItemDto>("[dbo].[spGetTeamListItems]", parameters);
