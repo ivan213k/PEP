@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.User.Auth0
 {
-    public interface IAuth0ClientFactory
+     public interface IAuth0ClientFactory
     {
-        public Task<ManagementApiClient> Create();
+        Task<ManagementApiClient> Create();
     }
 }

@@ -63,7 +63,7 @@ namespace PerformanceEvaluationPlatform
 
             services.AddMemoryCache();
 
-            services.Configure<Auth0Configure>(options => Configuration.GetSection("Auth0Configure").Bind(options));
+            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configure").Bind(options));
 
             var tokenValidationParameters = new TokenValidationParameters
             {

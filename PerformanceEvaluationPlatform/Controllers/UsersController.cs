@@ -30,10 +30,10 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
         private readonly ISurveysRepository _surveysRepository;
-        private readonly Auth0Configure _config;
+        private readonly Auth0Configur _config;
         private readonly IAuth0ClientFactory _auth0Factory;
         public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository,
-            ISurveysRepository surveysRepository, IOptions<Auth0Configure> config, IAuth0ClientFactory auth0Factory)
+            ISurveysRepository surveysRepository, IOptions<Auth0Configur> config, IAuth0ClientFactory auth0Factory)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
