@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using PerformanceEvaluationPlatform.Application.Interfaces.Examples;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
@@ -20,7 +19,8 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
-using PerformanceEvaluationPlatform.Persistence.Repositories.Examples;
+using PerformanceEvaluationPlatform.Application.Services.Example;
+using PerformanceEvaluationPlatform.Models.User.Auth0;
 
 namespace PerformanceEvaluationPlatform
 {
