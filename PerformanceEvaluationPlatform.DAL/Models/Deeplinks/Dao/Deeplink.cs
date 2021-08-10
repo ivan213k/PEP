@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
+using  PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
@@ -51,7 +51,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao
                 .IsRequired();
 
             deeplinkTypeBuilder.HasOne(t => t.Survey)
-               .WithMany(t => t.DeepLinks)
+               .WithMany(t=>t.DeepLinks)
                 .HasForeignKey(t => t.SurveyId)
                 .IsRequired();
         }

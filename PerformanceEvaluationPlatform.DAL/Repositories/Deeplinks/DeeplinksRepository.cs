@@ -69,17 +69,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks
             var details = new DeeplinkDetailsDto
             {
                 Id = deeplink.Id,
-               // SentToId = deeplink.UserId,
-                SentAt = deeplink.SentAt.GetValueOrDefault(),
-               // SentById = deeplink.SentById,
                 StateName = deeplink.DeeplinkState.Name,
+                SentAt = deeplink.SentAt.GetValueOrDefault(),
                 ExpiresAt = deeplink.ExpireDate,
                 SurveyId = deeplink.SurveyId,
-              //  SentToEmail = deeplink.User.Email,
-               // SentToFirstName = deeplink.User.FirstName,
-               // SentToLastName = deeplink.User.LastName,
-               // SentByFirstName = deeplink.SentBy.FirstName,
-               // SentByLastName = deeplink.SentBy.LastName,
                 FormTemplateName = deeplink.Survey.FormTemplate.Name,
                 SentTo = new DeeplinkUserRefDto
                     {
@@ -95,8 +88,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks
                         LastName = deeplink.SentBy.LastName,
                         Email = deeplink.SentBy.Email
                     }
-                
-                                                
                 };            
             return details;
          

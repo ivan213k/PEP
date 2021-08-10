@@ -57,6 +57,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             });
             return Ok(items);
         }
+
         [HttpGet("deeplinks/states")]
         public async Task<IActionResult> GetStates()
         {
@@ -70,7 +71,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             return Ok(items);
         }
-
 
         [HttpGet("deeplinks/{id:int}")]
         public async Task<IActionResult> Details(int id)
@@ -99,13 +99,17 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(detailsVm);
         }
 
-
-
-
-
         [HttpPut("deeplinks/{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateDeeplinkRequestModel requestModel)
         {
+            if (requestModel is null)
+            {
+                return BadRequest();
+            }
+            if (requestModel.ExpiresAt <= DateTime.Today)
+            {
+                return BadRequest();
+            }
             var entity = await _deeplinksRepository.Get(id);
             if (entity == null)
             {
@@ -113,13 +117,11 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
 
 
-
             entity.ExpireDate = requestModel.ExpiresAt;
 
             await _deeplinksRepository.SaveChanges();
             return Ok();
         }
-
 
         [HttpPost("deeplinks")]
         public async Task<IActionResult> Create([FromBody] CreateDeeplinkRequestModel requestModel)
@@ -162,7 +164,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 ExpireDate = requestModel.ExpiresDate,
                 SurveyId = requestModel.SurveyId,
                 Code = Guid.NewGuid(),
-                SentAt =DateTime.Today
+                SentAt = DateTime.Today
 
             };
 
