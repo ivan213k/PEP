@@ -29,8 +29,10 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
 
             var content = JsonConvert
                 .DeserializeObject<IList<FormTemplateStatusListItemViewModel>>(await response.Content.ReadAsStringAsync());
-            Assert.AreEqual(2, content.Count);
-            Assert.AreEqual("Active", content[0].Name);
+            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual("Draft", content[0].Name);
+            Assert.AreEqual("Active", content[1].Name);
+            Assert.AreEqual("Archived", content[2].Name);
         }
     }
 }

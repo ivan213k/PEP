@@ -145,5 +145,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
         {
             return Create<Survey>(survey);
         }
+
+        public Task<bool> ExistByFormTemplateId(int id)
+        {
+            return DbContext.Set<Survey>().AnyAsync(s => s.FormTemplateId == id);
+        }
     }
 }
