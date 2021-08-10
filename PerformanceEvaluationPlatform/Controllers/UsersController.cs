@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using Auth0.ManagementApi;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -24,12 +30,17 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
         private readonly ISurveysRepository _surveysRepository;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository, ISurveysRepository surveysRepository)
+        private readonly Auth0Configur _config;
+        private readonly IAuth0ClientFactory _auth0Factory;
+        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository,
+            ISurveysRepository surveysRepository, IOptions<Auth0Configur> config, IAuth0ClientFactory auth0Factory)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
             _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _config = config.Value ?? throw new ArgumentNullException(nameof(config));
+            _auth0Factory = auth0Factory ?? throw new ArgumentNullException(nameof(auth0Factory)); ;
         }
 
 
@@ -142,12 +153,12 @@ namespace PerformanceEvaluationPlatform.Controllers
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
-
             if (existingUser != null)
             {
                 ModelState.AddModelError(createUserRequest.Email, "User with the same email is already exists");
                 return Conflict(ModelState);
             }
+
 
             await ValidateUser(createUserRequest);
             if (ModelState.IsValid == false)
@@ -172,6 +183,10 @@ namespace PerformanceEvaluationPlatform.Controllers
             };
             await _userRepository.Create(user);
             await _userRepository.Save();
+
+            var client = await _auth0Factory.Create();
+            await CreateAuth0User(user, client);
+
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
             return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
@@ -215,6 +230,23 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
+        private async Task CreateAuth0User(User user,ManagementApiClient client)
+        {
+            const string connection = "Username-Password-Authentication";
+            await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
+            {
+                Email = user.Email,
+                Blocked = false,
+                EmailVerified = true,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NickName = user.FirstName,
+                UserId = user.Id.ToString(),
+                Connection = connection,
+                Password = Guid.NewGuid().ToString(),
+                VerifyEmail = false
+            });
+        }
 
         private async Task ValidateUser(IUserRequest userRequest)
         {
