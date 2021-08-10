@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using PerformanceEvaluationPlatform.Application.Interfaces.Examples;
+using PerformanceEvaluationPlatform.Application.Model.Examples;
+using PerformanceEvaluationPlatform.Domain.Examples;
+using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Examples
+namespace PerformanceEvaluationPlatform.Persistence.Repositories.Examples
 {
     public class ExamplesRepository : BaseRepository, IExamplesRepository
     {

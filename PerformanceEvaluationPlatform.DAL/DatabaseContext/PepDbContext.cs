@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Documents.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
@@ -41,10 +40,7 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ExampleType.Configure(modelBuilder);
-            ExampleState.Configure(modelBuilder);
-            Example.Configure(modelBuilder);
-            FormData.Configure(modelBuilder);
+	        FormData.Configure(modelBuilder);
             FormDataState.Configure(modelBuilder);
 
             Survey.Configure(modelBuilder);

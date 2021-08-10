@@ -3,61 +3,47 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
-using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
+using PerformanceEvaluationPlatform.Application.Services.Example;
 using PerformanceEvaluationPlatform.Models.Example.RequestModels;
 using PerformanceEvaluationPlatform.Models.Example.ViewModels;
+using PerformanceEvaluationPlatform.Application.Packages;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class ExamplesController : ControllerBase
+    public class ExamplesController : BaseController
     {
-        private readonly IExamplesRepository _examplesRepository;
+        private readonly IExamplesService _examplesService;
 
-        public ExamplesController(IExamplesRepository examplesRepository)
+        public ExamplesController(IExamplesService examplesService)
         {
-            _examplesRepository = examplesRepository ?? throw new ArgumentNullException(nameof(examplesRepository));
+	        _examplesService = examplesService ?? throw new ArgumentNullException(nameof(examplesService));
         }
 
         [HttpGet("examples")]
         [Authorize]
         public async Task<IActionResult> Get([FromQuery]ExampleListFilterRequestModel filter)
         {
-            var filterDto = new ExampleListFilterDto
-            {
-                Search = filter.Search,
-                Skip = filter.Skip,
-                Take = filter.Take,
-                StateId = filter.StateId,
-                TitleSortOrder = (int?) filter.TitleSortOrder,
-                TypeIds = filter.TypeIds
-            };
+            var itemsResponse = await _examplesService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult)) {
+	            return errorResult;
+            }
 
-            var itemsDto = await _examplesRepository.GetList(filterDto);
-            var items = itemsDto.Select(t => new ExampleListItemViewModel
-            {  
-                Id = t.Id,
-                State = t.StateName,
-                Type = t.TypeName,
-                Title = t.Title
-            });
-            return Ok(items);
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
         [HttpGet("examples/types")]
         [Authorize]
         public async Task<IActionResult> GetTypes()
         {
-            var itemsDto = await _examplesRepository.GetTypesList();
-            var items = itemsDto
-                .Select(t => new ExampleTypeListItemViewModel
-                {
-                    Id = t.Id,
-                    Title = t.Title
-                });
+	        var itemsResponse = await _examplesService.GetTypeListItems();
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+	        {
+		        return errorResult;
+	        }
 
+            var items = itemsResponse.Payload.Select(t => t.AsViewModel());
             return Ok(items);
         }
 
@@ -65,14 +51,13 @@ namespace PerformanceEvaluationPlatform.Controllers
         [Authorize]
         public async Task<IActionResult> GetStates()
         {
-            var itemsDto = await _examplesRepository.GetStatesList();
-            var items = itemsDto
-                .Select(t => new ExampleStateListItemViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Title
-                });
+	        var itemsResponse = await _examplesService.GetStateListItems();
+	        if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+	        {
+		        return errorResult;
+	        }
 
+            var items = itemsResponse.Payload.Select(t => t.AsViewModel());
             return Ok(items);
         }
 
@@ -80,84 +65,35 @@ namespace PerformanceEvaluationPlatform.Controllers
         [Authorize]
         public async Task<IActionResult> Details(int id)
         {
-            var detailsDto = await _examplesRepository.GetDetails(id);
-            if (detailsDto == null)
-            {
-                return NotFound();
-            }
+	        var detailsResponse = await _examplesService.GetDetails(id);
+	        if (TryGetErrorResult(detailsResponse, out IActionResult errorResult))
+	        {
+		        return errorResult;
+	        }
 
-            var detailsVm = new ExampleDetailsViewModel
-            {
-                Id = detailsDto.Id,
-                Title = detailsDto.Title,
-                StateName = detailsDto.StateName,
-                TypeName = detailsDto.TypeName
-            };
-
+            var detailsVm = detailsResponse.Payload.AsViewModel();
             return Ok(detailsVm);
         }
 
         [HttpPut("examples/{id:int}")]
         [Authorize]
-        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateExampleRequestModel requestModel)
-        {
-            var entity = await _examplesRepository.Get(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody]UpdateExampleRequestModel requestModel) {
 
-            var exampleType = await _examplesRepository.GetType(requestModel.TypeId);
-            if (exampleType == null)
-            {
-                return BadRequest("Type does not exists.");
-            }
-
-            var exampleState = await _examplesRepository.GetState(requestModel.StateId);
-            if (exampleState == null)
-            {
-                return BadRequest("State does not exists.");
-            }
-
-
-            entity.Title = requestModel.Title;
-            entity.ExampleTypeId = requestModel.TypeId;
-            entity.ExampleStateId = requestModel.StateId;
-
-            await _examplesRepository.SaveChanges();
-            return Ok();
+	        ServiceResponse serviceResponse = await _examplesService.Update(id, requestModel.AsDto());
+	        return TryGetErrorResult(serviceResponse, out IActionResult errorResult) 
+		        ? errorResult 
+		        : Ok();
         }
 
         [HttpPost("examples")]
         [Authorize]
         public async Task<IActionResult> Create([FromBody]CreateExampleRequestModel requestModel)
         {
-            var exampleType = await _examplesRepository.GetType(requestModel.TypeId);
-            if (exampleType == null)
-            {
-                return BadRequest("Type does not exists.");
-            }
 
-            var exampleState = await _examplesRepository.GetState(requestModel.StateId);
-            if (exampleState == null)
-            {
-                return BadRequest("State does not exists.");
-            }
-
-            var example = new Example
-            {
-                Title = requestModel.Title,
-                ExampleState = exampleState,
-                ExampleType = exampleType
-            };
-
-            await _examplesRepository.Create(example);
-            await _examplesRepository.SaveChanges();
-
-            var result = new ObjectResult(new {Id = example.Id}) {StatusCode = 201};
-            return result;
-
+            ServiceResponse<int> serviceResponse = await _examplesService.Create(requestModel.AsDto());
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult)
+	            ? errorResult
+	            : new ObjectResult(new { Id = serviceResponse.Payload }) { StatusCode = 201 };
         }
-
     }
 }

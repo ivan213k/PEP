@@ -1,4 +1,4 @@
-﻿namespace PerformanceEvaluationPlatform.DAL.Models.Examples.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Examples
 {
     public class ExampleTypeListItemDto
     {

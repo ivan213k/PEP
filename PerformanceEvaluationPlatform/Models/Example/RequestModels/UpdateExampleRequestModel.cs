@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PerformanceEvaluationPlatform.Application.Model.Examples;
 
 namespace PerformanceEvaluationPlatform.Models.Example.RequestModels
 {
@@ -13,5 +14,16 @@ namespace PerformanceEvaluationPlatform.Models.Example.RequestModels
 
         [Required]
         public int StateId { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions 
+    {
+	    public static UpdateExampleDto AsDto(this UpdateExampleRequestModel requestModel) {
+		    return new UpdateExampleDto {
+			    Title = requestModel.Title,
+			    TypeId = requestModel.TypeId,
+			    StateId = requestModel.StateId
+		    };
+	    }
     }
 }

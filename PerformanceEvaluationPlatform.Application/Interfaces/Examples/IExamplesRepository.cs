@@ -1,9 +1,9 @@
-﻿using PerformanceEvaluationPlatform.DAL.Models.Examples.Dao;
+﻿using PerformanceEvaluationPlatform.Application.Model.Examples;
+using PerformanceEvaluationPlatform.Domain.Examples;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.DAL.Models.Examples.Dto;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Examples
+namespace PerformanceEvaluationPlatform.Application.Interfaces.Examples
 {
     public interface IExamplesRepository : IBaseRepository
     {

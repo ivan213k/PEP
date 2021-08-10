@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Examples.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Examples
 {
     public class ExampleListFilterDto
     {

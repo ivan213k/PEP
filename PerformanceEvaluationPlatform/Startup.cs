@@ -9,7 +9,6 @@ using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Document;
-using PerformanceEvaluationPlatform.DAL.Repositories.Examples;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
@@ -20,6 +19,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
+using PerformanceEvaluationPlatform.Application.Services.Example;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
 
 namespace PerformanceEvaluationPlatform
@@ -43,7 +43,13 @@ namespace PerformanceEvaluationPlatform
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
-            services.AddTransient<IExamplesRepository, ExamplesRepository>();
+
+            services.Configure<PerformanceEvaluationPlatform.Persistence.DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
+            services.AddDbContext<PerformanceEvaluationPlatform.Persistence.DatabaseContext.PepDbContext>();
+
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Examples.IExamplesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Examples.ExamplesRepository>();
+            services.AddTransient<IExamplesService, ExamplesService>();
+
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 

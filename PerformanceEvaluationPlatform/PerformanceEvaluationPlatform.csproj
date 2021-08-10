@@ -26,6 +26,8 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PerformanceEvaluationPlatform.Application\PerformanceEvaluationPlatform.Application.csproj" />
     <ProjectReference Include="..\PerformanceEvaluationPlatform.DAL\PerformanceEvaluationPlatform.DAL.csproj" />
+    <ProjectReference Include="..\PerformanceEvaluationPlatform.Persistence\PerformanceEvaluationPlatform.Persistence.csproj" />
   </ItemGroup>
 </Project>

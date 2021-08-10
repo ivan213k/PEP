@@ -1,6 +1,6 @@
-﻿namespace PerformanceEvaluationPlatform.DAL.Models.Examples.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Examples
 {
-    public class ExampleListItemDto
+    public class ExampleDetailsDto
     {
         public int Id { get; set; }
         public string Title { get; set; }
