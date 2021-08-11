@@ -32,7 +32,7 @@ namespace PerformanceEvaluationPlatform
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -40,7 +40,7 @@ namespace PerformanceEvaluationPlatform
             services.AddApplicationInsightsTelemetry();
             services.AddControllers();
             services.AddSwaggerGen();
-            
+
 
             services.Configure<DatabaseOptions>(Configuration.GetSection("DatabaseOptions"));
             services.AddDbContext<PepDbContext>();
@@ -73,7 +73,7 @@ namespace PerformanceEvaluationPlatform
 
             services.AddMemoryCache();
 
-            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configure").Bind(options));
+            services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configur").Bind(options));
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -86,8 +86,8 @@ namespace PerformanceEvaluationPlatform
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options=> 
             {
-                options.Authority = $"https://{Configuration["Auth0Configure:Domain"]}";
-                options.Audience = Configuration["Auth0Configure:Audience"];
+                options.Authority = $"https://{Configuration["Auth0Configur:Domain"]}";
+                options.Audience = Configuration["Auth0Configur:Audience"];
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
@@ -97,12 +97,10 @@ namespace PerformanceEvaluationPlatform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSwagger();
 
             app.UseSwaggerUI(options =>

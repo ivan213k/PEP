@@ -1,4 +1,5 @@
-﻿using Auth0.ManagementApi;
+﻿using Auth0.AuthenticationApi;
+using Auth0.ManagementApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace PerformanceEvaluationPlatform.Models.User.Auth0
 {
      public interface IAuth0ClientFactory
     {
-        Task<ManagementApiClient> Create();
+        Task<ManagementApiClient> CreateManagementApi();
+        AuthenticationApiClient CreateAuthenticationApi();
     }
 }

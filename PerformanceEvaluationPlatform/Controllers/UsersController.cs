@@ -26,6 +26,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private const int ActiveState = 1;
         private const int SuspendState = 2;
+        private const string connection = "Username-Password-Authentication";
         private readonly IUserRepository _userRepository;
         private readonly IRolesRepository _roleRepository;
         private readonly ITeamsRepository _teamRepository;
@@ -184,8 +185,11 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Create(user);
             await _userRepository.Save();
 
-            var client = await _auth0Factory.Create();
+            var client = await _auth0Factory.CreateManagementApi();
             await CreateAuth0User(user, client);
+            var authclient = _auth0Factory.CreateAuthenticationApi();
+            await SendMessageToChangeEmail(authclient, user);
+            
 
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
@@ -226,13 +230,20 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
             user.StateId = SuspendState;
             await _userRepository.Save();
-            return Ok("User successfully change his state, now its ");
+            return Ok("User successfully change his state, now its Suspend");
         }
 
-
+        private async Task SendMessageToChangeEmail(AuthenticationApiClient client,User user)
+        {
+            await client.ChangePasswordAsync(new ChangePasswordRequest() 
+            {
+                ClientId = _config.ClientId,
+                Connection = connection,
+                Email = user.Email
+            });
+        }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
         {
-            const string connection = "Username-Password-Authentication";
             await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
             {
                 Email = user.Email,

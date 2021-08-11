@@ -11,6 +11,7 @@ namespace PerformanceEvaluationPlatform.Models.User.Auth0
         public string Audience { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
+        public string ConnectionId { get; set; }
 
         public string ManagementApiUrl => $"https://{Domain}/api/v2/";
     }

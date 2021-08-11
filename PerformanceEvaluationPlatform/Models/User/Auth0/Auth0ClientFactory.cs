@@ -20,12 +20,12 @@ namespace PerformanceEvaluationPlatform.Models.User.Auth0
             _config = config.Value ?? throw new ArgumentNullException(nameof(config));
             _cache = cache;
         }
-        public async Task<ManagementApiClient> Create()
+        public async Task<ManagementApiClient> CreateManagementApi()
         {
             AccessTokenResponse token;
             if (!_cache.TryGetValue(cacheKey,out token))
             {
-                var authClient = new AuthenticationApiClient(_config.Domain);
+                var authClient = CreateAuthenticationApi();
                  token = await authClient.GetTokenAsync(new ClientCredentialsTokenRequest()
                 {
                     ClientId = _config.ClientId,
@@ -36,9 +36,14 @@ namespace PerformanceEvaluationPlatform.Models.User.Auth0
                 _cache.Set(cacheKey, token, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes((token.ExpiresIn/60)-10)));
             }
 
-            var client = new ManagementApiClient(token.AccessToken, new Uri($"https://{_config.Domain}/api/v2"));
+            var client = new ManagementApiClient(token.AccessToken, new Uri(_config.ManagementApiUrl));
             return client;
            
+        }
+
+        public  AuthenticationApiClient CreateAuthenticationApi()
+        {
+            return new AuthenticationApiClient(_config.Domain);
         }
     }
 }
