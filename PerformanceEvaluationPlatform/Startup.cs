@@ -21,6 +21,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.Document.Validator;
 using PerformanceEvaluationPlatform.Application.Services.Example;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Application.Services.Field;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -49,6 +50,9 @@ namespace PerformanceEvaluationPlatform
 
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Examples.IExamplesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Examples.ExamplesRepository>();
             services.AddTransient<IExamplesService, ExamplesService>();
+
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Fields.IFieldsRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Fields.FieldsRepository>();
+            services.AddTransient<IFieldService, FieldService>();
 
             services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
             services.AddTransient<IUserRepository, UserRepository>();

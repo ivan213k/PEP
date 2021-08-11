@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PerformanceEvaluationPlatform.Application.Model.Fields;
 
 namespace PerformanceEvaluationPlatform.Models.Field.RequestModels
 {
@@ -17,5 +18,19 @@ namespace PerformanceEvaluationPlatform.Models.Field.RequestModels
         [Required]
         [MaxLength(256)]
         public string Description { get; set; }
+    }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static CreateFieldDto AsDto(this CreateFieldRequestModel requestModel)
+        {
+            return new CreateFieldDto
+            {
+                Name = requestModel.Name,
+                TypeId = requestModel.TypeId,
+                AssesmentGroupId = requestModel.AssesmentGroupId,
+                IsRequired = requestModel.IsRequired,
+                Description = requestModel.Description
+            };
+        }
     }
 }

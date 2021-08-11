@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PerformanceEvaluationPlatform.Application.Model.Fields;
 
 namespace PerformanceEvaluationPlatform.Models.Field.RequestModels
 {
@@ -17,4 +18,18 @@ namespace PerformanceEvaluationPlatform.Models.Field.RequestModels
         public string Description { get; set; }
 
     }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static EditFieldDto AsDto(this EditFieldRequestModel requestModel)
+        {
+            return new EditFieldDto
+            {
+                Name = requestModel.Name,
+                TypeId = requestModel.TypeId,
+                AssesmentGroupId = requestModel.AssesmentGroupId,
+                Description = requestModel.Description 
+            };
+        }
+    }
 }
+
