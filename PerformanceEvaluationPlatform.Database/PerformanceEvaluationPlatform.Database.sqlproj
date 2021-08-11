@@ -105,6 +105,7 @@
     <Folder Include="FieldsGroups\StoredProcedures" />
     <Folder Include="Role\StoredProcedures" />
     <Folder Include="Team\StoredProcedures" />
+    <Folder Include="Project\StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\Example.sql" />
@@ -157,6 +158,7 @@
     <Build Include="FieldsGroups\StoredProcedures\spGetFieldGroupListItems.sql" />
     <Build Include="Role\StoredProcedures\spGetRoleListItems.sql" />
     <Build Include="Team\StoredProcedures\spGetTeamListItems.sql" />
+    <Build Include="Project\StoredProcedures\spGetProjectListItems.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
