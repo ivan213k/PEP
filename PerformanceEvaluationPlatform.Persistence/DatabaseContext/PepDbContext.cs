@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Domain.Examples;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -35,6 +36,12 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 	        modelBuilder.ApplyConfiguration(new ExampleTypeConfiguration());
 	        modelBuilder.ApplyConfiguration(new ExampleStateConfiguration());
 	        modelBuilder.ApplyConfiguration(new ExampleConfiguration());
+
+            modelBuilder.ApplyConfiguration(new AssesmentConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldAssesmentGroupConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldDataConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldTypeConfiguration());
 
             //FormData.Configure(modelBuilder);
             //FormDataState.Configure(modelBuilder);

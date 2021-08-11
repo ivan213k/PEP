@@ -13,13 +13,16 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
 {
     public class FormTemplatesRepository : BaseRepository, IFormTemplatesRepository
     {
+        private const int DraftStatusId = 1;
         public FormTemplatesRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext) : base(databaseOptions, dbContext)
         {
         }
 
         public Task<FormTemplate> Get(int id)
         {
-            return DbContext.Set<FormTemplate>().Include(t=>t.FormTemplateFieldMaps).SingleOrDefaultAsync(t=>t.Id == id);
+            return DbContext.Set<FormTemplate>()
+                .Include(t=>t.FormTemplateFieldMaps)
+                .SingleOrDefaultAsync(t=>t.Id == id);
         }
 
         public async Task<FormTemplateDetailsDto> GetDetailsAsync(int id)
@@ -95,6 +98,18 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
         public Task<bool> ExistByName(string name)
         {
             return DbContext.Set<FormTemplate>().AnyAsync(t => t.Name == name);
+        }
+
+        public Task<bool> ExistDraftFormTemplate(string name)
+        {
+            return DbContext.Set<FormTemplate>()
+                .Where(t => t.StatusId == DraftStatusId)
+                .AnyAsync(t => t.Name == name);
+        }
+
+        public Task<int> MaxVersion(string name)
+        {
+            return DbContext.Set<FormTemplate>().Where(t => t.Name == name).MaxAsync(t => t.Version);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<ICollection<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(8, content.Count);
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<ICollection<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
         }
 
         [Test]
@@ -80,10 +80,11 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<IList<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
-            Assert.AreEqual("Junior Front-End Dev", content[0].Name);
-            Assert.AreEqual("Middle Back-End Dev", content[1].Name);
-            Assert.AreEqual("Middle Front-End Dev", content[2].Name);
+            Assert.AreEqual(8, content.Count);
+            Assert.AreEqual("Junior Back-End Dev", content[0].Name);
+            Assert.AreEqual("Junior Front-End Dev", content[1].Name);
+            Assert.AreEqual("Middle Back-End Dev", content[2].Name);
+            Assert.AreEqual("Middle Front-End Dev", content[3].Name);
         }
 
         [Test]
@@ -101,10 +102,13 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<IList<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
-            Assert.AreEqual("Junior Front-End Dev", content[2].Name);
-            Assert.AreEqual("Middle Back-End Dev", content[1].Name);
-            Assert.AreEqual("Middle Front-End Dev", content[0].Name);
+            Assert.AreEqual(8, content.Count);
+            Assert.AreEqual("Senior Front-End Dev", content[0].Name);
+            Assert.AreEqual("Senior Back-End Dev", content[1].Name);
+            Assert.AreEqual("Middle Front-End Dev", content[3].Name);
+            Assert.AreEqual("Middle Back-End Dev", content[5].Name);
+            Assert.AreEqual("Junior Front-End Dev", content[6].Name);
+            Assert.AreEqual("Junior Back-End Dev", content[7].Name);
         }
 
         [Test]
@@ -122,9 +126,10 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<IList<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(2, content.Count);
+            Assert.AreEqual(3, content.Count);
             Assert.AreEqual("Middle Back-End Dev", content[0].Name);
             Assert.AreEqual("Middle Front-End Dev", content[1].Name);
+            Assert.AreEqual("Middle Front-End Dev", content[2].Name);
         }
 
         [Test]
@@ -144,8 +149,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
                 .DeserializeObject<IList<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
             Assert.AreEqual(2, content.Count);
-            Assert.AreEqual("Middle Back-End Dev", content[1].Name);
-            Assert.AreEqual("Junior Front-End Dev", content[0].Name);
+            Assert.AreEqual("Junior Back-End Dev", content[0].Name);
+            Assert.AreEqual("Junior Front-End Dev", content[1].Name);
         }
 
     }

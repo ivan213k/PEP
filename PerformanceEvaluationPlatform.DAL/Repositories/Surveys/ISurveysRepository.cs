@@ -15,5 +15,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
         Task<SurveyState> GetState(int id);
         Task<Level> GetLevel(int id);
         Task Create(Survey survey);
+        Task<bool> ExistByFormTemplateId(int id);
     }
 }

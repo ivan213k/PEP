@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Models.FormTemplates.Interfaces;
+using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -20,14 +21,18 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private readonly IFormTemplatesRepository _formTemplatesRepository;
         private readonly IFieldsRepository _fieldsRepository;
+        private readonly ISurveysRepository _surveysRepository;
 
-        private const int DraftStateId = 2;
+        private const int DraftStatusId = 1;
+        private const int ActiveStatusId = 2;
+        private const int ArchivedStatusId = 3;
         private const int DefaultVersion = 1;
 
-        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository)
+        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository, ISurveysRepository surveysRepository)
         {
             _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
             _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
+            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
         }
 
         [HttpGet("formtemplates")]
@@ -120,7 +125,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Name = requestModel.Name,
                 CreatedAt = DateTime.Now,
                 Version = DefaultVersion,
-                StatusId = DraftStateId,
+                StatusId = DraftStatusId,
                 FormTemplateFieldMaps = requestModel.Fields.Select(t => new FormTemplateFieldMap {
                     FieldId = t.Id,
                     Order = t.Order
@@ -143,6 +148,28 @@ namespace PerformanceEvaluationPlatform.Controllers
             await ValidateFormTemplate(requestModel);
             if (ModelState.IsValid == false)
                 return BadRequest(ModelState);
+
+            if (formTemplate.StatusId == ArchivedStatusId)
+            {
+                var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
+                if(existDraft)
+                    return Forbid();
+                var idNew = await Copy(formTemplate.Name, requestModel);
+                return Redirect("/formtemplates/" + idNew);
+            }
+
+            if (formTemplate.StatusId == ActiveStatusId)
+            {
+                var existSurveys = await _surveysRepository.ExistByFormTemplateId(formTemplate.Id);
+                if(existSurveys)
+                {
+                    var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
+                    if (existDraft)
+                        return Forbid();
+                    var idNew = await Copy(formTemplate.Name, requestModel);
+                    return Redirect("/formtemplates/" + idNew);
+                }
+            }
 
             formTemplate.FormTemplateFieldMaps.Clear();
             formTemplate.FormTemplateFieldMaps = requestModel.Fields.Select(m => new FormTemplateFieldMap
@@ -192,6 +219,27 @@ namespace PerformanceEvaluationPlatform.Controllers
                         ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields, $"Field with {item} does not exist!");
                 }
             }
+        }
+
+        private async Task<int> Copy(string name, UpdateFormTemplateRequestModel requestModel)
+        {
+            var formTemplate = new FormTemplate
+            {
+                Name = name,
+                CreatedAt = DateTime.Now,
+                Version = await _formTemplatesRepository.MaxVersion(name) + 1,
+                StatusId = DraftStatusId,
+                FormTemplateFieldMaps = requestModel.Fields.Select(t => new FormTemplateFieldMap
+                {
+                    FieldId = t.Id,
+                    Order = t.Order
+                }).ToList()
+            };
+
+            await _formTemplatesRepository.Create(formTemplate);
+            await _formTemplatesRepository.SaveChanges();
+
+            return formTemplate.Id;
         }
     }
 }
