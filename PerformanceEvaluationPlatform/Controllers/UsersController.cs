@@ -229,7 +229,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
             user.StateId = SuspendState;
             await _userRepository.Save();
-            return Ok("User successfully change his state, now its ");
+            return Ok("User successfully change his state, now its Suspend");
         }
 
         private async Task SendMessageToChangeEmail(ManagementApiClient client,User user)
@@ -237,7 +237,9 @@ namespace PerformanceEvaluationPlatform.Controllers
             await client.Tickets.CreatePasswordChangeTicketAsync(new Auth0.ManagementApi.Models.PasswordChangeTicketRequest()
             {
                 ClientId = _config.ClientId,
-                UserId = $"auth0|{user.Id}"
+                ConnectionId = _config.ConnectionId,
+                Email = user.Email
+                // UserId = $"auth0|{user.Id}"
             });
         }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
