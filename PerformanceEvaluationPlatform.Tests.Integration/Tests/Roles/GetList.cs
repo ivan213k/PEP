@@ -45,7 +45,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
             var content = await response.Content.DeserializeAsAsync<ICollection<RoleListItemViewModel>>();
 
             Assert.NotNull(content);
-            Assert.AreEqual(4, content.Count);
+            Assert.AreEqual(5, content.Count);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
 
             var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(4, content.Count);
+            Assert.AreEqual(5, content.Count);
             Assert.AreEqual(content[0].Title, "Backend");
             Assert.AreEqual(content[1].Title, "Frontend");
             Assert.AreEqual(content[2].Title, "QA");
@@ -89,11 +89,12 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
 
             var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(4, content.Count);
-            Assert.AreEqual(content[0].Title, "Team Lead");
-            Assert.AreEqual(content[1].Title, "QA");
-            Assert.AreEqual(content[2].Title, "Frontend");
-            Assert.AreEqual(content[3].Title, "Backend");
+            Assert.AreEqual(5, content.Count);
+            Assert.AreEqual(content[0].Title, "Test");
+            Assert.AreEqual(content[1].Title, "Team Lead");
+            Assert.AreEqual(content[2].Title, "QA");
+            Assert.AreEqual(content[3].Title, "Frontend");
+            Assert.AreEqual(content[4].Title, "Backend");
         }
 
         [Test]
@@ -113,7 +114,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
 
             var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(4, content.Count);
+            Assert.AreEqual(5, content.Count);
             Assert.AreEqual(content[0].Title, "Team Lead");
              
         }
@@ -135,11 +136,12 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
 
             var content = await response.Content.DeserializeAsAsync<IList<RoleListItemViewModel>>();
             Assert.NotNull(content);
-            Assert.AreEqual(4, content.Count);
+            Assert.AreEqual(5, content.Count);
             Assert.AreEqual(content[0].Title, "Backend");
             Assert.AreEqual(content[1].Title, "Frontend");
             Assert.AreEqual(content[2].Title, "QA");
-            Assert.AreEqual(content[3].Title, "Team Lead");
+            Assert.AreEqual(content[3].Title, "Test");
+            Assert.AreEqual(content[4].Title, "Team Lead");
         }
 
         [Test]
@@ -161,7 +163,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
             var content = await response.Content.DeserializeAsAsync<ICollection<RoleListItemViewModel>>();
 
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(4, content.Count);
         }
 
         [Test]

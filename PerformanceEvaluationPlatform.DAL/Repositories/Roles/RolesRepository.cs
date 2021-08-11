@@ -63,6 +63,18 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
             return Get<Role>(id);
         }
 
+        public async Task<bool> IsTittleNotUnique(string title, int? id = null)
+        {
+            if (id == null)
+            {
+                return await DbContext.Set<Role>().AnyAsync(t => title.Equals(t.Title));
+            }
+            else
+            {
+                return await DbContext.Set<Role>().Where(t => t.Id != id).AnyAsync(t => title.Equals(t.Title));
+            }
+        }
+
         public Task Create(Role role)
         {
             return Create<Role>(role);

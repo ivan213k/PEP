@@ -73,9 +73,16 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRoleRequestModel requestModel)
         {
-            if (!requestModel.IsTitleValid())
+            if (requestModel is null)
             {
-                return BadRequest("Title is not valid");
+                return BadRequest();
+            }
+
+            var isTittleNotUnique = await _rolesRepository.IsTittleNotUnique(requestModel.Title);
+
+            if (isTittleNotUnique)
+            {
+                return Conflict("Role with the same title is already exists");
             }
 
             var role = new Role
@@ -95,10 +102,22 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpPut]
         public async Task<IActionResult> Edit(int id, [FromBody] EditRoleRequestModel requestModel)
         {
+            if (requestModel is null)
+            {
+                return BadRequest();
+            }
+
             var entity = await _rolesRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
+            }
+
+            var isTittleNotUnique = await _rolesRepository.IsTittleNotUnique(requestModel.Title, id);
+
+            if (isTittleNotUnique)
+            {
+                return Conflict("Role with the same title is already exists");
             }
 
             entity.Title = requestModel.Title;
