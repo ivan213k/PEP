@@ -236,10 +236,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             await client.Tickets.CreatePasswordChangeTicketAsync(new Auth0.ManagementApi.Models.PasswordChangeTicketRequest()
             {
-                ConnectionId =connection,
                 ClientId = _config.ClientId,
-                Email = user.Email,
-                UserId = user.Id.ToString()
+                UserId = $"auth0|{user.Id}"
             });
         }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
