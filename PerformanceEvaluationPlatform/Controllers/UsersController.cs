@@ -185,9 +185,10 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Create(user);
             await _userRepository.Save();
 
-            var client = await _auth0Factory.Create();
+            var client = await _auth0Factory.CreateManagementApi();
             await CreateAuth0User(user, client);
-            await SendMessageToChangeEmail(client,user);
+            var authclient =await _auth0Factory.CreateAuthenticationApi();
+            await SendMessageToChangeEmail(authclient, user);
             
 
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
@@ -232,14 +233,13 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok("User successfully change his state, now its Suspend");
         }
 
-        private async Task SendMessageToChangeEmail(ManagementApiClient client,User user)
+        private async Task SendMessageToChangeEmail(AuthenticationApiClient client,User user)
         {
-            await client.Tickets.CreatePasswordChangeTicketAsync(new Auth0.ManagementApi.Models.PasswordChangeTicketRequest()
+            await client.ChangePasswordAsync(new ChangePasswordRequest() 
             {
                 ClientId = _config.ClientId,
-                ConnectionId = _config.ConnectionId,
+                Connection = connection,
                 Email = user.Email
-                // UserId = $"auth0|{user.Id}"
             });
         }
         private async Task CreateAuth0User(User user,ManagementApiClient client)
