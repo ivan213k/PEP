@@ -10,6 +10,6 @@ namespace PerformanceEvaluationPlatform.Models.User.Auth0
      public interface IAuth0ClientFactory
     {
         Task<ManagementApiClient> CreateManagementApi();
-        Task<AuthenticationApiClient> CreateAuthenticationApi();
+        AuthenticationApiClient CreateAuthenticationApi();
     }
 }

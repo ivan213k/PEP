@@ -187,7 +187,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             var client = await _auth0Factory.CreateManagementApi();
             await CreateAuth0User(user, client);
-            var authclient =await _auth0Factory.CreateAuthenticationApi();
+            var authclient = _auth0Factory.CreateAuthenticationApi();
             await SendMessageToChangeEmail(authclient, user);
             
 
