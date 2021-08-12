@@ -15,6 +15,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
         Task Create(FormTemplate formTemplate);
         Task<bool> ExistByName(string name);
         Task<bool> ExistDraftFormTemplate(string name);
+        Task<IList<FormTemplate>> GetActiveFormTemplate(string name);
         Task<int> MaxVersion(string name);
     }
 }

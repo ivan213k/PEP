@@ -14,6 +14,8 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
     public class FormTemplatesRepository : BaseRepository, IFormTemplatesRepository
     {
         private const int DraftStatusId = 1;
+        private const int ActiveStatusId = 2;
+
         public FormTemplatesRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext) : base(databaseOptions, dbContext)
         {
         }
@@ -105,6 +107,13 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates
             return DbContext.Set<FormTemplate>()
                 .Where(t => t.StatusId == DraftStatusId)
                 .AnyAsync(t => t.Name == name);
+        }
+
+        public async Task<IList<FormTemplate>> GetActiveFormTemplate(string name)
+        {
+            return await DbContext.Set<FormTemplate>()
+                .Where(t => t.StatusId == ActiveStatusId && t.Name == name)
+                .ToListAsync();
         }
 
         public Task<int> MaxVersion(string name)

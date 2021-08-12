@@ -62,7 +62,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormTemplates
             var content = JsonConvert
                 .DeserializeObject<ICollection<FormTemplateListItemViewModel>>(await response.Content.ReadAsStringAsync());
             Assert.NotNull(content);
-            Assert.AreEqual(3, content.Count);
+            Assert.AreEqual(1, content.Count);
         }
 
         [Test]

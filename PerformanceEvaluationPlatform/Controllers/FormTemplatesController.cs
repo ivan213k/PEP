@@ -13,12 +13,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Models.FormTemplates.Interfaces;
 using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
+using Microsoft.Extensions.Logging;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     public class FormTemplatesController : ControllerBase
     {
+        private readonly ILogger _logger;
+
         private readonly IFormTemplatesRepository _formTemplatesRepository;
         private readonly IFieldsRepository _fieldsRepository;
         private readonly ISurveysRepository _surveysRepository;
@@ -28,11 +31,12 @@ namespace PerformanceEvaluationPlatform.Controllers
         private const int ArchivedStatusId = 3;
         private const int DefaultVersion = 1;
 
-        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository, ISurveysRepository surveysRepository)
+        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository, ISurveysRepository surveysRepository, ILogger<FormTemplatesController> logger)
         {
             _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
             _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _logger = logger;
         }
 
         [HttpGet("formtemplates")]
@@ -181,6 +185,30 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _formTemplatesRepository.SaveChanges();
 
             return Redirect("/formtemplates/" + formTemplate.Id);
+        }
+
+        [HttpPut("formtemplates/{id:int}/activate")]
+        public async Task<IActionResult> ChangeStatusToActive(int id)
+        {
+            var formTemplate = await _formTemplatesRepository.Get(id);
+            if (formTemplate == null)
+                return NotFound();
+
+            if (formTemplate.StatusId != DraftStatusId)
+                return UnprocessableEntity("Form Template is not in draft status!");
+
+            var activeFormTemplate = await _formTemplatesRepository.GetActiveFormTemplate(formTemplate.Name);
+            if (activeFormTemplate != null)
+            {
+                if(activeFormTemplate.Count()>1)
+                    _logger.LogWarning("Activated form templates with \"{name}\" name more than one!", formTemplate.Name);
+                activeFormTemplate.ToList().ForEach(t => t.StatusId = ArchivedStatusId);
+            }   
+
+            formTemplate.StatusId = ActiveStatusId;
+            await _formTemplatesRepository.SaveChanges();
+
+            return NoContent();
         }
 
         private async Task ValidateFormTemplate(IFormTemplateRequest request)
