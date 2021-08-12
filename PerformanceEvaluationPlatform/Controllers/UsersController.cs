@@ -262,7 +262,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 NickName = user.FirstName,
                 UserId = user.Id.ToString(),
                 Connection = connection,
-                Password = _host.IsDevelopment()?_config.DefaultPassword: Guid.NewGuid().ToString(),
+                Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
         }
