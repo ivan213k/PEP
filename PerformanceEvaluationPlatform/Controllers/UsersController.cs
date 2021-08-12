@@ -1,8 +1,10 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
@@ -33,15 +35,18 @@ namespace PerformanceEvaluationPlatform.Controllers
         private readonly ISurveysRepository _surveysRepository;
         private readonly Auth0Configur _config;
         private readonly IAuth0ClientFactory _auth0Factory;
+        private readonly IWebHostEnvironment _host;
         public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository,
-            ISurveysRepository surveysRepository, IOptions<Auth0Configur> config, IAuth0ClientFactory auth0Factory)
+            ISurveysRepository surveysRepository, IOptions<Auth0Configur> config, IAuth0ClientFactory auth0Factory,
+            IWebHostEnvironment host)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
             _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
             _config = config.Value ?? throw new ArgumentNullException(nameof(config));
-            _auth0Factory = auth0Factory ?? throw new ArgumentNullException(nameof(auth0Factory)); ;
+            _auth0Factory = auth0Factory ?? throw new ArgumentNullException(nameof(auth0Factory));
+            _host = host ?? throw new ArgumentNullException(nameof(host));
         }
 
 
@@ -187,9 +192,12 @@ namespace PerformanceEvaluationPlatform.Controllers
 
             var client = await _auth0Factory.CreateManagementApi();
             await CreateAuth0User(user, client);
+
+            if (!_host.IsDevelopment()) { 
             var authclient = _auth0Factory.CreateAuthenticationApi();
             await SendMessageToChangeEmail(authclient, user);
-            
+            }
+
 
             var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
             string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
@@ -254,7 +262,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 NickName = user.FirstName,
                 UserId = user.Id.ToString(),
                 Connection = connection,
-                Password = Guid.NewGuid().ToString(),
+                Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
         }
