@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.FormsData
 {
     public class FormDataListItemDto
     {

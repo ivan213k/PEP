@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
+using PerformanceEvaluationPlatform.Application.Model.FormsData;
+using PerformanceEvaluationPlatform.Domain.FormsData;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.FormsData      
+namespace PerformanceEvaluationPlatform.Application.Interfaces.FormsData
 {
     public interface IFormDataRepository: IBaseRepository
     {

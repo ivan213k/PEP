@@ -42,7 +42,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.FormData
                 .AppendPathSegment("forms")
                 .SetQueryParams(new FormDataListFilterRequestModel
                 {
-                    StateId = 1
+                    StateId = 3
                 })
                 .WithHttpMethod(HttpMethod.Get);
 

@@ -3,12 +3,11 @@ using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Domain.Shared;
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.Domain.Examples;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
+using PerformanceEvaluationPlatform.Persistence.Configurations.FormsData;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -37,24 +36,18 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 	        modelBuilder.ApplyConfiguration(new ExampleStateConfiguration());
 	        modelBuilder.ApplyConfiguration(new ExampleConfiguration());
 
-            modelBuilder.ApplyConfiguration(new AssesmentConfiguration());
-            modelBuilder.ApplyConfiguration(new FieldAssesmentGroupConfiguration());
-            modelBuilder.ApplyConfiguration(new FieldConfiguration());
-            modelBuilder.ApplyConfiguration(new FieldDataConfiguration());
-            modelBuilder.ApplyConfiguration(new FieldTypeConfiguration());
-
-            //FormData.Configure(modelBuilder);
-            //FormDataState.Configure(modelBuilder);
+            modelBuilder.ApplyConfiguration(new FormDataStateConfiguration());
+            modelBuilder.ApplyConfiguration(new FormDataConfiguration());
 
             //Survey.Configure(modelBuilder);
             //SurveyState.Configure(modelBuilder);
             //Level.Configure(modelBuilder);
 
-            //Assesment.Configure(modelBuilder);
-            //FieldData.Configure(modelBuilder);
-            //Field.Configure(modelBuilder);
-            //FieldType.Configure(modelBuilder);
-            //FieldAssesmentGroup.Configure(modelBuilder);
+            modelBuilder.ApplyConfiguration(new AssesmentConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldAssesmentGroupConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldDataConfiguration());
+            modelBuilder.ApplyConfiguration(new FieldTypeConfiguration());
 
             //FormTemplate.Configure(modelBuilder);
             //FormTemplateStatus.Configure(modelBuilder);

@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.FormData.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
@@ -40,9 +39,6 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-	        FormData.Configure(modelBuilder);
-            FormDataState.Configure(modelBuilder);
-
             Survey.Configure(modelBuilder);
             SurveyState.Configure(modelBuilder);
             Level.Configure(modelBuilder);

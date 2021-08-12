@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.FormData.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.FormsData
 {
     public class FormDataDetailsDto
     {

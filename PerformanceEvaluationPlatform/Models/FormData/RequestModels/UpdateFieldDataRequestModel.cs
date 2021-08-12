@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PerformanceEvaluationPlatform.Application.Model.FormsData;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
 {
@@ -9,5 +12,26 @@ namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
         [Required]
         public int AssesmentId { get; set; }
         public string Comment { get; set; }
+    }
+
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static IList<UpdateFieldDataDto> AsDto(this IList<UpdateFieldDataRequestModel> requestModel)
+        {
+            IList<UpdateFieldDataDto> updateFieldDataDtoList = new List<UpdateFieldDataDto> { };
+
+            foreach (var item in requestModel)
+            {
+                var updateFieldDataDto = new UpdateFieldDataDto
+                {
+                    Comment = item.Comment,
+                    FieldId = item.FieldId,
+                    AssesmentId = item.AssesmentId,
+                };
+                return updateFieldDataDtoList.Select(ufd => updateFieldDataDto).ToList();
+            }
+            return updateFieldDataDtoList;
+        }
     }
 }

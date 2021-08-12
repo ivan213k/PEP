@@ -11,7 +11,6 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Document;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
 using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
@@ -22,6 +21,7 @@ using PerformanceEvaluationPlatform.Models.Document.Validator;
 using PerformanceEvaluationPlatform.Application.Services.Example;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Application.Services.Field;
+using PerformanceEvaluationPlatform.Application.Services.FormsData;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -66,7 +66,8 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IFieldsGroupRepository, FieldsGroupRepository>();
             services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
             services.AddTransient<ITeamsRepository, TeamsRepository>();
-            services.AddTransient<IFormDataRepository, FormDataRepository>();
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormsData.IFormDataRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormsData.FormDataRepository>();
+            services.AddTransient<IFormDataService, FormDataService>();
             services.AddTransient<IProjectsRepository, ProjectsRepository>();
 
             services.AddTransient<IAuth0ClientFactory, Auth0ClientFactory>();

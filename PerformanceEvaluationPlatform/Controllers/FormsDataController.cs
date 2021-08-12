@@ -3,167 +3,71 @@ using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Models.FormData.ViewModels;
 using PerformanceEvaluationPlatform.Models.FormData.RequestModels;
 using System.Linq;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormsData;
-using PerformanceEvaluationPlatform.DAL.Models.FormData.Dto;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using System.Collections.Generic;
-using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
+using PerformanceEvaluationPlatform.Models.Example.RequestModels;
+using PerformanceEvaluationPlatform.Models.Example.ViewModels;
+using PerformanceEvaluationPlatform.Application.Packages;
+using PerformanceEvaluationPlatform.Application.Services.FormsData;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class FormsDataController : ControllerBase
+    public class FormsDataController : BaseController
     {
-        private const int InProgressStateId = 2;
-        private const int SubmittedStateId = 3;
-        private readonly IFormDataRepository _formDataRepository;
-        private readonly IFieldsRepository _fieldsRepository;
+        private readonly IFormDataService _formDataService;
 
-        public FormsDataController(IFormDataRepository formDataRepository, IFieldsRepository fieldsRepository)
+        public FormsDataController(IFormDataService formDataService)
         {
-            _formDataRepository = formDataRepository ?? throw new ArgumentNullException(nameof(formDataRepository));
-            _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
+            _formDataService = formDataService ?? throw new ArgumentNullException(nameof(formDataService));
         }
 
         [HttpGet("forms")]
         public async Task<IActionResult> Get([FromQuery] FormDataListFilterRequestModel filter)
         {
-            var filterDto = new FormDataListFilterDto
+            var formDataResponse = await _formDataService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(formDataResponse, out IActionResult errorResult))
             {
-                Search = filter.Search,
-                StateId = filter.StateId,
-                AssigneeSortOrder = (int?)filter.AssigneeSortOrder,
-                FormNameSortOrder = (int?)filter.FormNameSortOrder,
-                AssigneeIds = filter.AssigneeIds,
-                ReviewersIds = filter.ReviewersIds,
-                AppointmentDateFrom = filter.AppointmentDateFrom,
-                AppointmentDateTo = filter.AppointmentDateTo,
-                Skip = filter.Skip,
-                Take = filter.Take
-            };
+                return errorResult;
+            }
 
-            var formDataDto = await _formDataRepository.GetList(filterDto);
-            var formData = formDataDto.Select(fd => new FormDataListItemViewModel
-            {
-                Id = fd.Id,
-                AssigneeId = fd.AssigneeId,
-                Assignee = $"{fd.AssigneeFirstName} {fd.AssigneeLastName}",
-                AppointmentDate = fd.AppointmentDate,
-                FormId = fd.FormId,
-                FormName = fd.FormName,
-                Reviewer = $"{fd.ReviewerFirstName} {fd.ReviewerLastName}",
-                ReviewerId = fd.ReviewerId,
-                State = fd.StateName,
-                StateId = fd.StateId
-            });
-            return Ok(formData);
+            var itemsVm = formDataResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
         [HttpGet("forms/states")]
         public async Task<IActionResult> GetStates()
         {
-            var itemsDto = await _formDataRepository.GetStatesList();
-            var items = itemsDto
-                .Select(t => new FormDataStateListItemViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Name
-                });
+            var formDataResponse = await _formDataService.GetStateListItems();
+            if (TryGetErrorResult(formDataResponse, out IActionResult errorResult))
+            {
+                return errorResult;
+            }
 
+            var items = formDataResponse.Payload.Select(t => t.AsViewModel());
             return Ok(items);
         }
 
         [HttpGet("forms/{id:int}")]
         public async Task<IActionResult> GetDetailsPage([FromRoute] int id)
         {
-            var detailsDto = await _formDataRepository.GetDetails(id);
-            if (detailsDto == null)
+            var detailsResponse = await _formDataService.GetDetails(id);
+            if (TryGetErrorResult(detailsResponse, out IActionResult errorResult))
             {
-                return NotFound();
+                return errorResult;
             }
-            var detailsViewModel = new FormDataDetailViewModel
-            {
-                FormId = detailsDto.FormId,
-                FormName = detailsDto.FormName,
-                Assignee = detailsDto.Assignee,
-                AssigneeId = detailsDto.AssigneeId,
-                Reviewer = detailsDto.Reviewer,
-                ReviewerId = detailsDto.ReviewerId,
-                AppointmentDate = detailsDto.AppointmentDate,
-                RecommendedLevel = detailsDto.RecommendedLevel,
-                RecommendedLevelId = detailsDto.RecommendedLevelId,
-                State = detailsDto.State,
-                StateId = detailsDto.FormDataStateId,
-                Project = detailsDto.Project,
-                ProjectId = detailsDto.ProjectId,
-                Team = detailsDto.Team,
-                TeamId = detailsDto.TeamId,
-                Period = detailsDto.Period,
-                ExperienceInCompany = detailsDto.ExperienceInCompany,
-                EnglishLevel = detailsDto.EnglishLevel,
-                CurrentPosition = detailsDto.CurrentPosition,
-                Answers = detailsDto.Answers?
-                .Select(fd => new FormDataAnswersItemViewModel
-                {
-                    Assessment = fd.Assessment,
-                    Comment = fd.Comment,
-                    TypeId = fd.TypeId,
-                    TypeName = fd.TypeName,
-                    Order = fd.Order,
-                }).ToList()
-            };
-            return Ok(detailsViewModel);
+
+            var detailsVm = detailsResponse.Payload.AsViewModel();
+            return Ok(detailsVm);
         }
 
-        [HttpPut("forms/{formDataId:int}")]
+        [HttpPut("forms/{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] IList<UpdateFieldDataRequestModel> requestModel)
         {
-            var entity = await _formDataRepository.Get(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-            if (entity.FormDataStateId == SubmittedStateId)
-            {
-                return UnprocessableEntity("This form already complited");
-            }
-
-            foreach (var item in requestModel)
-            {
-                var field = await _fieldsRepository.Get(item.FieldId);
-                if (field == null)
-                {
-                    return BadRequest("Field does not exists.");
-                }
-                var assessment = await _fieldsRepository.Get(item.AssesmentId);
-                if (assessment == null)
-                {
-                    return BadRequest("Assesment does not exists.");
-                }
-                if (assessment.AssesmentGroupId != entity.FieldData.Select(x=>x.Field.AssesmentGroupId).FirstOrDefault())
-                {
-                    return BadRequest("Assessment is not related to the field");
-                }
-                var comment = await _fieldsRepository.GetFieldData(item.FieldId);
-                if (comment.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(comment.Comment))
-                {
-                    return BadRequest("Comment is required, but not set");
-                }
-            }
-
-            entity.FieldData.Clear();
-            entity.FieldData = requestModel.Select(m => new FieldData
-            {
-                Comment = m.Comment,
-                FieldId = m.FieldId,
-                AssesmentId = m.AssesmentId
-            }).ToList();
-
-            entity.FormDataStateId = InProgressStateId;
-
-            await _formDataRepository.SaveChanges();
-            return Ok("State was changed on In Progress");
+            ServiceResponse serviceResponse = await _formDataService.Update(id, requestModel.AsDto());
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult)
+                ? errorResult
+                : Ok();
         }
     }
 }

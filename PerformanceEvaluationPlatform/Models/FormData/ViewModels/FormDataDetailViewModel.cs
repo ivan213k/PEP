@@ -1,5 +1,7 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.FormsData;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PerformanceEvaluationPlatform.Models.FormData.ViewModels
 {
@@ -25,5 +27,45 @@ namespace PerformanceEvaluationPlatform.Models.FormData.ViewModels
         public string Period { get; set; }
         public string CurrentPosition { get; set; }
         public ICollection<FormDataAnswersItemViewModel> Answers { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static FormDataDetailViewModel AsViewModel(this FormDataDetailsDto dto)
+        {
+            return new FormDataDetailViewModel
+            {
+                FormId = dto.FormId,
+                FormName = dto.FormName,
+                Assignee = dto.Assignee,
+                AssigneeId = dto.AssigneeId,
+                Reviewer = dto.Reviewer,
+                ReviewerId = dto.ReviewerId,
+                AppointmentDate = dto.AppointmentDate,
+                RecommendedLevel = dto.RecommendedLevel,
+                RecommendedLevelId = dto.RecommendedLevelId,
+                State = dto.State,
+                StateId = dto.FormDataStateId,
+                Project = dto.Project,
+                ProjectId = dto.ProjectId,
+                Team = dto.Team,
+                TeamId = dto.TeamId,
+                Period = dto.Period,
+                ExperienceInCompany = dto.ExperienceInCompany,
+                EnglishLevel = dto.EnglishLevel,
+                CurrentPosition = dto.CurrentPosition,
+                Answers = dto.Answers?
+                .Select(fd => new FormDataAnswersItemViewModel
+                {
+                    Assessment = fd.Assessment,
+                    Comment = fd.Comment,
+                    TypeId = fd.TypeId,
+                    TypeName = fd.TypeName,
+                    Order = fd.Order,
+                })
+                .OrderBy(fd => fd.Order)
+                .ToList()
+            };
+        }
     }
 }
