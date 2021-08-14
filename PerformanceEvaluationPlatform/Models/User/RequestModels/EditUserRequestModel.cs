@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Models.User.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         [Required]
         public int EnglishLevelId { get; set; }
         [Required]
+        public SystemRoles systemRole { get; set; }
         public DateTime FirstDayInCompany { get; set; }
         [Required]
         public DateTime FirstDayInIndustry { get; set; }

@@ -185,6 +185,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 StateId = ActiveState,
                 TeamId = createUserRequest.TeamId,
                 TechnicalLevelId = createUserRequest.TechnicalLevelId,
+                SystemRole=(int)createUserRequest.SystemRole,
                 Roles = userRoleMaps
             };
             await _userRepository.Create(user);
@@ -332,6 +333,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.LastName = editedUser.LastName;
             user.TeamId = editedUser.TeamId;
             user.TechnicalLevelId = editedUser.TechnicalLevelId;
+            user.SystemRole = (int)editedUser.systemRole;
             _userRepository.Update(editedUser.RoleIds, user.Id);
         }
 
