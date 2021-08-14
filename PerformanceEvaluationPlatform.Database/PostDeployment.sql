@@ -14,6 +14,7 @@
 :r .\Survey\PostDeployment\01.SurveyStates.sql
 :r .\Survey\PostDeployment\02.Levels.sql
 
+:r .\Users\PostDeployment\00.SystemRole.sql
 :r .\Users\PostDeployment\01.UserState.sql
 :r .\Users\PostDeployment\02.User.sql
 :r .\Users\PostDeployment\03.UserRoleMap.sql

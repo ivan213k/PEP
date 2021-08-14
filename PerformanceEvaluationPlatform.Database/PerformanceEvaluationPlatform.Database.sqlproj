@@ -159,6 +159,7 @@
     <Build Include="Role\StoredProcedures\spGetRoleListItems.sql" />
     <Build Include="Team\StoredProcedures\spGetTeamListItems.sql" />
     <Build Include="Project\StoredProcedures\spGetProjectListItems.sql" />
+    <Build Include="Users\Tablse\SystemRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />
@@ -183,6 +184,7 @@
     <None Include="Users\PostDeployment\02.User.sql" />
     <None Include="Users\PostDeployment\03.UserRoleMap.sql" />
     <None Include="FieldsGroups\PostDeployment\01.FieldGroups.sql" />
+    <None Include="Users\PostDeployment\00.SystemRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Example\Tables\ExampleState.sql" />

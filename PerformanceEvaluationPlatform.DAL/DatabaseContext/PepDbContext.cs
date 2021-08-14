@@ -53,6 +53,7 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             FormTemplateStatus.Configure(modelBuilder);
             FormTemplateFieldMap.Configure(modelBuilder);
 
+            SystemRole.Configure(modelBuilder);
             User.Configure(modelBuilder);
             UserState.Configure(modelBuilder);
             UserRoleMap.Configure(modelBuilder);
