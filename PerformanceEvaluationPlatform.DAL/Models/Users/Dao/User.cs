@@ -77,6 +77,10 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
                 .WithOne(s => s.Asignee)
                 .IsRequired();
 
+            userTableBuilder.HasOne(s => s.SystemRole)
+                .WithMany()
+                .HasForeignKey(s => s.SystemRoleId)
+                .IsRequired();
         }
     }
 }

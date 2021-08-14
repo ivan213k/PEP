@@ -121,6 +121,22 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Users
             return SaveChanges();
         }
 
-       
+        public async Task<ICollection<SystemRoleDto>> GetSystemRoles()
+        {
+            return await DbContext.Set<SystemRole>().Select(s => new SystemRoleDto() 
+            {
+                Id = s.Id,
+                Name = s.Name
+            }).ToListAsync();
+        }
+
+        public async Task<SystemRoleDto> GetSystemRole(string id)
+        {
+            return await DbContext.Set<SystemRole>().Select(s => new SystemRoleDto()
+            {
+                Id = s.Id,
+                Name = s.Name
+            }).FirstOrDefaultAsync(s => s.Id == id);
+        }
     }
 }

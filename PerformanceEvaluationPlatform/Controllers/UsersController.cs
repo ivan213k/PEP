@@ -93,6 +93,16 @@ namespace PerformanceEvaluationPlatform.Controllers
             var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
             return Ok(userStatesviewModel);
         }
+        [HttpGet("systemrole")]
+        public async Task<IActionResult> GetSystemRoles()
+        {
+            var systemRoles =await _userRepository.GetSystemRoles();
+            return Ok(systemRoles.Select(s=>new SystemRoleViewModel() 
+            {
+                Id = s.Id,
+                Name = s.Name
+            }));
+        }
 
 
         [HttpGet("{id:int}")]
@@ -243,6 +253,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Save();
             return Ok("User successfully change his state, now its Suspend");
         }
+        
 
         private async Task SendMessageToChangeEmail(AuthenticationApiClient client,User user)
         {
@@ -268,7 +279,6 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
-            //client.Roles.AssignUsersAsync(roleId,userId);
         }
 
         private async Task UpdateAuth0User(User user, ManagementApiClient client)
@@ -287,7 +297,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private async Task ValidateUser(IUserRequest userRequest)
         {
-         
+
 
 
             List<int> notValidUserRoles = new List<int>();
@@ -311,6 +321,12 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (userTeam is null)
             {
                 ModelState.AddModelError(userRequest.TeamId.ToString(), "Team with this Id doesn't exists");
+            }
+
+            var systemRole = await _userRepository.GetSystemRole(userRequest.SystemRoleId);
+            if (systemRole is null)
+            {
+                ModelState.AddModelError(userRequest.TechnicalLevelId.ToString(), "System Role with this Id doesn't exists");
             }
 
             var userTechnicalLevel = await _surveysRepository.GetLevel(userRequest.TechnicalLevelId);
