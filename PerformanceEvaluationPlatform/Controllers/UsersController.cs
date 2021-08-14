@@ -135,7 +135,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return NotFound();
             }
             var existingUser = await _userRepository.Get(editedUser.Email);
-            if(existingUser.Id != id)
+            if(existingUser != null &&existingUser.Id != id)
             {
                 ModelState.AddModelError(editedUser.Email, "User with the same email is already exists");
                 return Conflict(ModelState);
@@ -150,6 +150,8 @@ namespace PerformanceEvaluationPlatform.Controllers
             UpdateUser(user, editedUser);
             await _userRepository.Save();
 
+            var client =await  _auth0Factory.CreateManagementApi();
+            await UpdateAuth0User(user, client);
 
             return Ok($"{user.Id} user with this Id was updated success");
         }
@@ -267,6 +269,20 @@ namespace PerformanceEvaluationPlatform.Controllers
                 VerifyEmail = false
             });
             //client.Roles.AssignUsersAsync(roleId,userId);
+        }
+
+        private async Task UpdateAuth0User(User user, ManagementApiClient client)
+        {
+            await client.Users.UpdateAsync($"auth0|{user.Id}", new Auth0.ManagementApi.Models.UserUpdateRequest()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NickName = user.FirstName,
+                FullName = $"{user.FirstName} {user.LastName}",
+                UserName = user.FirstName
+                
+            });
         }
 
         private async Task ValidateUser(IUserRequest userRequest)
