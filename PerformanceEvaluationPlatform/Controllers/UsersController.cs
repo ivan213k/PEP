@@ -266,6 +266,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
+            //client.Roles.AssignUsersAsync(roleId,userId);
         }
 
         private async Task ValidateUser(IUserRequest userRequest)
