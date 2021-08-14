@@ -23,6 +23,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
         public Level TechnicalLevel { get; set; }
         public int EnglishLevelId { get; set; }
         public Level EnglishLevel { get; set; }
+        public int SystemRole { get; set; }
         public IEnumerable<UserRoleMap> Roles { get; set; }
         public IEnumerable<Survey> Surveys { get; set; }
 

@@ -12,6 +12,7 @@
 	[EnglishLevelId] INT NOT NULL 
 
 	CONSTRAINT [Pk_User] PRIMARY KEY(Id),
+    [SystemRole] INT NOT NULL, 
     CONSTRAINT [Fk_User_UserState] FOREIGN KEY ([StateId]) REFERENCES [dbo].[UserState](Id),
 	CONSTRAINT [Fk_User_Team] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Team]([Id]),
 	CONSTRAINT [Fk_User_Level] FOREIGN KEY ([TechnicalLevelId]) REFERENCES [dbo].[Level]([Id]),
