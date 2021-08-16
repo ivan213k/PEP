@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Documents;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace PerformanceEvaluationPlatform.Models.Document.RequestModels
@@ -17,5 +18,23 @@ namespace PerformanceEvaluationPlatform.Models.Document.RequestModels
         public string FileName { get; set; }
         public int CreatedById { get; set; }
         public string MetaDate { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static CreateDocumentDto AsDto(this RequestAddDocumentModel request)
+        {
+            var createDocumentDto = new CreateDocumentDto()
+            {
+                Id=request.Id,
+                UserId=request.UserId,
+                TypeId=request.TypeId,
+                ValidToDate=request.ValidToDate,
+                FileName=request.FileName,
+                CreatedById=request.CreatedById,
+                MetaDate=request.MetaDate
+            };
+            return createDocumentDto;
+        }
     }
 }

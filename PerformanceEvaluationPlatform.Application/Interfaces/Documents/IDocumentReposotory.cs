@@ -1,10 +1,9 @@
-﻿using PerformanceEvaluationPlatform.DAL.Models.Documents.Dto;
+﻿using PerformanceEvaluationPlatform.Application.Model.Documents;
+using PerformanceEvaluationPlatform.Domain.Documents;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Documentdoc = PerformanceEvaluationPlatform.DAL.Models.Documents.Dao.Document;
 
-
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Document
+namespace PerformanceEvaluationPlatform.Application.Interfaces.Documents
 {
     public interface IDocumentReposotory : IBaseRepository
     {
@@ -16,11 +15,11 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Document
 
         Task<DocumentTypeDto> GetTypeModel(int id);
 
-        Task Create(Documentdoc example);
+        Task Create(Document example);
 
         Task DeleteDocument(int id);
 
-        Task<Models.Documents.Dao.Document> Get(int id);
+        Task<Document> Get(int id);
 
 
 

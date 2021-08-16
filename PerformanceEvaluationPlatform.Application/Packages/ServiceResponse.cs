@@ -30,7 +30,7 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 		public static ServiceResponse Failure(Dictionary<string, ICollection<string>> errors, int statusCode = 400) =>
 			new ServiceResponse
 			{
-				_statusCode = 400,
+				_statusCode = statusCode,
 				_errors = errors
 			};
 

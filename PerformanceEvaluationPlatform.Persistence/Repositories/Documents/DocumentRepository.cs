@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.Documents.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Documents.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.Documents.Mappers;
+using PerformanceEvaluationPlatform.Application.Interfaces.Documents;
+using PerformanceEvaluationPlatform.Application.Model.Documents;
+using PerformanceEvaluationPlatform.Domain.Documents;
+using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Document
+namespace PerformanceEvaluationPlatform.Persistence.Repositories.Documents
 {
     public class DocumentRepository : BaseRepository, IDocumentReposotory
     {
+        //TODO: Uncomment User after adding in project
         public DocumentRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext)
             : base(databaseOptions, dbContext)
         {
@@ -26,23 +27,23 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Document
                 var removeDocument = await Get(id);
             if (removeDocument != null)
             {
-                var result = DbContext.Set<Models.Documents.Dao.Document>().Remove(removeDocument);
+                var result = DbContext.Set<Document>().Remove(removeDocument);
                 await DbContext.SaveChangesAsync();
             }  
         }
 
         public async Task<DocumentDetailDto> GetDocument(int id)
         {
-            var documentDetail = await DbContext.Set<Models.Documents.Dao.Document>()
+            var documentDetail = await DbContext.Set<Document>()
                 .Include(x => x.DocumentType)
-                .Include(x => x.User)
-                .Include(x => x.CreatedBy)
-                .Include(x => x.UpdatedBy)
+                //.Include(x => x.User)
+                //.Include(x => x.CreatedBy)
+                //.Include(x => x.UpdatedBy)
                 .SingleOrDefaultAsync(x => x.Id == id);
             if (documentDetail == null) {
                 return null;
             }
-            var documentDetailDto = documentDetail.AsDocumentDetailDto();
+            var documentDetailDto = documentDetail.AsDto();
             return documentDetailDto;
         }
 
@@ -67,25 +68,25 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Document
             if (documentType == null) {
                 return null;
             }
-            var documentTypeDto = documentType.AsDocumentTypeDto();
+            var documentTypeDto = documentType.AsDto();
             return documentTypeDto;
         }
 
         public async Task<IList<DocumentTypeDto>> GetTypes()
         {
             var documentTypesList = await DbContext.Set<DocumentType>().ToListAsync();
-            var docTypesDtos = Mapper.ConvertToIEnumerableDocumetTypeDtoFromIEnumerableDocumentType(documentTypesList);
+            var docTypesDtos = documentTypesList.AsIEnumerableDtos(); 
             return (IList<DocumentTypeDto>)docTypesDtos;
             
         }
 
-        public  Task<Models.Documents.Dao.Document> Get(int id) {
-            return Get<Models.Documents.Dao.Document>(id);
+        public  Task<Document> Get(int id) {
+            return Get<Document>(id);
         }
 
-        public Task Create(Models.Documents.Dao.Document example)
+        public Task Create(Document example)
         {
-            return Create<Models.Documents.Dao.Document>(example);
+            return Create<Document>(example);
         }
     }
 }

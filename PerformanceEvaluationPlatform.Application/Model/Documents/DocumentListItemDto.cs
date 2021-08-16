@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Documents.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Documents
 {
     public class DocumentListItemDto
     {

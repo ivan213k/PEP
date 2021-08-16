@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Documents.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Documents
 {
     public class DocumentListFilterDto
     {
