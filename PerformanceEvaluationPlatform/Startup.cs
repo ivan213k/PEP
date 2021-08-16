@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Repositories.Deeplinks;
 using PerformanceEvaluationPlatform.DAL.Repositories.Document;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
@@ -22,6 +21,7 @@ using PerformanceEvaluationPlatform.Application.Services.Example;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormsData;
+using PerformanceEvaluationPlatform.Application.Services.Deeplinks;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -64,7 +64,10 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IDocumentReposotory, DocumentRepository>();
             services.AddTransient<IDocumentValidator, DocumentRequestModelsValidator>();
             services.AddTransient<IFieldsGroupRepository, FieldsGroupRepository>();
-            services.AddTransient<IDeeplinksRepository, DeeplinksRepository>();
+
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Deeplinks.IDeeplinksRepository,PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks.DeeplinksRepository>();
+            services.AddTransient<IDeeplinksService, DeeplinksService>();
+            
             services.AddTransient<ITeamsRepository, TeamsRepository>();
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormsData.IFormDataRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormsData.FormDataRepository>();
             services.AddTransient<IFormDataService, FormDataService>();

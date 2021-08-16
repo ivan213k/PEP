@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
 using PerformanceEvaluationPlatform.Persistence.Configurations.FormsData;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Deeplinks;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -38,6 +39,11 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 
             modelBuilder.ApplyConfiguration(new FormDataStateConfiguration());
             modelBuilder.ApplyConfiguration(new FormDataConfiguration());
+            modelBuilder.ApplyConfiguration(new DeeplinkConfiguration());
+            modelBuilder.ApplyConfiguration(new DeeplinkStateConfiguration());
+
+            //FormData.Configure(modelBuilder);
+            //FormDataState.Configure(modelBuilder);
 
             //Survey.Configure(modelBuilder);
             //SurveyState.Configure(modelBuilder);

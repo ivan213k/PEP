@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Documents.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
@@ -72,8 +71,6 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
                 }
             }
             FieldGroup.Configure(modelBuilder);
-            Deeplink.Configure(modelBuilder);
-            DeeplinkState.Configure(modelBuilder);
 
             Team.Configure(modelBuilder);
 

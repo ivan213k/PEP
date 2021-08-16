@@ -18,11 +18,11 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
     [TestFixture]
     class CreateNewDeeplink : IntegrationTestBase
     {
-        private CreateDeeplinkRequestModel createRequestModel;
+        private CreateDeeplinkRequestModel _createRequestModel;
 
         public CreateNewDeeplink()
         {
-            createRequestModel = new CreateDeeplinkRequestModel
+            _createRequestModel = new CreateDeeplinkRequestModel
             {
                 SurveyId = 3,
                 ExpiresDate = new DateTime(2021,10,25),
@@ -35,8 +35,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
         public async Task Shoud_return_bad_request_when_create_deeplink_request_model_is_null()
         {
             //Arrange
-            CreateDeeplinkRequestModel createRequestModel = null;
-            var request = CreatePostHttpRequest("deeplinks", createRequestModel);
+            CreateDeeplinkRequestModel _createRequestModel = null;
+            var request = CreatePostHttpRequest("deeplinks", _createRequestModel);
 
             //Act
             var response = await SendRequest(request);
@@ -50,8 +50,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
         public async Task Shoud_return_bad_request_when_User_does_not_exist()
         {
             //Arrange
-            createRequestModel.UserId = 10000;
-            var request = CreatePostHttpRequest("deeplinks", createRequestModel);
+            _createRequestModel.UserId = 10000;
+            var request = CreatePostHttpRequest("deeplinks", _createRequestModel);
 
             //Act
             var response = await SendRequest(request);
@@ -65,8 +65,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
         public async Task Shoud_return_bad_request_when_survey_does_not_exist()
         {
             //Arrange
-            createRequestModel.SurveyId = 10000;
-            var request = CreatePostHttpRequest("deeplinks", createRequestModel);
+            _createRequestModel.SurveyId = 10000;
+            var request = CreatePostHttpRequest("deeplinks", _createRequestModel);
 
             //Act
             var response = await SendRequest(request);
@@ -79,8 +79,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
         public async Task Shoud_return_bad_request_when_UserTo_and_UserBy_contain_the_same_Users()
         {
             //Arrange
-            createRequestModel.SentById = createRequestModel.UserId;
-            var request = CreatePostHttpRequest("surveys", createRequestModel);
+            _createRequestModel.SentById = _createRequestModel.UserId;
+            var request = CreatePostHttpRequest("surveys", _createRequestModel);
 
             //Act
             var response = await SendRequest(request);
@@ -97,7 +97,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Deeplink
         public async Task Shoud_create_deeplink_when_request_model_is_valid()
         {
             //Arrange
-            var request = CreatePostHttpRequest("deeplinks", createRequestModel);
+            var request = CreatePostHttpRequest("deeplinks", _createRequestModel);
 
             //Act
             var response = await SendRequest(request);

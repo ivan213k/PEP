@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Deeplinks;
+using System;
 namespace PerformanceEvaluationPlatform.Models.Deeplink.ViewModels
 {
 
@@ -16,5 +17,20 @@ namespace PerformanceEvaluationPlatform.Models.Deeplink.ViewModels
         public string FormTemplateName { get; set; }
       //  public int FormTemplateNameId { get; set; }
         
+    }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static DeeplinkListItemViewModel AsViewModel(this DeeplinkListItemDto dto)
+        {
+            return new DeeplinkListItemViewModel
+            {
+                Id = dto.Id,
+                SentTo = $"{dto.SentToFirstName} { dto.SentToLastName }",
+                State = dto.State,
+                ExpiresAt = dto.ExpireDate,
+                FormTemplateName = dto.FormTemplate
+
+            };
+        }
     }
 }
