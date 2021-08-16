@@ -1,6 +1,7 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -167,7 +169,8 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost()]
+        [Authorize(Policy =Policy.Admin)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
@@ -278,6 +281,10 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Connection = connection,
                 Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
+            });
+           await  client.Roles.AssignUsersAsync(user.SystemRoleId,new Auth0.ManagementApi.Models.AssignUsersRequest() 
+            {
+                Users =new string[] { $"auth0|{user.Id}" }
             });
         }
 
