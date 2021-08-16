@@ -304,9 +304,6 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         private async Task ValidateUser(IUserRequest userRequest)
         {
-
-
-
             List<int> notValidUserRoles = new List<int>();
             foreach (var item in userRequest.RoleIds)
             {
