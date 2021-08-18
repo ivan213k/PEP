@@ -89,7 +89,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
             return await DbContext.Set<FormTemplateFieldMap>().AnyAsync(t => t.FieldId == id);
         }
 
-        public async Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds)
+        public async Task<IList<Field>> GetListByIds(IEnumerable<int> fieldIds)
         {
             var fields = await DbContext.Set<Field>().Where(f => fieldIds.Contains(f.Id)).ToListAsync();
             return fields;

@@ -10,6 +10,11 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
+using PerformanceEvaluationPlatform.Persistence.Configurations.FormsData;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Deeplinks;
+using PerformanceEvaluationPlatform.Persistence.Configurations.FormTemplates;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -58,6 +63,23 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             modelBuilder.ApplyConfiguration(new FieldConfiguration());
             modelBuilder.ApplyConfiguration(new FieldDataConfiguration());
             modelBuilder.ApplyConfiguration(new FieldTypeConfiguration());
+
+            modelBuilder.ApplyConfiguration(new FormTemplateStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new FormTemplateConfiguration());
+            modelBuilder.ApplyConfiguration(new FormTemplateFieldMapConfiguration());
+
+            //FormData.Configure(modelBuilder);
+            //FormDataState.Configure(modelBuilder);
+
+            //Survey.Configure(modelBuilder);
+            //SurveyState.Configure(modelBuilder);
+            //Level.Configure(modelBuilder);
+
+            //Assesment.Configure(modelBuilder);
+            //FieldData.Configure(modelBuilder);
+            //Field.Configure(modelBuilder);
+            //FieldType.Configure(modelBuilder);
+            //FieldAssesmentGroup.Configure(modelBuilder);
 
             //FormTemplate.Configure(modelBuilder);
             //FormTemplateStatus.Configure(modelBuilder);

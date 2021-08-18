@@ -23,6 +23,10 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
+using PerformanceEvaluationPlatform.Application.Services.Field;
+using PerformanceEvaluationPlatform.Application.Services.FormsData;
+using PerformanceEvaluationPlatform.Application.Services.Deeplinks;
+using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -55,7 +59,9 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Fields.IFieldsRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Fields.FieldsRepository>();
             services.AddTransient<IFieldService, FieldService>();
 
-            services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates.IFormTemplatesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates.FormTemplatesRepository>();
+            services.AddTransient<IFormTemplatesService, FormTemplatesService>();
+
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IRolesRepository, RolesRepository>();

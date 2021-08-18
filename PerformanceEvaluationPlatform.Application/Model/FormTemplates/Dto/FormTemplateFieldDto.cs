@@ -1,6 +1,6 @@
-﻿namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
+﻿namespace PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto
 {
-    public class FormTemplateFieldViewModel
+    public class FormTemplateFieldDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

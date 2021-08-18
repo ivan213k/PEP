@@ -1,5 +1,4 @@
-﻿
-using PerformanceEvaluationPlatform.Domain.Fields;
+﻿using PerformanceEvaluationPlatform.Domain.Fields;
 
 namespace PerformanceEvaluationPlatform.Domain.FormTemplates
 {
