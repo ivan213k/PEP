@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Domain.Shared;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Deeplinks;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Documents;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
+using PerformanceEvaluationPlatform.Persistence.Configurations.FormsData;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.Persistence.Configurations.Examples;
-using PerformanceEvaluationPlatform.Persistence.Configurations.Fields;
-using PerformanceEvaluationPlatform.Persistence.Configurations.FormsData;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -38,6 +40,14 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 
             modelBuilder.ApplyConfiguration(new FormDataStateConfiguration());
             modelBuilder.ApplyConfiguration(new FormDataConfiguration());
+            modelBuilder.ApplyConfiguration(new DeeplinkConfiguration());
+            modelBuilder.ApplyConfiguration(new DeeplinkStateConfiguration());
+
+            modelBuilder.ApplyConfiguration(new DocumentConfiguration());
+            modelBuilder.ApplyConfiguration(new DocumentTypeConfiguration());
+
+            //FormData.Configure(modelBuilder);
+            //FormDataState.Configure(modelBuilder);
 
             //Survey.Configure(modelBuilder);
             //SurveyState.Configure(modelBuilder);
@@ -59,18 +69,15 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 
             //Role.Configure(modelBuilder);
 
-            //Document.Configure(modelBuilder);
-            //DocumentType.Configure(modelBuilder);
-
-            //var allEntityies = modelBuilder.Model.GetEntityTypes();
-            //foreach (var entity in allEntityies) 
-            //{
-            //    if (IsAssignebleFrom(entity.ClrType, typeof(IUpdatebleCreateable))) 
-            //    {
-            //        entity.AddProperty("CreatedAt", typeof(DateTime));
-            //        entity.AddProperty("LastUpdatesAt", typeof(DateTime?));
-            //    }
-            //}
+            var allEntityies = modelBuilder.Model.GetEntityTypes();
+            foreach (var entity in allEntityies)
+            {
+                if (IsAssignebleFrom(entity.ClrType, typeof(IUpdatebleCreateable)))
+                {
+                    entity.AddProperty("CreatedAt", typeof(DateTime));
+                    entity.AddProperty("LastUpdatesAt", typeof(DateTime?));
+                }
+            }
             //FieldGroup.Configure(modelBuilder);
             //Deeplink.Configure(modelBuilder);
             //DeeplinkState.Configure(modelBuilder);
@@ -83,22 +90,22 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
         }
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            var entries = ChangeTracker.Entries()
+                var entries = ChangeTracker.Entries()
                                         .Where(e => (e.State == EntityState.Added ||
                                                      e.State == EntityState.Modified) &&
                                                      IsAssignebleFrom(e.Entity.GetType(), typeof(IUpdatebleCreateable)));
 
-            foreach (var entityEntry in entries)
-            {
-                if (entityEntry.State == EntityState.Modified)
+                foreach (var entityEntry in entries)
                 {
-                    entityEntry.Property("LastUpdatesAt").CurrentValue = DateTime.Now;
+                    if (entityEntry.State == EntityState.Modified)
+                    {
+                        entityEntry.Property("LastUpdatesAt").CurrentValue = DateTime.Now;
+                    }
+                    if (entityEntry.State == EntityState.Added)
+                    {
+                        entityEntry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                    }
                 }
-                if (entityEntry.State == EntityState.Added)
-                {
-                    entityEntry.Property("CreatedAt").CurrentValue = DateTime.Now;
-                }
-            }
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
         private bool IsAssignebleFrom(Type entity, Type assigneFromType) 

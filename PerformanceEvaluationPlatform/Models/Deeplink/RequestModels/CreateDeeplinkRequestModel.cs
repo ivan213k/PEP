@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Deeplinks;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -22,4 +23,19 @@ namespace PerformanceEvaluationPlatform.Models.Deeplink.RequestModels
         public int SentById { get; set; }
 
     }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static CreateDeeplinkDto AsDto(this CreateDeeplinkRequestModel viewmodel)
+        {
+            return new CreateDeeplinkDto
+            {
+                UserId = viewmodel.UserId,
+                SentById = viewmodel.SentById,
+                SurveyId = viewmodel.SurveyId,
+                ExpiresDate = viewmodel.ExpiresDate
+
+            };
+        }
+    }
+
 }

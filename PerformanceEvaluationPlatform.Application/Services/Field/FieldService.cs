@@ -98,7 +98,7 @@ namespace PerformanceEvaluationPlatform.Application.Services.Field
             var entity = await _fieldsRepository.Get(id);
             if (entity == null)
             {
-                ServiceResponse.NotFound();
+                return ServiceResponse<int>.NotFound();
             }
             var field = new Domain.Fields.Field
             {

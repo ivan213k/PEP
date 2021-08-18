@@ -4,6 +4,13 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Models\Document\Interfaces\**" />
+	  <Content Remove="Models\Document\Interfaces\**" />
+	  <EmbeddedResource Remove="Models\Document\Interfaces\**" />
+	  <None Remove="Models\Document\Interfaces\**" />
+	</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Auth0.AuthenticationApi" Version="7.8.1" />
     <PackageReference Include="Auth0.ManagementApi" Version="7.8.1" />
@@ -13,10 +20,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Document\Interfaces\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <ExternalConsole>true</ExternalConsole>

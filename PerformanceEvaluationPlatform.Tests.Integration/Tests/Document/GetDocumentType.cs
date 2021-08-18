@@ -1,14 +1,10 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
-using PerformanceEvaluationPlatform.Models.Document.BaseModels;
 using PerformanceEvaluationPlatform.Models.Document.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
@@ -38,7 +34,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             .WithHttpMethod(HttpMethod.Get);
             //Act
             HttpResponseMessage response = await SendRequest(request);
-            var typemodel = JsonConvert.DeserializeObject<TypeModel>(await response.Content.ReadAsStringAsync());
+            var typemodel = JsonConvert.DeserializeObject<TypeViewModel>(await response.Content.ReadAsStringAsync());
             //Assert
             CustomAssert.IsSuccess(response);
             Assert.IsNotNull(typemodel);

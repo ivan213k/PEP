@@ -1,20 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.Models.Documents.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Deeplinks.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Shared;
 using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
+using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
 
 namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
 {
@@ -59,9 +57,8 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             UserRoleMap.Configure(modelBuilder);
 
             Role.Configure(modelBuilder);
+            
 
-            Document.Configure(modelBuilder);
-            DocumentType.Configure(modelBuilder);
 
             var allEntityies = modelBuilder.Model.GetEntityTypes();
             foreach (var entity in allEntityies) 
@@ -73,8 +70,6 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
                 }
             }
             FieldGroup.Configure(modelBuilder);
-            Deeplink.Configure(modelBuilder);
-            DeeplinkState.Configure(modelBuilder);
 
             Team.Configure(modelBuilder);
 

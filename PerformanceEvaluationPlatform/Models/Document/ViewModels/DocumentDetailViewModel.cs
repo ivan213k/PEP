@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Documents;
+using System;
 
 namespace PerformanceEvaluationPlatform.Models.Document.ViewModels
 {
@@ -16,5 +17,28 @@ namespace PerformanceEvaluationPlatform.Models.Document.ViewModels
         public string LastUpdatesByFirstName { get; set; }
         public string LastUpdatesByLastName { get; set; }
         public DateTime? LastUpdatesAt { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static DocumentDetailViewModel AsViewModel(this DocumentDetailDto documentDto)
+        {
+            var documentitemdetailItem = new DocumentDetailViewModel()
+            {
+                Id = documentDto.Id,
+                FileName = documentDto.FileName,
+                FirstName = documentDto.FirstName,
+                LastName = documentDto.LastName,
+                DocumentType = documentDto.DocumentType,
+                ValidTo = documentDto.ValidToDate,
+                CreatedByFirstName = documentDto.CreatedByFirstName,
+                CreatedByLastName = documentDto.CreatedByLastName,
+                CreatedAt = documentDto.CreatedAt,
+                LastUpdatesByFirstName = documentDto.LastUpdatesByFirstName,
+                LastUpdatesByLastName = documentDto.LastUpdatesByLastName,
+                LastUpdatesAt = documentDto.LastUpdatesAt
+            };
+            return documentitemdetailItem;
+        }
     }
 }
