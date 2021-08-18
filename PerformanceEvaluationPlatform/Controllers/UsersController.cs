@@ -53,7 +53,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
         [HttpGet]
-        [Authorize(Policy = Policy.User)]
+     //   [Authorize(Policy = Policy.User)]
         public async Task<IActionResult> Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
         {
             var parameters = new UserFilterDto()
@@ -90,7 +90,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("userstate")]
-        [Authorize(Policy = Policy.User)]
+      //  [Authorize(Policy = Policy.User)]
         public async Task<IActionResult> GetUserStates()
         {
             var userStateDtos = await _userRepository.GetStates();
@@ -108,7 +108,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             }));
         }
 
-        [Authorize(Policy = Policy.User)]
+        //[Authorize(Policy = Policy.User)]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
@@ -139,7 +139,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(userViewModel);
         }
 
-        [Authorize(Policy = Policy.Admin)]
+        //[Authorize(Policy = Policy.Admin)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
@@ -173,7 +173,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
         [HttpPost()]
-        [Authorize(Policy =Policy.Admin)]
+      //  [Authorize(Policy =Policy.Admin)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
@@ -224,7 +224,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("{id:int}/activate")]
-        [Authorize(Policy = Policy.Admin)]
+       // [Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> ActivateUser(int id)
         {
             var user = await _userRepository.Get(id);
@@ -243,7 +243,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok("User successfully change his state, now its active!");
         }
         [HttpPut("{id:int}/suspend")]
-        [Authorize(Policy = Policy.Admin)]
+        //[Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> SuspendUser(int id)
         {
             var user = await _userRepository.Get(id);
