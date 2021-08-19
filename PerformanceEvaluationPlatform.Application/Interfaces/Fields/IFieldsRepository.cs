@@ -18,6 +18,6 @@ namespace PerformanceEvaluationPlatform.Application.Interfaces.Fields
         Task<IList<Field>> GetListByIds(IEnumerable<int> fieldIds);
         void Delete(Field field);
         Task<bool> GetAnyReferenceToFormTemplate(int id);
-        Task<FieldData> GetFieldData(int id);
+        Task<List<FieldData>> GetFieldData(int id);
     }
 }

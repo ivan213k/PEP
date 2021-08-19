@@ -29,7 +29,7 @@ namespace PerformanceEvaluationPlatform.Models.FormData.RequestModels
                     FieldId = item.FieldId,
                     AssesmentId = item.AssesmentId,
                 };
-                return updateFieldDataDtoList.Select(ufd => updateFieldDataDto).ToList();
+                updateFieldDataDtoList.Add(updateFieldDataDto);
             }
             return updateFieldDataDtoList;
         }

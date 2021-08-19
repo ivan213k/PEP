@@ -1,4 +1,4 @@
-﻿//using FormsData = PerformanceEvaluationPlatform.Domain.FormData;
+﻿using PerformanceEvaluationPlatform.Domain.FormsData;
 
 namespace PerformanceEvaluationPlatform.Domain.Fields
 {
@@ -11,9 +11,8 @@ namespace PerformanceEvaluationPlatform.Domain.Fields
         public string Comment { get; set; }
         public int Order { get; set; }
 
-        //public FormsData FormsData { get; set; }
+        public FormData FormData { get; set; }
         public Field Field { get; set; }
-
         public Assesment Assesment { get; set; }
     }
 }

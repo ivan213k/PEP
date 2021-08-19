@@ -1,5 +1,4 @@
-﻿//using FormsData = PerformanceEvaluationPlatform.Domain.FormData;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PerformanceEvaluationPlatform.Domain.Fields;
 
@@ -25,9 +24,10 @@ namespace PerformanceEvaluationPlatform.Persistence.Configurations.Fields
                 .WithMany()
                 .HasForeignKey(fd => fd.AssesmentId)
                 .IsRequired();
-
+            modelBuilder.HasOne(fd => fd.FormData)
+                .WithMany(fd => fd.FieldData)
+                .HasForeignKey(fd => fd.FormDataId)
+                .IsRequired();
         }
-
-
     }
 }

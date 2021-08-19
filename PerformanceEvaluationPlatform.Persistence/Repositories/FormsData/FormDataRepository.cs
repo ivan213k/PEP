@@ -51,11 +51,11 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormsData
         {
             var formData = await DbContext.Set<FormData>()
                 .Include(fd => fd.FormDataState)
-                //.Include(fd => fd.Survey)
-                //    .ThenInclude(s => s.RecomendedLevel)
-                //.Include(fd => fd.Survey)
-                //    .ThenInclude(s => s.FormTemplate)
-                //    .ThenInclude(s => s.FormTemplateFieldMaps)
+                .Include(fd => fd.Survey)
+                    .ThenInclude(s => s.RecomendedLevel)
+                .Include(fd => fd.Survey)
+                    .ThenInclude(s => s.FormTemplate)
+                    .ThenInclude(s => s.FormTemplateFieldMaps)
                 //.Include(fd => fd.User)
                 //    .ThenInclude(u => u.Team)
                 //    .ThenInclude(u => u.Project)
@@ -74,8 +74,8 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormsData
 
             var details = new FormDataDetailsDto
             {
-                //FormName = formData.Survey.FormTemplate.Name,
-                //FormId = formData.Survey.FormTemplateId,
+                FormName = formData.Survey.FormTemplate.Name,
+                FormId = formData.Survey.FormTemplateId,
                 //Assignee = GetFormatedName(formData),
                 //AssigneeId = formData.User.Id,
                 //Reviewer = GetFormatedName(formData),
@@ -83,8 +83,8 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormsData
                 State = formData.FormDataState.Name,
                 FormDataStateId = formData.FormDataStateId,
                 AppointmentDate = DateTime.Now,
-                //RecommendedLevel = formData.Survey.RecomendedLevel.Name,
-                //RecommendedLevelId = formData.Survey.RecommendedLevelId,
+                RecommendedLevel = formData.Survey.RecomendedLevel.Name,
+                RecommendedLevelId = formData.Survey.RecommendedLevelId,
                 //Project = formData.User.Team.Project.Title,
                 //ProjectId = formData.User.Team.Project.Id,
                 //Team = formData.User.Team.Title,
@@ -107,14 +107,15 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormsData
             };
             return details;
         }
-        //private static string GetFormatedName(FormData formData)
-        //{
-        //    return $"{formData.User.FirstName} {formData.User.LastName}";
-        //}
 
         public Task<FormData> Get(int id)
         {
             return DbContext.Set<FormData>().Include(t => t.FieldData).SingleOrDefaultAsync(t => t.Id == id);
         }
+
+        //private static string GetFormatedName(FormData formData)
+        //{
+        //    return $"{formData.User.FirstName} {formData.User.LastName}";
+        //}
     }
 }
