@@ -1,6 +1,7 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
 using Auth0.ManagementApi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
@@ -51,6 +53,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
 
         [HttpGet]
+     //   [Authorize(Policy = Policy.User)]
         public async Task<IActionResult> Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
         {
             var parameters = new UserFilterDto()
@@ -87,14 +90,25 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpGet("userstate")]
+      //  [Authorize(Policy = Policy.User)]
         public async Task<IActionResult> GetUserStates()
         {
             var userStateDtos = await _userRepository.GetStates();
             var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
             return Ok(userStatesviewModel);
         }
+        [HttpGet("systemrole")]
+        public async Task<IActionResult> GetSystemRoles()
+        {
+            var systemRoles =await _userRepository.GetSystemRoles();
+            return Ok(systemRoles.Select(s=>new SystemRoleViewModel() 
+            {
+                Id = s.Id,
+                Name = s.Name
+            }));
+        }
 
-
+        //[Authorize(Policy = Policy.User)]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
@@ -125,6 +139,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok(userViewModel);
         }
 
+        //[Authorize(Policy = Policy.Admin)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
@@ -135,7 +150,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return NotFound();
             }
             var existingUser = await _userRepository.Get(editedUser.Email);
-            if(existingUser.Id != id)
+            if(existingUser != null &&existingUser.Id != id)
             {
                 ModelState.AddModelError(editedUser.Email, "User with the same email is already exists");
                 return Conflict(ModelState);
@@ -150,12 +165,15 @@ namespace PerformanceEvaluationPlatform.Controllers
             UpdateUser(user, editedUser);
             await _userRepository.Save();
 
+            var client =await  _auth0Factory.CreateManagementApi();
+            await UpdateAuth0User(user, client);
 
             return Ok($"{user.Id} user with this Id was updated success");
         }
 
 
-        [HttpPost]
+        [HttpPost()]
+      //  [Authorize(Policy =Policy.Admin)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
             var existingUser = await _userRepository.Get(createUserRequest.Email);
@@ -185,6 +203,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 StateId = ActiveState,
                 TeamId = createUserRequest.TeamId,
                 TechnicalLevelId = createUserRequest.TechnicalLevelId,
+                SystemRoleId=createUserRequest.SystemRoleId,
                 Roles = userRoleMaps
             };
             await _userRepository.Create(user);
@@ -205,6 +224,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("{id:int}/activate")]
+       // [Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> ActivateUser(int id)
         {
             var user = await _userRepository.Get(id);
@@ -223,6 +243,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             return Ok("User successfully change his state, now its active!");
         }
         [HttpPut("{id:int}/suspend")]
+        //[Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> SuspendUser(int id)
         {
             var user = await _userRepository.Get(id);
@@ -240,6 +261,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             await _userRepository.Save();
             return Ok("User successfully change his state, now its Suspend");
         }
+        
 
         private async Task SendMessageToChangeEmail(AuthenticationApiClient client,User user)
         {
@@ -265,13 +287,28 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
                 VerifyEmail = false
             });
+           await  client.Roles.AssignUsersAsync(user.SystemRoleId,new Auth0.ManagementApi.Models.AssignUsersRequest() 
+            {
+                Users =new string[] { $"auth0|{user.Id}" }
+            });
+        }
+
+        private async Task UpdateAuth0User(User user, ManagementApiClient client)
+        {
+            await client.Users.UpdateAsync($"auth0|{user.Id}", new Auth0.ManagementApi.Models.UserUpdateRequest()
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NickName = user.FirstName,
+                FullName = $"{user.FirstName} {user.LastName}",
+                UserName = user.FirstName
+                
+            });
         }
 
         private async Task ValidateUser(IUserRequest userRequest)
         {
-         
-
-
             List<int> notValidUserRoles = new List<int>();
             foreach (var item in userRequest.RoleIds)
             {
@@ -293,6 +330,12 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (userTeam is null)
             {
                 ModelState.AddModelError(userRequest.TeamId.ToString(), "Team with this Id doesn't exists");
+            }
+
+            var systemRole = await _userRepository.GetSystemRole(userRequest.SystemRoleId);
+            if (systemRole is null)
+            {
+                ModelState.AddModelError(userRequest.TechnicalLevelId.ToString(), "System Role with this Id doesn't exists");
             }
 
             var userTechnicalLevel = await _surveysRepository.GetLevel(userRequest.TechnicalLevelId);
@@ -332,6 +375,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             user.LastName = editedUser.LastName;
             user.TeamId = editedUser.TeamId;
             user.TechnicalLevelId = editedUser.TechnicalLevelId;
+            user.SystemRoleId = editedUser.SystemRoleId;
             _userRepository.Update(editedUser.RoleIds, user.Id);
         }
 

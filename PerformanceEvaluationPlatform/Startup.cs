@@ -20,6 +20,9 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Application.Services.Field;
+using PerformanceEvaluationPlatform.Application.Services.FormsData;
+using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
 using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
@@ -102,7 +105,29 @@ namespace PerformanceEvaluationPlatform
                 options.TokenValidationParameters = tokenValidationParameters;
             });
 
-            
+            services.AddAuthorization(options => {
+                options.AddPolicy(Policy.User, policy =>
+                 {
+                     policy.RequireRole("User");
+                     policy.RequireAuthenticatedUser();
+                 });
+            });
+
+            services.AddAuthorization(options => {
+                options.AddPolicy(Policy.Admin, policy =>
+                {
+                    policy.RequireRole("Admin");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
+
+            services.AddAuthorization(options => {
+                options.AddPolicy(Policy.ProjectCoordinator, policy =>
+                {
+                    policy.RequireRole("ProjectCoordinator");
+                    policy.RequireAuthenticatedUser();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

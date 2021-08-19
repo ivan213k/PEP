@@ -26,6 +26,7 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         [Required]
         public int EnglishLevelId { get; set; }
         [Required]
+        public string SystemRoleId { get; set; }
         public DateTime FirstDayInCompany { get; set; }
         [Required]
         public DateTime FirstDayInIndustry { get; set; }

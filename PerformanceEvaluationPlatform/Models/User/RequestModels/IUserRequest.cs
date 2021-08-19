@@ -14,6 +14,7 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         public int TeamId { get; set; }
         public int TechnicalLevelId { get; set; }
         public int EnglishLevelId { get; set; }
+        public string SystemRoleId { get; set; }
         public DateTime FirstDayInCompany { get; set; }
         public DateTime FirstDayInIndustry { get; set; }
     }

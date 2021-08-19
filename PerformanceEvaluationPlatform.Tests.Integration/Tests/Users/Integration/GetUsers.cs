@@ -73,6 +73,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
         public async Task Get_FilteredByStateIds_ReturnValidFilteredItems()
         {
             //Arrange
+
             var filter = new UserFilterRequestModel() { StateIds = new[] { 1 } };
             var items = GetArrangeWithFilteredParams(filter);
 
