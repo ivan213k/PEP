@@ -1,9 +1,9 @@
-﻿using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
+﻿using PerformanceEvaluationPlatform.Application.Model.Surveys;
+using PerformanceEvaluationPlatform.Domain.Surveys;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
+namespace PerformanceEvaluationPlatform.Application.Interfaces.Surveys
 {
     public interface ISurveysRepository : IBaseRepository
     {
@@ -15,6 +15,6 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
         Task<SurveyState> GetState(int id);
         Task<Level> GetLevel(int id);
         Task Create(Survey survey);
-        Task<bool> ExistByFormTemplateId(int id);
+        Task<bool> ExistsByFormTemplate(int formTemplateId);
     }
 }

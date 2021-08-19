@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto;
+using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+using PerformanceEvaluationPlatform.Application.Model.Surveys;
+using PerformanceEvaluationPlatform.Domain.Surveys;
+using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
+namespace PerformanceEvaluationPlatform.Persistence.Repositories.Surveys
 {
     public class SurveysRepository : BaseRepository, ISurveysRepository
     {
@@ -78,10 +79,10 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             var survey = await DbContext.Set<Survey>()
                 .Include(r => r.SurveyState)
                 .Include(r => r.RecomendedLevel)
-                .Include(r => r.FormTemplate)
-                .Include(r => r.Asignee)
-                .Include(r => r.Supervisor)
-                .Include(r => r.DeepLinks).ThenInclude(t => t.User)
+                //.Include(r => r.FormTemplate)
+                //.Include(r => r.Asignee)
+                //.Include(r => r.Supervisor)
+                .Include(r => r.DeepLinks)/*.ThenInclude(t => t.User)*/
                 .Include(r => r.FormData).ThenInclude(f => f.FormDataState)
                 .SingleOrDefaultAsync(r => r.Id == id);
 
@@ -98,16 +99,16 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
                 RecommendedLevel = survey.RecomendedLevel.Name,
                 RecommendedLevelId = survey.RecommendedLevelId,
                 Summary = survey.Summary,
-                Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
+                //Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
                 AssigneeId = survey.AssigneeId,
-                Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
+                //Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
                 SupervisorId = survey.SupervisorId,
-                FormName = survey.FormTemplate.Name,
+                //FormName = survey.FormTemplate.Name,
                 FormId = survey.FormTemplateId,
                 AssignedUsers = survey.DeepLinks.Select(d => new SurveyDetailsAssignedUserDto
                 {
                     Id = d.UserId,
-                    Name = $"{d.User.FirstName} {d.User.LastName}"
+                    //Name = $"{d.User.FirstName} {d.User.LastName}"
                 }).ToList(),
                 FormData = survey.FormData.Select(fd => new SurveyFormDataDto
                 {
@@ -146,9 +147,9 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Surveys
             return Create<Survey>(survey);
         }
 
-        public Task<bool> ExistByFormTemplateId(int id)
+        public Task<bool> ExistsByFormTemplate(int formTemplateId)
         {
-            return DbContext.Set<Survey>().AnyAsync(s => s.FormTemplateId == id);
+            return DbContext.Set<Survey>().AnyAsync(s => s.FormTemplateId == formTemplateId);
         }
     }
 }

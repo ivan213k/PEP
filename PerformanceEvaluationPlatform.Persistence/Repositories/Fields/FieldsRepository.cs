@@ -13,7 +13,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
 {
     public class FieldsRepository : BaseRepository, IFieldsRepository
     {
-        public FieldsRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext) 
+        public FieldsRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext)
             : base(databaseOptions, dbContext)
         {
         }
@@ -89,7 +89,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
             return await DbContext.Set<FormTemplateFieldMap>().AnyAsync(t => t.FieldId == id);
         }
 
-        public async Task<List<Field>> GetListByIds(IEnumerable<int> fieldIds)
+        public async Task<IList<Field>> GetListByIds(IEnumerable<int> fieldIds)
         {
             var fields = await DbContext.Set<Field>().Where(f => fieldIds.Contains(f.Id)).ToListAsync();
             return fields;
@@ -111,9 +111,12 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
             Delete<Field>(field);
         }
 
-        public Task<FieldData> GetFieldData(int id)
+        public Task<List<FieldData>> GetFieldData(int id)
         {
-            return Get<FieldData>(id);
+            return DbContext.Set<FieldData>()
+                .Include(x=>x.Assesment)
+                .Where(t => t.FieldId == id)
+                .ToListAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PerformanceEvaluationPlatform.Models.Shared.ValidationAttributes;
+﻿using PerformanceEvaluationPlatform.Application.Model.Surveys;
+using PerformanceEvaluationPlatform.Models.Shared.ValidationAttributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,5 +26,21 @@ namespace PerformanceEvaluationPlatform.Models.Survey.RequestModels
 
         [Required]
         public ICollection<int> AssignedUserIds { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static CreateSurveyDto AsDto(this CreateSurveyRequestModel requestModel)
+        {
+            return new CreateSurveyDto
+            {
+                AppointmentDate = requestModel.AppointmentDate,
+                SupervisorId = requestModel.SupervisorId,
+                RecommendedLevelId = requestModel.RecommendedLevelId,
+                FormId = requestModel.FormId,
+                AssigneeId = requestModel.AssigneeId,
+                AssignedUserIds = requestModel.AssignedUserIds
+            };
+        }
     }
 }

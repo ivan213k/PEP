@@ -10,6 +10,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.Persistence.Configurations.FormTemplates;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Surveys;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -49,15 +51,32 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             //FormData.Configure(modelBuilder);
             //FormDataState.Configure(modelBuilder);
 
-            //Survey.Configure(modelBuilder);
-            //SurveyState.Configure(modelBuilder);
-            //Level.Configure(modelBuilder);
+            modelBuilder.ApplyConfiguration(new SurveyConfiguration());
+            modelBuilder.ApplyConfiguration(new SurveyStateConfiguration());
+            modelBuilder.ApplyConfiguration(new LevelConfiguration());
 
             modelBuilder.ApplyConfiguration(new AssesmentConfiguration());
             modelBuilder.ApplyConfiguration(new FieldAssesmentGroupConfiguration());
             modelBuilder.ApplyConfiguration(new FieldConfiguration());
             modelBuilder.ApplyConfiguration(new FieldDataConfiguration());
             modelBuilder.ApplyConfiguration(new FieldTypeConfiguration());
+
+            modelBuilder.ApplyConfiguration(new FormTemplateStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new FormTemplateConfiguration());
+            modelBuilder.ApplyConfiguration(new FormTemplateFieldMapConfiguration());
+
+            //FormData.Configure(modelBuilder);
+            //FormDataState.Configure(modelBuilder);
+
+            //Survey.Configure(modelBuilder);
+            //SurveyState.Configure(modelBuilder);
+            //Level.Configure(modelBuilder);
+
+            //Assesment.Configure(modelBuilder);
+            //FieldData.Configure(modelBuilder);
+            //Field.Configure(modelBuilder);
+            //FieldType.Configure(modelBuilder);
+            //FieldAssesmentGroup.Configure(modelBuilder);
 
             //FormTemplate.Configure(modelBuilder);
             //FormTemplateStatus.Configure(modelBuilder);

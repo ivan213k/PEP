@@ -15,10 +15,8 @@ using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
-using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
@@ -26,6 +24,10 @@ using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormsData;
 using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
+using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
+using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+using PerformanceEvaluationPlatform.Persistence.Repositories.Surveys;
+using PerformanceEvaluationPlatform.Application.Services.Surveys;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -58,12 +60,16 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Fields.IFieldsRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Fields.FieldsRepository>();
             services.AddTransient<IFieldService, FieldService>();
 
-            services.AddTransient<IFormTemplatesRepository, FormTemplatesRepository>();
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates.IFormTemplatesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates.FormTemplatesRepository>();
+            services.AddTransient<IFormTemplatesService, FormTemplatesService>();
+
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
+
             services.AddTransient<ISurveysRepository, SurveysRepository>();
+            services.AddTransient<ISurveyService, SurveyService>();
 
             services.AddTransient<IDocumentReposotory, DocumentRepository>();
             services.AddTransient<IDocumentService, DocumentService>();

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel
 {
@@ -12,5 +10,17 @@ namespace PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel
         public int Id { get; set; }
         [Range(1, int.MaxValue)]
         public int Order { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static FormTemplateFieldDto AsDto(this FormTemplateFieldRequestModel requestModel)
+        {
+            return new FormTemplateFieldDto
+            {
+                Id = requestModel.Id,
+                Order = requestModel.Order
+            };
+        }
     }
 }

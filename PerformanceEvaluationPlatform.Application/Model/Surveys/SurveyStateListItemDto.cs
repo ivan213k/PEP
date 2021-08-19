@@ -1,4 +1,4 @@
-﻿namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Surveys
 {
     public class SurveyStateListItemDto
     {

@@ -63,9 +63,20 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 		public static ServiceResponse NotFound(string message = ServiceResponse.GeneralErrorProperty) =>
 			Failure(message, 404);
 
-		public bool IsBadRequest => StatusCode == 400;
+		public static ServiceResponse Conflict(string message = ServiceResponse.GeneralErrorProperty) =>
+			Failure(message, 409);
+
+		public static ServiceResponse UnprocessableEntity(string message = ServiceResponse.GeneralErrorProperty) =>
+			Failure(message, 422);
+
+        public static ServiceResponse NoContent() => 
+			Success(204);
+
+        public bool IsBadRequest => StatusCode == 400;
 		public bool IsForbidden => StatusCode == 403;
 		public bool IsNotFound => StatusCode == 404;
+		public bool IsConflict => StatusCode == 409;
+		public bool IsUnprocessableEntity => StatusCode == 422;
 	}
 
 	public class ServiceResponse<TResponse> : ServiceResponse
@@ -107,6 +118,16 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 		public new static ServiceResponse<TResponse> Failure(string message, int statusCode = 400) =>
 			Failure(new Dictionary<string, ICollection<string>> {
 				{GeneralErrorProperty, new List<string>{message}}
+			}, statusCode);
+
+		public static ServiceResponse<TResponse> Conflict<T>(Expression<Func<T, object>> property, string message, int statusCode = 400)
+		{
+			return Conflict(ExpressionHelper.GetPropertyName(property), message);
+		}
+
+		public static ServiceResponse<TResponse> Conflict(string propertyName, string message, int statusCode = 409) =>
+			Failure(new Dictionary<string, ICollection<string>> {
+				{propertyName, new List<string>{message}}
 			}, statusCode);
 
 		public new static ServiceResponse<TResponse> BadRequest(string message = ServiceResponse.GeneralErrorProperty) =>

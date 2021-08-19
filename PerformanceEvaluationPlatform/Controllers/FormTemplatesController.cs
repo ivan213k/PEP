@@ -1,273 +1,149 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dto;
-using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
-using PerformanceEvaluationPlatform.DAL.Repositories.FormTemplates;
+using PerformanceEvaluationPlatform.Application.Services.Field;
+using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
-using PerformanceEvaluationPlatform.Models.Shared.Enums;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PerformanceEvaluationPlatform.Models.FormTemplates.Interfaces;
-using PerformanceEvaluationPlatform.DAL.Repositories.Surveys;
-using Microsoft.Extensions.Logging;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class FormTemplatesController : ControllerBase
+    public class FormTemplatesController : BaseController
     {
-        private readonly ILogger _logger;
-
-        private readonly IFormTemplatesRepository _formTemplatesRepository;
-        private readonly IFieldsRepository _fieldsRepository;
-        private readonly ISurveysRepository _surveysRepository;
+        private readonly IFormTemplatesService _formTemplatesService;
+        private readonly IFieldService _fieldsService;
 
         private const int DraftStatusId = 1;
         private const int ActiveStatusId = 2;
         private const int ArchivedStatusId = 3;
         private const int DefaultVersion = 1;
 
-        public FormTemplatesController(IFormTemplatesRepository formTemplatesRepository, IFieldsRepository fieldsRepository, ISurveysRepository surveysRepository, ILogger<FormTemplatesController> logger)
+        public FormTemplatesController(IFormTemplatesService formTemplatesService, IFieldService fieldService)
         {
-            _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
-            _fieldsRepository = fieldsRepository ?? throw new ArgumentNullException(nameof(fieldsRepository));
-            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
-            _logger = logger;
+            _formTemplatesService = formTemplatesService ?? throw new ArgumentNullException(nameof(formTemplatesService));
+            _fieldsService = fieldService ?? throw new ArgumentNullException(nameof(fieldService));
         }
 
         [HttpGet("formtemplates")]
-        public async Task<IActionResult> GetAsync([FromQuery] FormTemplateListFilterOrderRequestModel filter)
+        public async Task<IActionResult> Get([FromQuery] FormTemplateListFilterOrderRequestModel filter)
         {
-            var filterDto = new FormTemplateListFilterOrderDto
-            {
-                Search = filter.Search,
-                StatusIds = filter.StatusIds,
-                NameSortOrder = (int?)filter.NameSortOrder,
-                Skip = (int)filter.Skip,
-                Take = (int)filter.Take
-            };
+            var itemsResponse = await _formTemplatesService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+                return errorResult;
 
-            var itemsDto = await _formTemplatesRepository.GetList(filterDto);
-            var items = itemsDto.Select(f => new FormTemplateListItemViewModel
-            {
-                Id = f.Id,
-                Name = f.Name,
-                Version = f.Version,
-                StatusName = f.StatusName,
-                StatusId = f.StatusId,
-                CreatedAt = f.CreatedAt
-            });
-
-            return Ok(items);
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
         [HttpGet("formtemplates/statuses")]
-        public async Task<IActionResult> GetStatusesAsync()
+        public async Task<IActionResult> GetStatuses()
         {
-            var itemsDto = await _formTemplatesRepository.GetStatusListAsync();
-            var items = itemsDto
-                .Select(s => new FormTemplateStatusListItemViewModel
-                {
-                    Id = s.Id,
-                    Name = s.Name
-                });
+            var itemsResponse = await _formTemplatesService.GetStatusListItems();
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+                return errorResult;
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
 
-            return Ok(items);
+            return Ok(itemsVm);
         }
 
         [HttpGet("formtemplates/{id:int}")]
-        public async Task<IActionResult> DetailsAsync(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var itemDto = await _formTemplatesRepository.GetDetailsAsync(id);
-            if (itemDto == null)
-            {
-                return NotFound();
-            }
+            var itemResponse = await _formTemplatesService.GetDetails(id);
 
-            var item = new FormTemplateDetailsViewModel
-            {
-                Id = itemDto.Id,
-                Name = itemDto.Name,
-                Version = itemDto.Version,
-                CreatedAt = itemDto.CreatedAt,
-                StatusId = itemDto.StatusId,
-                Status = itemDto.Status,
-                Fields = itemDto.Fields?
-                .Select(t => new FormTemplateFieldViewModel
-                {
-                    Id = t.Id,
-                    Name = t.Name,
-                    Order = t.Order,
-                    FieldTypeId = t.FieldTypeId,
-                    FieldTypeName = t.FieldTypeName
-                }).ToList()
-            };
+            if (TryGetErrorResult(itemResponse, out IActionResult errorResult))
+                return errorResult;
 
-            return Ok(item);
+            var itemVm = itemResponse.Payload.AsViewModel();
+
+            return Ok(itemVm);
         }
 
         [HttpPost("formtemplates")]
-        public async Task<IActionResult> CreateAsync([FromBody] CreateFormTemplateRequestModel requestModel)
+        public async Task<IActionResult> Create([FromBody] CreateFormTemplateRequestModel requestModel)
         {
-            var existName = await _formTemplatesRepository.ExistByName(requestModel.Name);
-            if (existName)
-            {
-                ModelState.AddModelError<CreateFormTemplateRequestModel>(t => t.Name, $"Name = {requestModel.Name} exists!");
-                return Conflict(ModelState);
-            }
+            var response = await _formTemplatesService.Create(requestModel.AsDto());
 
-            await ValidateFormTemplate(requestModel);
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
-
-            var formTemplate = new FormTemplate
-            {
-                Name = requestModel.Name,
-                CreatedAt = DateTime.Now,
-                Version = DefaultVersion,
-                StatusId = DraftStatusId,
-                FormTemplateFieldMaps = requestModel.Fields.Select(t => new FormTemplateFieldMap {
-                    FieldId = t.Id,
-                    Order = t.Order
-                }).ToList()
-            };
-
-            await _formTemplatesRepository.Create(formTemplate);
-            await _formTemplatesRepository.SaveChanges();
-
-            return Redirect("/formtemplates/" + formTemplate.Id);
+            return TryGetErrorResult(response, out IActionResult errorResult)
+                ? errorResult
+                : Redirect("/formtemplates/" + response.Payload);
         }
 
-        [HttpPut("formtemplates/{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFormTemplateRequestModel requestModel)
-        { 
-            var formTemplate = await _formTemplatesRepository.Get(id);
-            if (formTemplate == null)
-                return NotFound();
+        //[HttpPut("formtemplates/{id:int}")]
+        //public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFormTemplateRequestModel requestModel)
+        //{ 
+        //    var formTemplate = await _formTemplatesRepository.Get(id);
+        //    if (formTemplate == null)
+        //        return NotFound();
 
-            await ValidateFormTemplate(requestModel);
-            if (ModelState.IsValid == false)
-                return BadRequest(ModelState);
+        //    await ValidateFormTemplate(requestModel);
+        //    if (ModelState.IsValid == false)
+        //        return BadRequest(ModelState);
 
-            if (formTemplate.StatusId == ArchivedStatusId)
-            {
-                var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
-                if(existDraft)
-                    return Forbid();
-                var idNew = await Copy(formTemplate.Name, requestModel);
-                return Redirect("/formtemplates/" + idNew);
-            }
+        //    if (formTemplate.StatusId == ArchivedStatusId)
+        //    {
+        //        var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
+        //        if(existDraft)
+        //            return Forbid();
+        //        var idNew = await Copy(formTemplate.Name, requestModel);
+        //        return Redirect("/formtemplates/" + idNew);
+        //    }
 
-            if (formTemplate.StatusId == ActiveStatusId)
-            {
-                var existSurveys = await _surveysRepository.ExistByFormTemplateId(formTemplate.Id);
-                if(existSurveys)
-                {
-                    var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
-                    if (existDraft)
-                        return Forbid();
-                    var idNew = await Copy(formTemplate.Name, requestModel);
-                    return Redirect("/formtemplates/" + idNew);
-                }
-            }
+        //    if (formTemplate.StatusId == ActiveStatusId)
+        //    {
+        //        var existSurveys = await _surveysRepository.ExistByFormTemplateId(formTemplate.Id);
+        //        if(existSurveys)
+        //        {
+        //            var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
+        //            if (existDraft)
+        //                return Forbid();
+        //            var idNew = await Copy(formTemplate.Name, requestModel);
+        //            return Redirect("/formtemplates/" + idNew);
+        //        }
+        //    }
 
-            formTemplate.FormTemplateFieldMaps.Clear();
-            formTemplate.FormTemplateFieldMaps = requestModel.Fields.Select(m => new FormTemplateFieldMap
-            {
-                FieldId = m.Id,
-                Order = m.Order
-            }).ToList();
+        //    formTemplate.FormTemplateFieldMaps.Clear();
+        //    formTemplate.FormTemplateFieldMaps = requestModel.Fields.Select(m => new FormTemplateFieldMap
+        //    {
+        //        FieldId = m.Id,
+        //        Order = m.Order
+        //    }).ToList();
 
-            await _formTemplatesRepository.SaveChanges();
+        //    await _formTemplatesRepository.SaveChanges();
 
-            return Redirect("/formtemplates/" + formTemplate.Id);
-        }
+        //    return Redirect("/formtemplates/" + formTemplate.Id);
+        //}
 
         [HttpPut("formtemplates/{id:int}/activate")]
         public async Task<IActionResult> ChangeStatusToActive(int id)
         {
-            var formTemplate = await _formTemplatesRepository.Get(id);
-            if (formTemplate == null)
-                return NotFound();
-
-            if (formTemplate.StatusId != DraftStatusId)
-                return UnprocessableEntity("Form Template is not in draft status!");
-
-            var activeFormTemplate = await _formTemplatesRepository.GetActiveFormTemplate(formTemplate.Name);
-            if (activeFormTemplate != null)
-            {
-                if(activeFormTemplate.Count()>1)
-                    _logger.LogWarning("Activated form templates with \"{name}\" name more than one!", formTemplate.Name);
-                activeFormTemplate.ToList().ForEach(t => t.StatusId = ArchivedStatusId);
-            }   
-
-            formTemplate.StatusId = ActiveStatusId;
-            await _formTemplatesRepository.SaveChanges();
-
+            var response = await _formTemplatesService.ChangeStatusToActive(id);
+            if (TryGetErrorResult(response, out IActionResult errorResult))
+                return errorResult;
             return NoContent();
         }
 
-        private async Task ValidateFormTemplate(IFormTemplateRequest request)
-        {
-            var hasDuplicatedFields = request.Fields.GroupBy(f => f.Id).Where(f => f.Count() > 1).ToList();
-            var hasDuplicatedOrder = request.Fields.GroupBy(f => f.Order).Where(f => f.Count() > 1).ToList();
+        //private async Task<int> Copy(string name, UpdateFormTemplateRequestModel requestModel)
+        //{
+        //    var formTemplate = new FormTemplate
+        //    {
+        //        Name = name,
+        //        CreatedAt = DateTime.Now,
+        //        Version = await _formTemplatesRepository.MaxVersion(name) + 1,
+        //        StatusId = DraftStatusId,
+        //        FormTemplateFieldMaps = requestModel.Fields.Select(t => new FormTemplateFieldMap
+        //        {
+        //            FieldId = t.Id,
+        //            Order = t.Order
+        //        }).ToList()
+        //    };
 
-            if(hasDuplicatedFields.Any()||hasDuplicatedOrder.Any())
-            {
-                for (int i = 0; i < request.Fields.Count(); i++)
-                {
-                    if (hasDuplicatedFields.Any(t => t.Key == request.Fields[i].Id))
-                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields[i].Id, $"Field with id={request.Fields[i].Id} is repeated!");
-                    if (hasDuplicatedOrder.Any(t => t.Key == request.Fields[i].Order))
-                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields[i].Id, $"Field with order={request.Fields[i].Order} is repeated!");
-                }
-            }
+        //    await _formTemplatesRepository.Create(formTemplate);
+        //    await _formTemplatesRepository.SaveChanges();
 
-            var expectedOrder = Enumerable.Range(1, request.Fields.Count);
-            var actualOrder = request.Fields
-                    .Select(t => t.Order)
-                    .OrderBy(t => t);
-
-            var isOrderValid = expectedOrder.SequenceEqual(actualOrder);
-            if (!isOrderValid)
-                ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields, "Missing order elements!");
-
-            var ids = request.Fields.Select(x => x.Id).Distinct();
-            var existedFields = await _fieldsRepository.GetListByIds(ids);
-
-            if (existedFields.Count() != ids.Count())
-            {
-                foreach (var item in ids)
-                {
-                    if (!existedFields.Any(t => t.Id == item))
-                        ModelState.AddModelError<IFormTemplateRequest>(t => t.Fields, $"Field with {item} does not exist!");
-                }
-            }
-        }
-
-        private async Task<int> Copy(string name, UpdateFormTemplateRequestModel requestModel)
-        {
-            var formTemplate = new FormTemplate
-            {
-                Name = name,
-                CreatedAt = DateTime.Now,
-                Version = await _formTemplatesRepository.MaxVersion(name) + 1,
-                StatusId = DraftStatusId,
-                FormTemplateFieldMaps = requestModel.Fields.Select(t => new FormTemplateFieldMap
-                {
-                    FieldId = t.Id,
-                    Order = t.Order
-                }).ToList()
-            };
-
-            await _formTemplatesRepository.Create(formTemplate);
-            await _formTemplatesRepository.SaveChanges();
-
-            return formTemplate.Id;
-        }
+        //    return formTemplate.Id;
+        //}
     }
 }

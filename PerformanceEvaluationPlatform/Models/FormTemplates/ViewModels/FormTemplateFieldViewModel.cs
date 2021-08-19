@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
+﻿namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
 {
     public class FormTemplateFieldViewModel
     {
