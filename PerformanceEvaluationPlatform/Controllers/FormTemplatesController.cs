@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;

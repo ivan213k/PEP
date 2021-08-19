@@ -69,7 +69,10 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 		public static ServiceResponse UnprocessableEntity(string message = ServiceResponse.GeneralErrorProperty) =>
 			Failure(message, 422);
 
-		public bool IsBadRequest => StatusCode == 400;
+        public static ServiceResponse NoContent() => 
+			Success(204);
+
+        public bool IsBadRequest => StatusCode == 400;
 		public bool IsForbidden => StatusCode == 403;
 		public bool IsNotFound => StatusCode == 404;
 		public bool IsConflict => StatusCode == 409;

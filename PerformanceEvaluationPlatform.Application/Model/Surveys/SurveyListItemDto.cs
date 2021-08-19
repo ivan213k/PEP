@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Surveys
 {
     public class SurveyListItemDto
     {
@@ -17,6 +17,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
         public DateTime AppointmentDate { get; set; }
         public string StateName { get; set; }
         public int StateId { get; set; }
+        public double ProgressInPercenteges { get; set; }
         public ICollection<SurveyListItemAssignedUserDto> AssignedUsers { get; set; }
         public ICollection<SurveyListItemFormDataDto> FormData { get; set; }
     }

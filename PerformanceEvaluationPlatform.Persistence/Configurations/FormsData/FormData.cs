@@ -23,10 +23,10 @@ namespace PerformanceEvaluationPlatform.Persistence.Configurations.FormsData
                 .WithOne()
                 .HasForeignKey(t => t.FormDataId)
                 .IsRequired();
-            //builder.HasOne(fd => fd.Survey)
-            //    .WithMany(s => s.FormData)
-            //    .HasForeignKey(fd => fd.SurveyId)
-            //    .IsRequired();
+            builder.HasOne(fd => fd.Survey)
+                .WithMany(s => s.FormData)
+                .HasForeignKey(fd => fd.SurveyId)
+                .IsRequired();
             //builder.HasOne(fd => fd.User)
             //    .WithMany()
             //    .HasForeignKey(fd => fd.UserId)

@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Domain.Fields;
+using PerformanceEvaluationPlatform.Domain.Surveys;
 using System.Collections.Generic;
 
 
@@ -13,7 +14,7 @@ namespace PerformanceEvaluationPlatform.Domain.FormsData
         public FormDataState FormDataState { get; set; }
 
       //  public Users User { get; set; }
-      //  public Survey Survey { get; set; }
+        public Survey Survey { get; set; }
         public ICollection<FieldData> FieldData { get; set; }
     }
 }

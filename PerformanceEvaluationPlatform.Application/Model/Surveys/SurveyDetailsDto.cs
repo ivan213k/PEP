@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Surveys.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Surveys
 {
     public class SurveyDetailsDto
     {

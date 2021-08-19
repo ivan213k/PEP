@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Surveys;
+using System;
 
 namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
 {
@@ -15,5 +16,26 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
         public string State { get; set; }
         public int StateId { get; set; }
         public double ProgressInPercenteges { get; set; }
+    }
+
+    public static partial class ViewModelMapperExtensions
+    {
+        public static SurveyListItemViewModel AsViewModel(this SurveyListItemDto dto)
+        {
+            return new SurveyListItemViewModel
+            {
+                Id = dto.Id,
+                AppointmentDate = dto.AppointmentDate,
+                Assignee = $"{dto.AssigneeFirstName} {dto.AssigneeLastName}",
+                AssigneeId = dto.AssigneeId,
+                Supervisor = $"{dto.SupervisorFirstName} {dto.SupervisorLastName}",
+                SupervisorId = dto.SupervisorId,
+                FormName = dto.FormName,
+                FormId = dto.FormId,
+                State = dto.StateName,
+                StateId = dto.StateId,
+                ProgressInPercenteges = dto.ProgressInPercenteges
+            };
+        }
     }
 }
