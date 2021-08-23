@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
-using System;
+using PerformanceEvaluationPlatform.Application.Interfaces.Roles;
+using PerformanceEvaluationPlatform.Application.Model.Roles;
+using PerformanceEvaluationPlatform.Domain.Roles;
+using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
+namespace PerformanceEvaluationPlatform.Persistence.Repositories.Roles
 {
     public class RolesRepository : BaseRepository, IRolesRepository
     {

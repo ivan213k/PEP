@@ -2,129 +2,70 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
-using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
+using PerformanceEvaluationPlatform.Application.Packages;
+using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Models.Role.RequestModels;
 using PerformanceEvaluationPlatform.Models.Role.ViewModels;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
-    public class RolesController : ControllerBase
+    public class RolesController : BaseController
     {
-        private readonly IRolesRepository _rolesRepository;
+        private readonly IRolesService _rolesService;
 
-        public RolesController(IRolesRepository rolesRepository)
+        public RolesController(IRolesService rolesService)
         {
-            _rolesRepository = rolesRepository ?? throw new ArgumentNullException(nameof(rolesRepository));
+            _rolesService = rolesService ?? throw new ArgumentNullException(nameof(rolesService));
         }
 
         [Route("roles")]
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] RoleListFilterRequestModel filter)
         {
-            var filterDto = new RoleListFilterDto
+            var itemsResponse = await _rolesService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
             {
-                Skip = filter.Skip,
-                Take = filter.Take,
-                Search = filter.Search,
-                IsPrimary = filter.IsPrimary,
-                UsersCountFrom =filter.UsersCountFrom,
-                UsersCountTo = filter.UsersCountTo,
-                TitleSortOrder = (int?)filter.TitleSortOrder,
-                IsPrimarySortOrder = (int?)filter.IsPrimarySortOrder
-            };
+                return errorResult;
+            }
 
-            var itemsDto = await _rolesRepository.GetList(filterDto);
-            var items = itemsDto.Select(t => new RoleListItemViewModel
-            {
-                Id = t.Id,
-                Title = t.Title,
-                IsPrimary = t.IsPrimary,
-                UsersCount = t.UsersCount
-            });
-
-            return Ok(items);
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
         [Route("roles/{id:int}")]
         [HttpGet]
         public async Task<IActionResult> GetRoleDetails([FromRoute] int id)
         {
-            var detailsDto = await _rolesRepository.GetDetails(id);
-            if (detailsDto == null)
+            var detailsResponse = await _rolesService.GetDetails(id);
+
+            if (TryGetErrorResult(detailsResponse, out IActionResult errorResult))
             {
-                return NotFound();
+                return errorResult;
             }
 
-            var detailsVm = new RoleDetailsViewModel
-            {
-                Id = detailsDto.Id,
-                Title = detailsDto.Title,
-                IsPrimary = detailsDto.IsPrimary,
-                UsersCount = detailsDto.UsersCount
-            };
-
+            var detailsVm = detailsResponse.Payload.AsViewModel();
             return Ok(detailsVm);
+        }
+
+        [Route("roles/{id:int}")]
+        [HttpPut]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateRoleRequestModel requestModel)
+        {
+            ServiceResponse serviceResponse = await _rolesService.Update(id, requestModel.AsDto());
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult)
+                ? errorResult
+                : Ok();
         }
 
         [Route("roles")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateRoleRequestModel requestModel)
         {
-            if (requestModel is null)
-            {
-                return BadRequest();
-            }
-
-            var isTittleNotUnique = await _rolesRepository.IsTittleNotUnique(requestModel.Title);
-
-            if (isTittleNotUnique)
-            {
-                return Conflict("Role with the same title is already exists");
-            }
-
-            var role = new Role
-            {
-                Title = requestModel.Title,
-                IsPrimary = requestModel.IsPrimary
-            };
-
-            await _rolesRepository.Create(role);
-            await _rolesRepository.SaveChanges();
-
-            var result = new ObjectResult(new { Id = role.Id }) { StatusCode = 201 };
-            return result;
-        }
-
-        [Route("roles/{id:int}")]
-        [HttpPut]
-        public async Task<IActionResult> Edit(int id, [FromBody] EditRoleRequestModel requestModel)
-        {
-            if (requestModel is null)
-            {
-                return BadRequest();
-            }
-
-            var entity = await _rolesRepository.Get(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            var isTittleNotUnique = await _rolesRepository.IsTittleNotUnique(requestModel.Title, id);
-
-            if (isTittleNotUnique)
-            {
-                return Conflict("Role with the same title is already exists");
-            }
-
-            entity.Title = requestModel.Title;
-            entity.IsPrimary = requestModel.IsPrimary;
-
-            await _rolesRepository.SaveChanges();
-            return Ok();
+            ServiceResponse<int> serviceResponse = await _rolesService.Create(requestModel.AsDto());
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult)
+                ? errorResult
+                : new ObjectResult(new { Id = serviceResponse.Payload }) { StatusCode = 201 };
         }
     }
 }

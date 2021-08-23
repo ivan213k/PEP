@@ -4,7 +4,6 @@ using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Shared;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
@@ -52,10 +51,6 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             User.Configure(modelBuilder);
             UserState.Configure(modelBuilder);
             UserRoleMap.Configure(modelBuilder);
-
-            Role.Configure(modelBuilder);
-            
-
 
             var allEntityies = modelBuilder.Model.GetEntityTypes();
             foreach (var entity in allEntityies) 

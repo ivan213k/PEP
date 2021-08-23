@@ -16,13 +16,11 @@ using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
-using PerformanceEvaluationPlatform.DAL.Repositories.Roles;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
-using PerformanceEvaluationPlatform.Application.Services.Field;
-using PerformanceEvaluationPlatform.Application.Services.FormsData;
 using PerformanceEvaluationPlatform.Models.User.Policies;
+using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
 using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
@@ -65,7 +63,9 @@ namespace PerformanceEvaluationPlatform
 
             services.AddTransient<IUserRepository, UserRepository>();
 
-            services.AddTransient<IRolesRepository, RolesRepository>();
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Roles.IRolesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Roles.RolesRepository>();
+            services.AddTransient<IRolesService, RolesService>();
+
             services.AddTransient<IFieldsRepository, FieldsRepository>();
 
             services.AddTransient<ISurveysRepository, SurveysRepository>();

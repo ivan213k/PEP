@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using PerformanceEvaluationPlatform.Domain.Roles;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dao
 {

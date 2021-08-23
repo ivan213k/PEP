@@ -138,5 +138,8 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 
 		public new static ServiceResponse<TResponse> NotFound(string message = ServiceResponse.GeneralErrorProperty) =>
 			Failure(message, 404);
+
+		public new static ServiceResponse<TResponse> Conflict(string message = ServiceResponse.GeneralErrorProperty) =>
+			Failure(message, 409);
 	}
 }

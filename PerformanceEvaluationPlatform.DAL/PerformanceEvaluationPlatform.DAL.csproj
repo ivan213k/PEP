@@ -17,4 +17,9 @@
     <Folder Include="Models\Surveys\Dto\" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\PerformanceEvaluationPlatform.Domain\PerformanceEvaluationPlatform.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

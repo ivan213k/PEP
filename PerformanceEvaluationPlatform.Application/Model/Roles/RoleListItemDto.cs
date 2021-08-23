@@ -1,6 +1,6 @@
-﻿namespace PerformanceEvaluationPlatform.DAL.Models.Roles.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Roles
 {
-    public class RoleDetailsDto
+    public class RoleListItemDto
     {
         public int Id { get; set; }
         public string Title { get; set; }

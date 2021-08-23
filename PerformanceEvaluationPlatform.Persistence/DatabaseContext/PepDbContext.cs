@@ -12,6 +12,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Persistence.Configurations.FormTemplates;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Surveys;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Roles;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Users;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -44,6 +46,11 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             modelBuilder.ApplyConfiguration(new FormDataConfiguration());
             modelBuilder.ApplyConfiguration(new DeeplinkConfiguration());
             modelBuilder.ApplyConfiguration(new DeeplinkStateConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleMapConfiguration());
+            modelBuilder.ApplyConfiguration(new UserStatepConfiguration());
 
             modelBuilder.ApplyConfiguration(new DocumentConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentTypeConfiguration());

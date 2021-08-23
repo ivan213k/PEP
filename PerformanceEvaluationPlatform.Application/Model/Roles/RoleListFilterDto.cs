@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PerformanceEvaluationPlatform.DAL.Models.Roles.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Roles
 {
     public class RoleListFilterDto
     {

@@ -59,48 +59,46 @@ namespace PerformanceEvaluationPlatform.Application.Services.FormsData
                 var field = await _fieldsRepository.Get(item.FieldId);
                 if (field == null)
                 {
-                    return ServiceResponse.Failure<UpdateFieldDataDto>(ufd => ufd.FieldId, "Field does not exists.");
+                    return ServiceResponse.Failure<UpdateFieldDataDto>(t => t.FieldId, "Field does not exists.");
                 }
                 var assessment = await _fieldsRepository.Get(item.AssesmentId);
                 if (assessment == null)
                 {
                     return ServiceResponse.Failure<UpdateFieldDataDto>(t => t.AssesmentId, "Assesment does not exists.");
                 }
-                var ids = entity.FieldData.Select(fd => fd.Field.AssesmentGroupId).Distinct();
-                if (!ids.Contains(assessment.AssesmentGroupId))
+                if (assessment.AssesmentGroupId != entity.FieldData.Select(x => x.Field.AssesmentGroupId).FirstOrDefault())
                 {
                     return ServiceResponse.Failure<UpdateFieldDataDto>(t => t.AssesmentId, "Assessment is not related to the field");
                 }
 
-                var fieldDataList = await _fieldsRepository.GetFieldData(item.FieldId);
-                foreach (var fieldData in fieldDataList)
+                // Check how it could be on the master? GetFieldData returns List
+                //var comment = await _fieldsRepository.GetFieldData(item.FieldId);
+                //if (comment.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(comment.Comment))
+                //{
+                //    return ServiceResponse.Failure<UpdateFieldDataDto>(t => t.Comment, "Comment is required, but not set");
+                //}
+                var commentList = await _fieldsRepository.GetFieldData(item.FieldId);
+
+                foreach (var comment in commentList)
                 {
-                    if (fieldData.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(fieldData.Comment))
+                    if (comment.Assesment.IsCommentRequired && string.IsNullOrWhiteSpace(comment.Comment))
                     {
-                        return ServiceResponse.Failure<UpdateFieldDataDto>(ufd => ufd.Comment, "Comment is required, but not set");
+                        return ServiceResponse.Failure<UpdateFieldDataDto>(t => t.Comment, "Comment is required, but not set");
                     }
                 }
-
             }
             entity.FieldData.Clear();
-            var startOrder = 1;
             entity.FieldData = model.Select(m => new FieldData
             {
                 Comment = m.Comment,
                 FieldId = m.FieldId,
-                AssesmentId = m.AssesmentId,
-                Order = OrderCounter(ref startOrder)
+                AssesmentId = m.AssesmentId
             }).ToList();
 
             entity.FormDataStateId = InProgressStateId;
 
             await _formDataRepository.SaveChanges();
             return ServiceResponse.Success();
-        }
-
-        private static int OrderCounter(ref int startOrder)
-        {
-            return startOrder++;
         }
     }
 }

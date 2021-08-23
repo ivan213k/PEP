@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PerformanceEvaluationPlatform.DAL.Models.Roles.Dto
+﻿namespace PerformanceEvaluationPlatform.Application.Model.Roles
 {
-    public class RoleListItemDto
+    public class RoleDetailsDto
     {
         public int Id { get; set; }
         public string Title { get; set; }

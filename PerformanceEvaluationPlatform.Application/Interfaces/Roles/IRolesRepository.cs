@@ -1,11 +1,9 @@
-﻿using PerformanceEvaluationPlatform.DAL.Models.Roles.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Roles.Dto;
-using System;
+﻿ using PerformanceEvaluationPlatform.Application.Model.Roles;
+using PerformanceEvaluationPlatform.Domain.Roles;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Roles
+namespace PerformanceEvaluationPlatform.Application.Interfaces.Roles
 {
     public interface IRolesRepository : IBaseRepository
     {

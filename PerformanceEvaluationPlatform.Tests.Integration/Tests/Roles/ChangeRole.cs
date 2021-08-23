@@ -11,14 +11,14 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
     [TestFixture]
     class ChangeRole : IntegrationTestBase
     {
-        private EditRoleRequestModel editRoleRequestModel;
+        private UpdateRoleRequestModel editRoleRequestModel;
 
         public ChangeRole()
         {
-            editRoleRequestModel = new EditRoleRequestModel
+            editRoleRequestModel = new UpdateRoleRequestModel
             {
-                Id = 5,
-                Title = "Test",
+                Id = 4,
+                Title = "Team Lead",
                 IsPrimary = true
             };
         }
@@ -72,7 +72,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Roles
         public async Task Request_should_change_IsPrimary_to_true()
         {
             //Arrange
-            var roleId = 5;
+            var roleId = 4;
             var request = CreatePutHttpRequest(editRoleRequestModel, "roles", roleId);
 
             //Act
