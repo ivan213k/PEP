@@ -42,6 +42,12 @@ namespace PerformanceEvaluationPlatform
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
+            services.AddCors(options => options.AddPolicy("default", builder =>
+            {
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+                builder.AllowAnyOrigin();
+            }));
             services.AddControllers();
             services.AddSwaggerGen();
 
@@ -145,8 +151,8 @@ namespace PerformanceEvaluationPlatform
             });
 
             app.UseRouting();
+            app.UseCors("default");
 
-            
             app.UseAuthentication();
             app.UseAuthorization();
 
