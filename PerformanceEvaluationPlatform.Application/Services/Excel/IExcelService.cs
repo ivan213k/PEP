@@ -1,10 +1,12 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.Excel;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
-namespace PerformanceEvaluationPlatform.Application.Services.Field
+namespace PerformanceEvaluationPlatform.Application.Services.Excel
 {
     public interface IExcelService
     {
-        Stream Convert(ReportDto report);
+        MemoryStream Convert(ReportDto report);
     }
 }

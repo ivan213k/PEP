@@ -69,13 +69,13 @@ namespace PerformanceEvaluationPlatform.Application.Services.Field
             var fieldType = await _fieldsRepository.GetType(model.TypeId);
             if (fieldType == null)
             {
-                ServiceResponse.Failure<CreateFieldDto>(t => t.TypeId, "Type does not exists.");
+                return ServiceResponse<int>.Failure<CreateFieldDto>(t => t.TypeId, "Type does not exists."); //виникає internal server error 
             }
 
             var fieldAssesmentGroup = await _fieldsRepository.GetAssesmentGroup(model.AssesmentGroupId);
             if (fieldAssesmentGroup == null)
             {
-                ServiceResponse.Failure<CreateFieldDto>(t => t.AssesmentGroupId, "Assesment group does not exists.");
+                return ServiceResponse<int>.Failure<CreateFieldDto>(t => t.AssesmentGroupId, "Assesment group does not exists."); 
             }
 
             var field = new Domain.Fields.Field

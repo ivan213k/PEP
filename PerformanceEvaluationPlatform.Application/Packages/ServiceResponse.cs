@@ -120,6 +120,11 @@ namespace PerformanceEvaluationPlatform.Application.Packages
 				{GeneralErrorProperty, new List<string>{message}}
 			}, statusCode);
 
+		public new static ServiceResponse<TResponse> Failure<T>(Expression<Func<T, object>> property, string message, int statusCode = 400) =>
+		Failure(new Dictionary<string, ICollection<string>> {
+				{ExpressionHelper.GetPropertyName(property), new List<string>{message}}
+		}, statusCode);
+
 		public static ServiceResponse<TResponse> Conflict<T>(Expression<Func<T, object>> property, string message, int statusCode = 400)
 		{
 			return Conflict(ExpressionHelper.GetPropertyName(property), message);

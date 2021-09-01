@@ -19,6 +19,8 @@ using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
+using PerformanceEvaluationPlatform.Application.Services.Excel;
+using PerformanceEvaluationPlatform.Application.Services.FormsData;
 using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
@@ -63,6 +65,7 @@ namespace PerformanceEvaluationPlatform
 
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Fields.IFieldsRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Fields.FieldsRepository>();
             services.AddTransient<IFieldService, FieldService>();
+            services.AddTransient<IExcelService, ExcelService>();
 
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates.IFormTemplatesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates.FormTemplatesRepository>();
             services.AddTransient<IFormTemplatesService, FormTemplatesService>();
