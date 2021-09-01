@@ -46,5 +46,23 @@ namespace PerformanceEvaluationPlatform.Controllers
             });
             return Ok(items);
         }
+
+        [HttpGet("fields/groups/{id:int}")]
+        public async Task<IActionResult> GetFieldGroupDetails(int id)
+        {
+            var detailsDto = await _fieldsGroupRepository.GetDetails(id);
+            if(detailsDto == null)
+            {
+                return NotFound();
+            }
+
+            var details = new FieldGroupDetailsViewModel
+            {
+                Id = detailsDto.Id,
+                Title = detailsDto.Title,
+                FieldsNames = detailsDto.FieldsNames
+            };
+            return Ok(details);
+        }
     }
 }

@@ -32,6 +32,25 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup
             return ExecuteSp<FieldGroupListItemDto>("[dbo].[spGetFieldGroupListItems]", parameters);
         }
 
+        public async Task<FieldGroupDetailsDto> GetDetails(int id)
+        {
+            var fieldGroup = await DbContext.Set<FieldGroup>()
+                .Include(t => t.Fields)
+                .SingleOrDefaultAsync(t => t.Id == id);
+            if (fieldGroup == null)
+            {
+                return null;
+            }
+
+            var details = new FieldGroupDetailsDto
+            {
+                Id = fieldGroup.Id,
+                Title = fieldGroup.Title,
+                FieldsNames = fieldGroup.Fields.Select(t => t.Name).ToList()
+            };
+
+            return details;
+        }
 
 
         public Task<FieldGroup> Get(int id)

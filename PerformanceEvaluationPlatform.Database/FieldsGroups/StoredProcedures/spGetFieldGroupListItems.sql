@@ -84,7 +84,7 @@ DECLARE @Sql NVARCHAR(MAX) ='
 SELECT 
 	[Fg].[Id],
 	[Fg].[Title],
-	COUNT([F].[FieldGroupId]) As [Count]
+	COUNT([F].[FieldGroupId]) As [FieldCount]
 FROM [dbo].[FieldGroup] [Fg]
 	LEFT JOIN [dbo].[Field] [F] ON [F].FieldGroupId = [Fg].Id
 '+ @WhereClause +'

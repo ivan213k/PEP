@@ -8,6 +8,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup
     public interface IFieldsGroupRepository : IBaseRepository
     {
         Task<IList<FieldGroupListItemDto>> GetList(FieldGroupListFilterDto filter);
+        Task<FieldGroupDetailsDto> GetDetails(int id);
         Task<FieldGroup> Get(int id);
     }
 }

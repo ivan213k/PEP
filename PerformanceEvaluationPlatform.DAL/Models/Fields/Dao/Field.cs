@@ -13,6 +13,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Fields.Dao
         public bool IsRequired { get; set; }
         public FieldAssesmentGroup AssesmentGroup { get; set; }
         public FieldType FieldType { get; set; }
+        public int? FieldGroupId { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
