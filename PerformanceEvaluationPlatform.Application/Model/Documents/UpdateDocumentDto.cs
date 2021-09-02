@@ -9,5 +9,6 @@ namespace PerformanceEvaluationPlatform.Application.Model.Documents
         public string FileName { get; set; }
         public int? LastUpdateById { get; set; }
         public string MetaData { get; set; }
+        public byte[] File { get; set; }
     }
 }

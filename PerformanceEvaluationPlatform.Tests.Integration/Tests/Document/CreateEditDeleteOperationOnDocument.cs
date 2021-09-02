@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using PerformanceEvaluationPlatform.Models.Document.RequestModels;
@@ -6,6 +6,9 @@ using PerformanceEvaluationPlatform.Models.Document.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
+using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,22 +22,30 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
         public async Task Request_should_return_valid_id_item_after_added_document()
         {
             //Arrange
-            HttpRequestMessage request = BaseAddress
-                .AppendPathSegment("document")
-                .WithHttpMethod(HttpMethod.Post);
-
+            var form = GetFileMock("text/csv", "test;test;","Creating.csv");
             RequestAddDocumentModel model = new RequestAddDocumentModel()
             {
                 UserId = 1,
                 TypeId = 2,
                 ValidToDate = System.DateTime.Now.AddDays(365),
-                FileName = "Added.doc",
                 CreatedById = 3,
-                MetaDate = "Some new Added metadate"
+                MetaData = "Some new Added metadate",
+                File=form
             };
 
-            var bodyContent = JsonConvert.SerializeObject(model);
-            request.Content = new StringContent(bodyContent, Encoding.UTF8, "application/json");
+            string contentType = GetHttpContentType();
+
+            var formData = FormDataConstructor(model, form);
+            var request = new HttpRequestMessage(HttpMethod.Post, BaseAddress.AppendPathSegment("document"))
+            {
+                Headers =
+            {
+                { HttpRequestHeader.ContentType.ToString(), contentType }
+            },
+                Content = formData
+            };
+
+
 
             //Act
             HttpResponseMessage response = await SendRequest(request);
@@ -51,24 +62,28 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
         [Test]
         public async Task Request_should_return_valid_result_after_updating_entety()
         {
-            var Id=await GreatingDocumentHelperForTests();
+            var Id=await CreatingDocumentHelper(3);
             //Updating Document
             //Arrange
+            var form = GetFileMock("text/csv", "test;test;", "Updating.csv");
             RequestUpdateDocumentModel model = new RequestUpdateDocumentModel()
             {
                 TypeId = 2,
                 ValidToDate = System.DateTime.Now.AddDays(365),
-                FileName = "Updated.doc",
                 LastUpdateById = 3,
                 MetaData = "Some MetadataUpdated"
             };
-            HttpRequestMessage request = BaseAddress
-                .AppendPathSegment("document")
-                .AppendPathSegment(Id)
-                .WithHttpMethod(HttpMethod.Put);
+            string contentType = GetHttpContentType();
 
-            var bodyContent = JsonConvert.SerializeObject(model);
-            request.Content = new StringContent(bodyContent, Encoding.UTF8, "application/json");
+            var formData = FormDataConstructor(model, form);
+            var request = new HttpRequestMessage(HttpMethod.Put, BaseAddress.AppendPathSegment("document").AppendPathSegment(Id))
+            {
+                Headers =
+            {
+                { HttpRequestHeader.ContentType.ToString(), contentType }
+            },
+                Content = formData
+            };
 
             HttpRequestMessage getModelForChecking = BaseAddress
                 .AppendPathSegment("documents")
@@ -83,9 +98,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             //Asserts
             CustomAssert.IsSuccess(response);
             Assert.AreEqual(document.Id, Id);
-            Assert.AreEqual(document.Id, Id);
-            Assert.AreEqual(document.ValidTo, model.ValidToDate);
-            Assert.AreEqual(document.FileName, model.FileName);
+            Assert.AreEqual(document.ValidTo.ToShortDateString(), model.ValidToDate.ToShortDateString());
+            
 
             //Deleting
             await DeletingDocumentHelperTest(Id);
@@ -94,12 +108,13 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
         [Test]
         public async Task Request_should_return_valid_result_of_deleting()
         {
-            var Id = await GreatingDocumentHelperForTests();
+            var Id = await CreatingDocumentHelper(1);
             //Arrange
             HttpRequestMessage request = BaseAddress
-            .AppendPathSegment("document")
-            .AppendPathSegment(Id)
-            .WithHttpMethod(HttpMethod.Delete);
+             .AppendPathSegment("document")
+             .AppendPathSegment(Id)
+             .WithHttpMethod(HttpMethod.Delete);
+
             //Act
             HttpResponseMessage response = await SendRequest(request);
 
@@ -116,19 +131,25 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                
                 TypeId = 2,
                 ValidToDate = System.DateTime.Now.AddDays(365),
-                FileName = "Updated.doc",
                 LastUpdateById = 3,
                 MetaData = "Some MetadataUpdated"
             };
-            HttpRequestMessage request = BaseAddress
-               .AppendPathSegment("document")
-               .AppendPathSegment(1000000)
-               .WithHttpMethod(HttpMethod.Put);
+            var form = GetFileMock("text/csv", "test;test;", "Search.csv");
+            
+            string contentType = GetHttpContentType();
 
-           
+            var formData = FormDataConstructor(model, form);
+            var request = new HttpRequestMessage(HttpMethod.Put, BaseAddress.AppendPathSegment("document").AppendPathSegment(100000000))
+            {
+                Headers =
+            {
+                { HttpRequestHeader.ContentType.ToString(), contentType }
+            },
+                Content = formData
+            };
+
+
             //Act
-            var bodyContent = JsonConvert.SerializeObject(model);
-            request.Content = new StringContent(bodyContent, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await SendRequest(request);
             await response.Content.ReadAsStringAsync();
             //Assert
@@ -144,7 +165,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
                
                 TypeId = 2,
                 ValidToDate = System.DateTime.Now.AddDays(-365),
-                FileName = "Updated.doc",
                 LastUpdateById = 3,
                 MetaData = "Some MetadataUpdated"
             };
@@ -165,24 +185,34 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
         }
 
         //Private Helper Functions
-        private async Task<int> GreatingDocumentHelperForTests() {
-            HttpRequestMessage request = BaseAddress
-                .AppendPathSegment("document")
-                .WithHttpMethod(HttpMethod.Post);
-
+        private async Task<int> CreatingDocumentHelper(int userId) {
+            //Arrange
+            var form = GetFileMock("text/csv", "test;test;", "Helper.csv");
             RequestAddDocumentModel model = new RequestAddDocumentModel()
             {
-                UserId = 1,
+                UserId = userId,
                 TypeId = 2,
                 ValidToDate = System.DateTime.Now.AddDays(365),
-                FileName = "Helper.doc",
-                CreatedById = 3,
-                MetaDate = "Some new Helper metadate"
+                CreatedById = 1,
+                MetaData = "Some helper metadata",
+                File = form
+            };
+          
+            string contentType = GetHttpContentType();
+
+            var formData = FormDataConstructor(model, form);
+            var request = new HttpRequestMessage(HttpMethod.Post, BaseAddress.AppendPathSegment("document"))
+            {
+                Headers =
+            {
+                { HttpRequestHeader.ContentType.ToString(), contentType }
+            },
+                Content = formData
             };
 
-            var bodyContent = JsonConvert.SerializeObject(model);
-            request.Content = new StringContent(bodyContent, Encoding.UTF8, "application/json");
 
+
+            //Act
             HttpResponseMessage response = await SendRequest(request);
             var define = new { id = 0 };
             var result = await response.Content.ReadAsStringAsync();
@@ -195,8 +225,58 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Document
             .AppendPathSegment(id)
             .WithHttpMethod(HttpMethod.Delete);
             //Act
-            HttpResponseMessage response = await SendRequest(request);
+            await SendRequest(request);
         }
-       
+        private IFormFile GetFileMock(string contentType, string content,string fileName)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(content);
+
+            var file = new FormFile(
+                baseStream: new MemoryStream(bytes),
+                baseStreamOffset: 0,
+                length: bytes.Length,
+                name: "Data",
+                fileName: fileName
+            )
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = contentType
+            };
+
+            return file;
+        }
+        private MultipartFormDataContent FormDataConstructor(RequestAddDocumentModel model,IFormFile file) {
+            var formData = new MultipartFormDataContent() {
+               { new StringContent(model.UserId.ToString()), nameof(model.UserId) },
+               { new StringContent(model.TypeId.ToString()), nameof(model.TypeId) },
+               { new StringContent(model.ValidToDate.ToString()), nameof(model.ValidToDate) },
+               { new StringContent(model.CreatedById.ToString()), nameof(model.CreatedById) },
+               { new StringContent(model.MetaData), nameof(model.MetaData) },
+            };
+            MemoryStream ms = new MemoryStream();
+            file.CopyTo(ms);
+            ms.Close();
+            formData.Add(new ByteArrayContent(ms.ToArray()), nameof(model.File), file.FileName);
+            return formData;
+        }
+        private MultipartFormDataContent FormDataConstructor(RequestUpdateDocumentModel model, IFormFile file)
+        {
+            var formData = new MultipartFormDataContent() {
+               { new StringContent(model.TypeId.ToString()), nameof(model.TypeId) },
+               { new StringContent(model.ValidToDate.ToString()), nameof(model.ValidToDate) },
+               { new StringContent(model.LastUpdateById.ToString()), nameof(model.LastUpdateById) },
+               { new StringContent(model.MetaData), nameof(model.MetaData) },
+            };
+            MemoryStream ms = new MemoryStream();
+            file.CopyTo(ms);
+            ms.Close();
+            formData.Add(new ByteArrayContent(ms.ToArray()), nameof(model.File), file.FileName);
+            return formData;
+        }
+        private  string GetHttpContentType() {
+            string formDataBoundary = String.Format("----------{0:N}", Guid.NewGuid());
+            string contentType = "multipart/form-data; boundary=" + formDataBoundary;
+            return contentType;
+        }
     }
 }

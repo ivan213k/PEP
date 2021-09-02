@@ -64,7 +64,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPost("document")]
-        public async Task< IActionResult> CreateDocument([FromBody] RequestAddDocumentModel model) {
+        public async Task< IActionResult> CreateDocument([FromForm] RequestAddDocumentModel model) {
             var createDocumentResponce = await _documentService.Create(model.AsDto());
             return TryGetErrorResult(createDocumentResponce, out IActionResult errorResult)
                 ? errorResult
@@ -72,7 +72,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         }
 
         [HttpPut("document/{id:int}")]
-        public async Task <IActionResult> EditDocument([FromRoute]int id,[FromBody] RequestUpdateDocumentModel model) {
+        public async Task <IActionResult> EditDocument([FromRoute]int id, [FromForm] RequestUpdateDocumentModel model) {
             var documentUpdateResponce = await _documentService.Update(id, model.AsDto());
             return TryGetErrorResult(documentUpdateResponce, out IActionResult errorResult)
                 ? errorResult
@@ -87,6 +87,17 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
             return Ok();
+        }
+
+        [HttpGet("document/download/{id:int}")]
+        public async Task<IActionResult> DownloadFile(int id) {
+            var filedocument = await _documentService.FileDownload(id);
+            if (TryGetErrorResult(filedocument, out IActionResult errorResult))
+            {
+                return errorResult;
+            }
+            return File(filedocument.Payload.Content, filedocument.Payload.ContentType, filedocument.Payload.FileName);
+
         }
     }
 }

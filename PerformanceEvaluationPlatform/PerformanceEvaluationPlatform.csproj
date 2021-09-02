@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PerformanceEvaluationPlatform.Application\PerformanceEvaluationPlatform.Application.csproj" />
     <ProjectReference Include="..\PerformanceEvaluationPlatform.DAL\PerformanceEvaluationPlatform.DAL.csproj" />
+    <ProjectReference Include="..\PerformanceEvaluationPlatform.Infrastructure\PerformanceEvaluationPlatform.Infrastructure.csproj" />
     <ProjectReference Include="..\PerformanceEvaluationPlatform.Persistence\PerformanceEvaluationPlatform.Persistence.csproj" />
   </ItemGroup>
 </Project>

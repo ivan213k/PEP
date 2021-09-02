@@ -6,11 +6,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using PerformanceEvaluationPlatform.Application.Interfaces.Documents;
+using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
 using PerformanceEvaluationPlatform.Application.Services.Deeplinks;
 using PerformanceEvaluationPlatform.Application.Services.Document;
 using PerformanceEvaluationPlatform.Application.Services.Example;
+using PerformanceEvaluationPlatform.Application.Services.Excel;
 using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormsData;
+using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
+using PerformanceEvaluationPlatform.Application.Services.Role;
+using PerformanceEvaluationPlatform.Application.Services.Surveys;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
@@ -18,16 +23,11 @@ using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Projects;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
 using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Infrastructure.Document;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
-using PerformanceEvaluationPlatform.Application.Services.Excel;
-using PerformanceEvaluationPlatform.Application.Services.FormsData;
 using PerformanceEvaluationPlatform.Models.User.Policies;
-using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
-using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
-using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Surveys;
-using PerformanceEvaluationPlatform.Application.Services.Surveys;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -97,6 +97,11 @@ namespace PerformanceEvaluationPlatform
             services.AddMemoryCache();
 
             services.Configure<Auth0Configur>(options => Configuration.GetSection("Auth0Configur").Bind(options));
+            var DocumentStorage = new DocumentStorageConfigur();
+            Configuration.GetSection("DocumentStorageConfigur").Bind(DocumentStorage);
+            services.AddSingleton(x => DocumentStorage);
+
+            services.AddSingleton<IDocumentStorage, AzureBlobDocumentStorage>();
 
             var tokenValidationParameters = new TokenValidationParameters
             {

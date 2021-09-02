@@ -1,4 +1,5 @@
-﻿using PerformanceEvaluationPlatform.Application.Model.Documents;
+﻿using PerformanceEvaluationPlatform.Application.Interfaces.Documents;
+using PerformanceEvaluationPlatform.Application.Model.Documents;
 using PerformanceEvaluationPlatform.Application.Packages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,5 +15,6 @@ namespace PerformanceEvaluationPlatform.Application.Services.Document
         Task<ServiceResponse> Update(int id, UpdateDocumentDto model);
         Task<ServiceResponse<int>> Create(CreateDocumentDto model);
         Task<ServiceResponse> Delete(int id);
+        Task<ServiceResponse<BlobFileDto>> FileDownload(int id);
     }
 }

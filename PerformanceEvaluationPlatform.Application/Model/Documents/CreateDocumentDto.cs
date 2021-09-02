@@ -11,5 +11,6 @@ namespace PerformanceEvaluationPlatform.Application.Model.Documents
         public string FileName { get; set; }
         public int CreatedById { get; set; }
         public string MetaDate { get; set; }
+        public byte[] File { get; set; }
     }
 }

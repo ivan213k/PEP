@@ -11,10 +11,12 @@ namespace PerformanceEvaluationPlatform.Application.Services.Document
     {
         //TODO: Uncomment after adding User into project
         private readonly IDocumentReposotory _documentReposotory;
-       // private readonly IUserRepository _userRepository;
-        public DocumentService(IDocumentReposotory documumentRepository)
+        private readonly IDocumentStorage _documentStorage;
+        //private readonly IUserRepository _userRepository;
+        public DocumentService(IDocumentReposotory documumentRepository, IDocumentStorage documentStorage)
         {
             _documentReposotory = documumentRepository;
+            _documentStorage = documentStorage;
         }
         public async Task<ServiceResponse<int>> Create(CreateDocumentDto model)
         {
@@ -49,6 +51,8 @@ namespace PerformanceEvaluationPlatform.Application.Services.Document
             };
             await _documentReposotory.Create(document);
             await _documentReposotory.SaveChanges();
+            var path = PathConstructorForStorage(document.UserId, document.FileName);
+            await _documentStorage.Upload(path, model.File);
             return ServiceResponse<int>.Success(document.Id, 201);
         }
 
@@ -59,6 +63,8 @@ namespace PerformanceEvaluationPlatform.Application.Services.Document
                return ServiceResponse.NotFound();
             }
             await _documentReposotory.DeleteDocument(id);
+            var path = PathConstructorForStorage(document.UserId, document.FileName);
+            await _documentStorage.Delete(path);
            return ServiceResponse.Success();
         }
 
@@ -118,13 +124,30 @@ namespace PerformanceEvaluationPlatform.Application.Services.Document
             //if (createdByUser == null) {
             // return ServiceResponse.Failure<UpdateDocumentDto>(t => t.LastUpdateById, "User doesn`t exist");
             //}
+            var oldPath = PathConstructorForStorage(document.UserId, document.FileName);
+            var newPath = PathConstructorForStorage(document.UserId, model.FileName);
             document.TypeId = model.TypeId;
             document.ValidToDate = model.ValidToDate;
             document.FileName = model.FileName;
             document.LastUpdatesById = model.LastUpdateById;
             document.MetaData = model.MetaData;
             await _documentReposotory.SaveChanges();
+            await _documentStorage.UpdateFileInStorage(oldPath, newPath, model.File);
             return ServiceResponse.Success();
+        }
+        public async Task<ServiceResponse<BlobFileDto>> FileDownload(int id) {
+            var document = await _documentReposotory.Get(id);
+            if (document == null)
+            {
+                return ServiceResponse<BlobFileDto>.NotFound("Document does not exist");
+            }
+            var path = PathConstructorForStorage(document.UserId, document.FileName);
+             var documentFile =await _documentStorage.Download(path);
+            return ServiceResponse<BlobFileDto>.Success(documentFile);
+
+        }
+        private string PathConstructorForStorage(int UserId, string fileName) {
+            return UserId + "/" + fileName;
         }
     }
 }
