@@ -1,8 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[spGetProjectListItems]
 @Search NVARCHAR(256),
-@Coordinator INT,
+@CoordinatorIds [dbo].[IntList] READONLY,
 @TitleSortOrder INT,
-@StartDateSortOrder DATETIME2,
+@StartDateSortOrder INT,
 @CoordinatorSortOrder INT,
 @Skip INT,
 @Take INT
@@ -11,6 +11,7 @@ BEGIN
 	DECLARE @SearchClause NVARCHAR(258) = ''
 	DECLARE @WhereClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
+	DECLARE @JoinClause NVARCHAR(MAX) = ''
  
 	IF (@Search IS NOT NULL)
 	BEGIN
@@ -22,16 +23,11 @@ BEGIN
  
 		SET @WhereClause = @WhereClause + '[P].[Title] LIKE ''' + @SearchClause + ''' '
 	END
-
-	IF (@Coordinator IS NOT NULL)
-	BEGIN
-		 IF (@WhereClause = '')
-			SET @WhereClause = 'HAVING '
-		 ELSE
-			SET @WhereClause = @WhereClause + ' AND '
- 
-		SET @WhereClause = @WhereClause + ' [P].[CoordinatorId] = @Coordinator'
-	END
+	
+	IF(EXISTS(SELECT * FROM @CoordinatorIds))
+		BEGIN
+			SET @JoinClause = @JoinClause + ' INNER JOIN @CoordinatorIds [CI] ON [CI].[Id] = [P].[CoordinatorId] '
+		END
 	
 	IF (@TitleSortOrder IS NOT NULL)
 		BEGIN
@@ -43,7 +39,7 @@ BEGIN
 
 	IF(@StartDateSortOrder IS NOT NULL)
 		BEGIN
-			IF (@TitleSortOrder = 1)
+			IF (@StartDateSortOrder = 1)
 				SET @OrderClause = '[P].[StartDate] ASC'
 			ELSE
 				SET @OrderClause = '[P].[StartDate] DESC'
@@ -62,11 +58,12 @@ BEGIN
 	DECLARE @Sql NVARCHAR(MAX) = '
 	SELECT
 		[P].[Id],
-		[P].Title,
-		[P].StartDateSortOrder AS [StartDate],
+		[P].[Title],
+		[P].[StartDate],
 		[P].[CoordinatorId] AS [Coordinator]
 	FROM [dbo].[Project] [P]
 	INNER JOIN [dbo].[User] AS [U] ON [U].Id = [P].[Id]
+	'+ @JoinClause + ' 
 	'+ @WhereClause + '
 	ORDER BY ' + @OrderClause + '
 	OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
@@ -74,14 +71,16 @@ BEGIN
  
 	 DECLARE @Params NVARCHAR(MAX) = '
 		@SearchClause NVARCHAR(258),
-		@Coordinator INT,
+		@CoordinatorIds [dbo].[IntList] READONLY,
+		@StartDateSortOrder INT,
 		@Skip INT,
 		@Take INT
 	';
  
 	EXECUTE sp_executesql @Sql, @Params,
 		@SearchClause,
-		@Coordinator,
+		@CoordinatorIds,
+		@StartDateSortOrder,
 		@Skip,
 		@Take
 END

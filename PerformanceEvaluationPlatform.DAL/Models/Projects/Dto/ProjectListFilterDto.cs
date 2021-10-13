@@ -6,7 +6,7 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Projects.Dto
 {
     public class ProjectListFilterDto
     {
-        public ICollection<int> CoordinatorId { get; set; }
+        public ICollection<int> CoordinatorIds { get; set; }
 
         public int? Skip { get; set; }
         public int? Take { get; set; }

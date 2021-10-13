@@ -15,12 +15,12 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Projects
         {
         }
 
-        public Task<IList<ProjectListItemDto>> GetList(ProjectListFilterDto filter)
+        public Task<IList<ProjectListItemDto>> GetList(ProjectListFilterDto filter) 
         {
             var parameters = new
             {
                 Search = filter.Search,
-                CoordinatorId = filter.CoordinatorId,
+                CoordinatorIds = filter.CoordinatorIds,
                 Skip = filter.Skip,
                 Take = filter.Take,
                 TitleSortOrder = filter.TitleSortOrder,

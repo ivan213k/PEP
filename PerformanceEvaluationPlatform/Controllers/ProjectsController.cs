@@ -31,7 +31,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 TitleSortOrder = (int?)filter.TitleSortOrder,
                 StartDateSortOrder = (int?)filter.StartDateSortOrder,
                 CoordinatorSortOrder = (int?)filter.CoordinatorSortOrder,
-                CoordinatorId = filter.CoordinatorIds
+                CoordinatorIds = filter.CoordinatorIds
             };
 
             var itemsDto = await _projectRepository.GetList(filterDto);
