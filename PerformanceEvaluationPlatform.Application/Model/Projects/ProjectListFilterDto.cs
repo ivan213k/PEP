@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Projects.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Projects
 {
     public class ProjectListFilterDto
     {

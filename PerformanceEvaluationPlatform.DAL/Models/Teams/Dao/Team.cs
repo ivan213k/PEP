@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PerformanceEvaluationPlatform.DAL.Models.Teams.Dao
 {
@@ -11,8 +7,6 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Teams.Dao
         public int Id { get; set; }
         public string Title { get; set; }
         public int ProjectId { get; set; }
-
-        public Project Project { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {

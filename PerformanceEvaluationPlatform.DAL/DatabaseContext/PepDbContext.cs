@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.DAL.Models.Fields.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FieldsGroup.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.FormTemplates.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Shared;
 using PerformanceEvaluationPlatform.DAL.Models.Teams.Dao;
 using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
@@ -64,8 +63,6 @@ namespace PerformanceEvaluationPlatform.DAL.DatabaseContext
             FieldGroup.Configure(modelBuilder);
 
             Team.Configure(modelBuilder);
-
-            Project.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }

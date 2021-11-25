@@ -1,21 +1,20 @@
 ﻿using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.DAL.DatabaseContext;
-using PerformanceEvaluationPlatform.DAL.Models.Projects;
-using PerformanceEvaluationPlatform.DAL.Models.Projects.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Projects.Dto;
+using PerformanceEvaluationPlatform.Application.Interfaces.Projects;
+using PerformanceEvaluationPlatform.Application.Model.Projects;
+using PerformanceEvaluationPlatform.Domain.Projects;
+using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.DAL.Repositories.Projects
+namespace PerformanceEvaluationPlatform.Persistence.Repositories.Projects
 {
     public class ProjectsRepository : BaseRepository, IProjectsRepository
     {
-        public ProjectsRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext)
-            : base(databaseOptions, dbContext)
+        public ProjectsRepository(IOptions<DatabaseOptions> databaseOptions, PepDbContext dbContext) : base(databaseOptions, dbContext)
         {
         }
 
-        public Task<IList<ProjectListItemDto>> GetList(ProjectListFilterDto filter) 
+        public Task<IList<ProjectListItemDto>> GetList(ProjectListFilterDto filter)
         {
             var parameters = new
             {
@@ -31,7 +30,7 @@ namespace PerformanceEvaluationPlatform.DAL.Repositories.Projects
             return ExecuteSp<ProjectListItemDto>("[dbo].[spGetProjectListItems]", parameters);
         }
 
-        public Task<Project> Get(int id)
+        public Task<Project> GetById(int id)
         {
             return Get<Project>(id);
         }

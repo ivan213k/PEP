@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Projects
+namespace PerformanceEvaluationPlatform.Application.Model.Projects
 {
     public class ProjectListItemDto
     {

@@ -14,6 +14,7 @@ using PerformanceEvaluationPlatform.Persistence.Configurations.FormTemplates;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Surveys;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Roles;
 using PerformanceEvaluationPlatform.Persistence.Configurations.Users;
+using PerformanceEvaluationPlatform.Persistence.Configurations.Projects;
 
 namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 {
@@ -72,6 +73,8 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             modelBuilder.ApplyConfiguration(new FormTemplateConfiguration());
             modelBuilder.ApplyConfiguration(new FormTemplateFieldMapConfiguration());
 
+            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+
             //FormData.Configure(modelBuilder);
             //FormDataState.Configure(modelBuilder);
 
@@ -109,8 +112,6 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             //DeeplinkState.Configure(modelBuilder);
 
             //Team.Configure(modelBuilder);
-
-            //Project.Configure(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }

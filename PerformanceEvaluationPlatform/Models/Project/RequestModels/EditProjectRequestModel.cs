@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Projects;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace PerformanceEvaluationPlatform.Models.Project.RequestModels
@@ -14,5 +15,17 @@ namespace PerformanceEvaluationPlatform.Models.Project.RequestModels
 
         [Required]
         public int CoordinatorId { get; set; }
+    }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static UpdateProjectDto AsDto(this EditProjectRequestModel requestModel)
+        {
+            return new UpdateProjectDto
+            {
+                CoordinatorId = requestModel.CoordinatorId,
+                Title = requestModel.Title,
+                StartDate = requestModel.StartDate,
+            };
+        }
     }
 }
