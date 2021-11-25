@@ -40,7 +40,8 @@ namespace PerformanceEvaluationPlatform.Controllers
                 Id = t.Id,
                 Title = t.Title,
                 StartDate = t.StartDate,
-                Coordinator = t.Coordinator
+                Coordinator = $"{t.CoordinatorFirstName} {t.CoordinatorLastName}",
+                CoordinatorId = t.CoordinatorId,
             });
 
             return Ok(items);

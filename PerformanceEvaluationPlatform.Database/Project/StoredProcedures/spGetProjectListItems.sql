@@ -48,9 +48,9 @@ BEGIN
 	IF (@CoordinatorSortOrder IS NOT NULL)
 		BEGIN
 			IF (@CoordinatorSortOrder = 1)
-				SET @OrderClause = '[P].[Coordinator] ASC'
+				SET @OrderClause = '[PC].[FirstName] + '' '' + [PC].[LastName] ASC'
 			ELSE
-				SET @OrderClause = '[P].[Coordinator] DESC'
+				SET @OrderClause = '[PC].[FirstName] + '' '' + [PC].[LastName] DESC'
 		END
 	IF (@OrderClause = '')
 		SET @OrderClause = '[P].[Title] ASC'
@@ -60,9 +60,11 @@ BEGIN
 		[P].[Id],
 		[P].[Title],
 		[P].[StartDate],
-		[P].[CoordinatorId] AS [Coordinator]
+		[PC].[FirstName] AS [CoordinatorFirstName],
+		[PC].[LastName] AS [CoordinatorLastName],
+		[P].[CoordinatorId]
 	FROM [dbo].[Project] [P]
-	INNER JOIN [dbo].[User] AS [U] ON [U].Id = [P].[Id]
+	INNER JOIN [dbo].[User] [PC] ON [P].[CoordinatorId] = [PC].[Id]
 	'+ @JoinClause + ' 
 	'+ @WhereClause + '
 	ORDER BY ' + @OrderClause + '
