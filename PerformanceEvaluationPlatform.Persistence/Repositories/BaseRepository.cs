@@ -3,6 +3,7 @@ using DapperParameters;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Application.Interfaces;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using PerformanceEvaluationPlatform.Persistence.Shared;
 using System;
@@ -47,7 +48,22 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories
                 return result.AsList();
             }
         }
+        protected async Task<ListItemsDto<TItem>> ExecuteMultiResultSetSp<TItem>(string spName, object parameters) 
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_databaseOptions.SqlConnectionString))
+            {
+                var mappedParameters = MapParameters(parameters);
+                var gridReader = await dbConnection.QueryMultipleAsync(spName, mappedParameters, commandType: CommandType.StoredProcedure);
 
+                var items = gridReader.Read<TItem>();
+                int totalItemsCount = gridReader.Read<int>().Single();
+                return new ListItemsDto<TItem>()
+                {
+                    Items = items.ToList(),
+                    TotalItemsCount = totalItemsCount
+                };
+            }
+        }
         protected async Task<TEntity> Get<TEntity>(int id) where TEntity: class
         {
             return await DbContext.Set<TEntity>().FindAsync(id);

@@ -1,5 +1,6 @@
 ﻿using PerformanceEvaluationPlatform.Application.Interfaces.Projects;
 using PerformanceEvaluationPlatform.Application.Model.Projects;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Domain.Projects;
 using System.Collections.Generic;
@@ -51,10 +52,10 @@ namespace PerformanceEvaluationPlatform.Application.Services.Projects
             return ServiceResponse<ProjectDetailsDto>.Success(detailsDto);
         }
 
-        public async Task<ServiceResponse<IList<ProjectListItemDto>>> GetList(ProjectListFilterDto filter)
+        public async Task<ServiceResponse<ListItemsDto<ProjectListItemDto>>> GetList(ProjectListFilterDto filter)
         {
             var projects = await _projectsRepository.GetList(filter);
-            return ServiceResponse<IList<ProjectListItemDto>>.Success(projects);
+            return ServiceResponse<ListItemsDto<ProjectListItemDto>>.Success(projects);
         }
 
         public async Task<ServiceResponse> Update(int id, UpdateProjectDto updateProjectDto)

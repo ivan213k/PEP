@@ -29,9 +29,14 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
 
-            var items = response.Payload?.Select(t => t.AsViewModel());
+            var listItemsDto = response.Payload;
+            var listItemsViewModel = new ListItemsViewModel<ProjectListItemViewModel>
+            {
+                TotalItemsCount = listItemsDto.TotalItemsCount,
+                Items = listItemsDto.Items?.Select(t => t.AsViewModel()).ToList()
+            };
 
-            return Ok(items);
+            return Ok(listItemsViewModel);
         }
 
         [HttpPost("projects")]

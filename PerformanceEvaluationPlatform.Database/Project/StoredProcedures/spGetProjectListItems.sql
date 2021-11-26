@@ -70,6 +70,10 @@ BEGIN
 	ORDER BY ' + @OrderClause + '
 	OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
 		';
+	
+	SET @Sql = @Sql + ' SELECT COUNT(*) AS [TotalItemsCount] FROM [dbo].[Project] [P] 
+	'+ @JoinClause + '
+	'+ @WhereClause ;
  
 	 DECLARE @Params NVARCHAR(MAX) = '
 		@SearchClause NVARCHAR(258),
