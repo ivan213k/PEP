@@ -9,5 +9,8 @@ VALUES
 (6,3,6),
 (7,4,7),
 (8,2,8),
-(9,4,9)
+(9,4,9),
+(10,5,1), --Project Coordinator role
+(11,5,2), --Project Coordinator role
+(12,5,3) --Project Coordinator role
 SET IDENTITY_INSERT [dbo].[UserRoleMap] OFF

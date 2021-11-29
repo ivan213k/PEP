@@ -142,7 +142,10 @@ Begin
 		Set @OrderClause ='[UPES].[PreviousPE] DESC'
 	END
 
-
+	IF(@Skip IS NULL)
+		SET @Skip = 0
+	IF(@Take IS NULL)
+		SET @Take = 30
 
 	DECLARE @Sql NVARCHAR(MAX)= 'SELECT DISTINCT [U].[Id],[U].[FirstName],[U].[LastName],[U].[Email],[US].[Name] AS [StateName],
 	[T].[Title] as [TeamName], [R].[Title] as [RoleName],[L].[Name] AS [LevelName],[UPES].[PreviousPE], [UPES].[NextPE]

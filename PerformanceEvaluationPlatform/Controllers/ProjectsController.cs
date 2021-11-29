@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Application.Model.Users;
 using PerformanceEvaluationPlatform.Application.Services.Projects;
+using PerformanceEvaluationPlatform.Application.Services.Users;
 using PerformanceEvaluationPlatform.Models.Project.RequestModels;
 using PerformanceEvaluationPlatform.Models.Project.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared;
@@ -12,11 +14,14 @@ namespace PerformanceEvaluationPlatform.Controllers
     [ApiController]
     public class ProjectsController : BaseController
     {
+        private const int ProjectCoordinatorRoleId = 5;
         private readonly IProjectsService _projectsService;
+        private readonly IUserService _userService;
 
-        public ProjectsController(IProjectsService projectsService)
+        public ProjectsController(IProjectsService projectsService, IUserService userService)
         {
             _projectsService = projectsService ?? throw new ArgumentNullException(nameof(projectsService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }
 
         [HttpGet("projects")]
@@ -75,6 +80,30 @@ namespace PerformanceEvaluationPlatform.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("projects/filterCoordinators")]
+        public async Task<IActionResult> GetFilterCoordinators()
+        {
+            var userFilterDto = new UserFilterDto
+            {
+                Skip = 0,
+                Take = int.MaxValue,
+                RoleIds = new[] { ProjectCoordinatorRoleId }
+            };
+            var response = await _userService.GetList(userFilterDto);
+            if (TryGetErrorResult(response, out IActionResult errorResult))
+            {
+                return errorResult;
+            }
+
+            var filterCoordinators = response.Payload?.Select(t => new FilterDropDownItemViewModel
+            {
+                Id = t.Id,
+                Value = $"{t.FirstName} {t.LastName}"
+            });
+
+            return Ok(filterCoordinators);
         }
     }
 }

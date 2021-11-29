@@ -14,13 +14,6 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         public byte? UserNameSortOrder { get; set; }
         public byte? UserPreviousPESortOrder { get; set; }
         public byte? UserNextPESortOrder { get; set; }
-
-
-        public UserFilterRequestModel()
-        {
-            Skip = 0;
-            Take = 2;
-        }
     }
     public static partial class ViewModelMapperExtensions
     {
