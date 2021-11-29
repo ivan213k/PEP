@@ -15,6 +15,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
         [Test]
         public async Task GetUser_SendId_ReturnValidObject()
         {
+            // Create user with id =2
             HttpRequestMessage request = BaseAddress
                 .AppendPathSegment("users")
                 .AppendPathSegment(2)
