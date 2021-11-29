@@ -26,14 +26,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
                 .WithHttpMethod(HttpMethod.Get);
             return users;
                     }
-        private HttpRequestMessage GetArrangeWithSortedParams(UserSortingRequestModel sortingModel)
-        {
-            var users = BaseAddress
-                .AppendPathSegment("users")
-                .SetQueryParams(sortingModel)
-                .WithHttpMethod(HttpMethod.Get);
-            return users;
-        }
 
         [Test]
         public async Task Get_WhenCalled_ReturnValidItems()
@@ -58,7 +50,7 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
         public async Task Get_FilteredByEmail_ReturnValidFilteredItems()
         {
             //Arrange
-            var items = GetArrangeWithFilteredParams(new UserFilterRequestModel() { EmailOrName = "k" });
+            var items = GetArrangeWithFilteredParams(new UserFilterRequestModel { Search = "k" });
 
             //Act
             HttpResponseMessage result = await SendRequest(items);
@@ -139,8 +131,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
         public async Task Get_SortingbyUserNameAsc_ReturnValidSortedItems()
         {
             //Arrange
-            var sorting = new UserSortingRequestModel() { UserName = 1 };
-            var items = GetArrangeWithSortedParams(sorting);
+            var sorting = new UserFilterRequestModel() { UserNameSortOrder = 1 };
+            var items = GetArrangeWithFilteredParams(sorting);
 
             //Act
             HttpResponseMessage result = await SendRequest(items);
@@ -157,8 +149,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
         public async Task Get_SortingbyUserPreviousPEDesc_ReturnValidSortedItems()
         {
             //Arrange
-            var sorting = new UserSortingRequestModel() { UserPreviousPE =2};
-            var items = GetArrangeWithSortedParams(sorting);
+            var sorting = new UserFilterRequestModel() { UserPreviousPESortOrder =2};
+            var items = GetArrangeWithFilteredParams(sorting);
 
             //Act
             HttpResponseMessage result = await SendRequest(items);
@@ -175,8 +167,8 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
         public async Task Get_SortingbyUserNextPEAsc_ReturnValidSortedItems()
         {
             //Arrange
-            var sorting = new UserSortingRequestModel() { UserNextPE=1};
-            var items = GetArrangeWithSortedParams(sorting);
+            var sorting = new UserFilterRequestModel() { UserNextPESortOrder=1};
+            var items = GetArrangeWithFilteredParams(sorting);
 
             //Act
             HttpResponseMessage result = await SendRequest(items);

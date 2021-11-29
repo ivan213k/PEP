@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace PerformanceEvaluationPlatform.Models.User.RequestModels
+namespace PerformanceEvaluationPlatform.Application.Model.Users
 {
-    interface IUserRequest
+    interface IUserDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

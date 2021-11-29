@@ -51,7 +51,7 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleMapConfiguration());
-            modelBuilder.ApplyConfiguration(new UserStatepConfiguration());
+            modelBuilder.ApplyConfiguration(new UserStateConfiguration());
 
             modelBuilder.ApplyConfiguration(new DocumentConfiguration());
             modelBuilder.ApplyConfiguration(new DocumentTypeConfiguration());
@@ -75,6 +75,11 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
 
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
 
+            modelBuilder.ApplyConfiguration(new SystemRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new UserStateConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleMapConfiguration());
+
             //FormData.Configure(modelBuilder);
             //FormDataState.Configure(modelBuilder);
 
@@ -91,10 +96,6 @@ namespace PerformanceEvaluationPlatform.Persistence.DatabaseContext
             //FormTemplate.Configure(modelBuilder);
             //FormTemplateStatus.Configure(modelBuilder);
             //FormTemplateFieldMap.Configure(modelBuilder);
-
-            //User.Configure(modelBuilder);
-            //UserState.Configure(modelBuilder);
-            //UserRoleMap.Configure(modelBuilder);
 
             //Role.Configure(modelBuilder);
 

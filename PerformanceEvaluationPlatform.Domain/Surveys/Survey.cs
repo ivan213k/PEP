@@ -1,6 +1,7 @@
 ﻿using PerformanceEvaluationPlatform.Domain.Deeplinks;
 using PerformanceEvaluationPlatform.Domain.FormsData;
 using PerformanceEvaluationPlatform.Domain.FormTemplates;
+using PerformanceEvaluationPlatform.Domain.Users;
 using System;
 using System.Collections.Generic;
 
@@ -20,8 +21,8 @@ namespace PerformanceEvaluationPlatform.Domain.Surveys
         public SurveyState SurveyState { get; set; }
         public Level RecomendedLevel { get; set; }
 
-        //public User Asignee { get; set; }
-        //public User Supervisor { get; set; }
+        public User Asignee { get; set; }
+        public User Supervisor { get; set; }
         public FormTemplate FormTemplate { get; set; }
 
         public ICollection<Deeplink> DeepLinks { get; set; }

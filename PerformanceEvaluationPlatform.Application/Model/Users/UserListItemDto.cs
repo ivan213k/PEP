@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dto
+namespace PerformanceEvaluationPlatform.Application.Model.Users
 {
    public  class UserListItemDto
     {
@@ -18,5 +18,4 @@ namespace PerformanceEvaluationPlatform.DAL.Models.Users.Dto
         public DateTime NextPE { get; set; }
 
     }
-   
 }

@@ -15,7 +15,7 @@ namespace PerformanceEvaluationPlatform.Application.Services.Example
             _examplesRepository = examplesRepository;
         }
 
-        public async Task<ServiceResponse<IList<ExampleListItemDto>>> GetListItems(ExampleListFilterDto filter) 
+        public async Task<ServiceResponse<IList<ExampleListItemDto>>> GetListItems(ExampleListFilterDto filter)
         {
 	        IList<ExampleListItemDto> items = await _examplesRepository.GetList(filter);
 	        return ServiceResponse<IList<ExampleListItemDto>>.Success(items);

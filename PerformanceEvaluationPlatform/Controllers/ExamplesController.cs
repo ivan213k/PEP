@@ -15,6 +15,7 @@ namespace PerformanceEvaluationPlatform.Controllers
     {
         private readonly IExamplesService _examplesService;
 
+
         public ExamplesController(IExamplesService examplesService)
         {
 	        _examplesService = examplesService ?? throw new ArgumentNullException(nameof(examplesService));

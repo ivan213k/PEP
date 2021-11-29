@@ -4,13 +4,10 @@ using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integration
+namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
 {
     [TestFixture]
     class ActivateUser:IntegrationTestBase
@@ -37,17 +34,6 @@ namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integratio
             Assert.That(content.StateName, Is.EqualTo("Active"));
         }
 
-        [Test]
-        public async Task ActivateUser_UserIdWichhasActivateState_ShouldreturnOkWithWords()
-        {
-            var item = BaseAddress
-               .AppendPathSegment("users")
-               .AppendPathSegment(2)
-               .AppendPathSegment("activate")
-               .WithHttpMethod(HttpMethod.Put);
-            HttpResponseMessage response = await SendRequest(item);
-            Assert.That(response.Content.ReadAsStringAsync, Is.EqualTo("User is already with active state"));
-        }
         [Test]
         public async Task ActivateUser_NotExistingId_ReturnNOtFound()
         {

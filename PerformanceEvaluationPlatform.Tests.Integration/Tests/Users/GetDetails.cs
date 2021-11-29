@@ -4,13 +4,10 @@ using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Assert;
 using PerformanceEvaluationPlatform.Tests.Integration.Infrastructure.Flurl;
 using PerformanceEvaluationPlatform.Tests.Integration.Tests.Base;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users.Integration
+namespace PerformanceEvaluationPlatform.Tests.Integration.Tests.Users
 {
     [TestFixture]
     class GetDetails : IntegrationTestBase

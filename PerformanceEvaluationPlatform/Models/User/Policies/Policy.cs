@@ -8,7 +8,7 @@ namespace PerformanceEvaluationPlatform.Models.User.Policies
     public static class Policy
     {
         public const string User = "UserAccess";
-        public const string Admin= "AdminAccess";
+        public const string Admin = "AdminAccess";
         public const string ProjectCoordinator = " ProjectCoordinatorAccess";
     }
 }

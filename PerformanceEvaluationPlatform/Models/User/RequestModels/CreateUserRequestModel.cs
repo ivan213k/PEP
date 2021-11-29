@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Application.Model.Users;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PerformanceEvaluationPlatform.Models.User.RequestModels
 {
-    public class CreateUserRequestModel: IUserRequest
+    public class CreateUserRequestModel
     {
         [Required]
         [MaxLength(70)]
@@ -28,10 +29,27 @@ namespace PerformanceEvaluationPlatform.Models.User.RequestModels
         [Required]
         public string SystemRoleId { get; set; }
         [Required]
-        public DateTime NextPEDate { get; set; }
-        [Required]
         public DateTime FirstDayInCompany { get; set; }
         [Required]
         public DateTime FirstDayInIndustry { get; set; }
+    }
+    public static partial class ViewModelMapperExtensions
+    {
+        public static CreateUserDto AsDto(this CreateUserRequestModel editUser)
+        {
+            return new CreateUserDto()
+            {
+                Email = editUser.Email,
+                EnglishLevelId = editUser.EnglishLevelId,
+                FirstDayInCompany = editUser.FirstDayInCompany,
+                FirstDayInIndustry = editUser.FirstDayInIndustry,
+                FirstName = editUser.FirstName,
+                LastName = editUser.LastName,
+                RoleIds = editUser.RoleIds,
+                SystemRoleId = editUser.SystemRoleId,
+                TeamId = editUser.TeamId,
+                TechnicalLevelId = editUser.TechnicalLevelId
+            };
+        }
     }
 }

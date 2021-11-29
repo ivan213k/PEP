@@ -18,18 +18,23 @@ using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Application.Services.Projects;
 using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Application.Services.Surveys;
+using PerformanceEvaluationPlatform.Application.Services.Users;
 using PerformanceEvaluationPlatform.DAL;
 using PerformanceEvaluationPlatform.DAL.DatabaseContext;
 using PerformanceEvaluationPlatform.DAL.Repositories.Fields;
 using PerformanceEvaluationPlatform.DAL.Repositories.FieldsGroup;
 using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
-using PerformanceEvaluationPlatform.DAL.Repositories.Users;
 using PerformanceEvaluationPlatform.Infrastructure.Document;
-using PerformanceEvaluationPlatform.Models.User.Auth0;
+//using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Models.User.Policies;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Documents;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Projects;
 using PerformanceEvaluationPlatform.Persistence.Repositories.Surveys;
+using PerformanceEvaluationPlatform.Application.Services.Users.Auth0;
+using PerformanceEvaluationPlatform.Application.Interfaces.Users.Auth0;
+using PerformanceEvaluationPlatform.Application.Model.Users;
+using PerformanceEvaluationPlatform.Application.Interfaces.Roles;
+using PerformanceEvaluationPlatform.Persistence.Repositories.Roles;
 
 namespace PerformanceEvaluationPlatform
 {
@@ -72,11 +77,10 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates.IFormTemplatesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates.FormTemplatesRepository>();
             services.AddTransient<IFormTemplatesService, FormTemplatesService>();
 
-            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Users.IUserRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Users.UserRepository>();
+            services.AddTransient<IUserService, UserService>();
 
-            services.AddTransient<PerformanceEvaluationPlatform.Application.Interfaces.Roles.IRolesRepository, PerformanceEvaluationPlatform.Persistence.Repositories.Roles.RolesRepository>();
-            services.AddTransient<IRolesService, RolesService>();
-
+            services.AddTransient<IRolesRepository, RolesRepository>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
 
             services.AddTransient<ISurveysRepository, SurveysRepository>();

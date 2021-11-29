@@ -4,7 +4,7 @@ using PerformanceEvaluationPlatform.Domain.Users;
 
 namespace PerformanceEvaluationPlatform.Persistence.Configurations.Users
 {
-    class UserStatepConfiguration : IEntityTypeConfiguration<UserState>
+    public class UserStateConfiguration:IEntityTypeConfiguration<UserState>
     {
         public void Configure(EntityTypeBuilder<UserState> builder)
         {

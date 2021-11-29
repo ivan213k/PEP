@@ -1,21 +1,11 @@
-﻿using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using Auth0.ManagementApi;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.Application.Interfaces.Roles;
-using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dao;
-using PerformanceEvaluationPlatform.DAL.Models.Users.Dto;
-using PerformanceEvaluationPlatform.DAL.Repositories.Teams;
-using PerformanceEvaluationPlatform.DAL.Repositories.Users;
+using PerformanceEvaluationPlatform.Application.Services.Users;
 using PerformanceEvaluationPlatform.Models.User.Auth0;
 using PerformanceEvaluationPlatform.Models.User.RequestModels;
 using PerformanceEvaluationPlatform.Models.User.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,358 +13,103 @@ namespace PerformanceEvaluationPlatform.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
-        private const int ActiveState = 1;
-        private const int SuspendState = 2;
-        private const string connection = "Username-Password-Authentication";
-        private readonly IUserRepository _userRepository;
-        private readonly IRolesRepository _roleRepository;
-        private readonly ITeamsRepository _teamRepository;
-        private readonly ISurveysRepository _surveysRepository;
-        private readonly Auth0Configur _config;
-        private readonly IAuth0ClientFactory _auth0Factory;
+        private readonly IUserService _userService;
         private readonly IWebHostEnvironment _host;
-        public UsersController(IUserRepository userRepository, IRolesRepository roleRepository, ITeamsRepository teamRepository,
-            ISurveysRepository surveysRepository, IOptions<Auth0Configur> config, IAuth0ClientFactory auth0Factory,
+        public UsersController(IUserService userService,
             IWebHostEnvironment host)
         {
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            _teamRepository = teamRepository ?? throw new ArgumentNullException(nameof(teamRepository));
-            _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
-            _config = config.Value ?? throw new ArgumentNullException(nameof(config));
-            _auth0Factory = auth0Factory ?? throw new ArgumentNullException(nameof(auth0Factory));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
             _host = host ?? throw new ArgumentNullException(nameof(host));
         }
 
-
+        //   [Authorize(Policy = Policy.User)]
         [HttpGet]
-     //   [Authorize(Policy = Policy.User)]
-        public async Task<IActionResult> Get([FromQuery] UserSortingRequestModel userSorting, [FromQuery] UserFilterRequestModel userFilter)
+        public async Task<IActionResult> Get([FromQuery] UserFilterRequestModel userFilter)
         {
-            var parameters = new UserFilterDto()
+            
+            var itemsResponse = await _userService.GetList(userFilter.AsDto());
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
             {
-                NextPeDate = userFilter.NextPEDate,
-                PreviousPeDate = userFilter.PreviousPEDate,
-                RoleIds = userFilter.RoleIds,
-                Search = userFilter.EmailOrName,
-                Skip = userFilter.Skip,
-                StateIds = userFilter.StateIds,
-                Take = userFilter.Take,
-                UserNameSort = userSorting.UserName,
-                UserNextPE = userSorting.UserNextPE,
-                UserPreviousPE = userSorting.UserPreviousPE
-            };
+                return errorResult;
+            }
 
-            var itemsDto = await _userRepository.GetList(parameters);
-
-            var itemViewModel = itemsDto.Select(s => new UserViewModel()
-            {
-                Id = s.Id,
-                Email = s.Email,
-                FirstName = s.FirstName,
-                LastName = s.LastName,
-                LevelName = s.LevelName,
-                NextPEDate = s.NextPE,
-                StateName = s.StateName,
-                PreviousPEDate = s.PreviousPE,
-                RoleName = s.RoleName,
-                TeamName = s.TeamName
-            });
-
-            return Ok(itemViewModel);
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
+        //  [Authorize(Policy = Policy.User)]
         [HttpGet("userstate")]
-      //  [Authorize(Policy = Policy.User)]
         public async Task<IActionResult> GetUserStates()
         {
-            var userStateDtos = await _userRepository.GetStates();
-            var userStatesviewModel = userStateDtos.Select(s => new UserStateViewModel { Id = s.Id, Name = s.Name });
-            return Ok(userStatesviewModel);
+            var itemsResponse = await _userService.GetStates();
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+            {
+
+                return errorResult;
+            }
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
+
         [HttpGet("systemrole")]
         public async Task<IActionResult> GetSystemRoles()
         {
-            var systemRoles =await _userRepository.GetSystemRoles();
-            return Ok(systemRoles.Select(s=>new SystemRoleViewModel() 
+            var itemsResponse = await _userService.GetSystemRoles();
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
             {
-                Id = s.Id,
-                Name = s.Name
-            }));
+                return errorResult;
+            }
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            return Ok(itemsVm);
         }
 
         //[Authorize(Policy = Policy.User)]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetUser(int id)
         {
-            var user = await _userRepository.GetDetail(id);
-
-            if (user is null)
+            var itemsResponse = await _userService.GetDetail(id);
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
             {
-                return NotFound();
+                return errorResult;
             }
-            var userViewModel = new UserDetailViewModel()
-            {
-                Email = user.Email,
-                EnglishLevelName = user.EnglishLevel,
-                FirstDayInCompany = user.FirstDayInCompany,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                TechnicalLevelName = user.TechnicalLevel,
-                NextPEDate = user.NextPeDate,
-                PreviousPEDate = user.PreviousPEDate,
-                PreviousPEs = user.PreviousPes,
-                ProjectName = user.Project,
-                RoleNames = user.Role,
-                StateName = user.State,
-                TeamName = user.Team,
-                YearsInCompany = user.YearsInCompany,
-                YearsOfExpirience = user.YearsOfExpirience
-            };
-            return Ok(userViewModel);
+            return Ok(itemsResponse.Payload.AsViewModel());
         }
 
         //[Authorize(Policy = Policy.Admin)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditUser(int id, [FromBody] EditUserRequestModel editedUser)
         {
-
-            var user = await _userRepository.Get(id);
-            if (user is null)
-            {
-                return NotFound();
-            }
-            var existingUser = await _userRepository.Get(editedUser.Email);
-            if(existingUser != null &&existingUser.Id != id)
-            {
-                ModelState.AddModelError(editedUser.Email, "User with the same email is already exists");
-                return Conflict(ModelState);
-            }
-
-            await ValidateUser(editedUser);
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
-
-            UpdateUser(user, editedUser);
-            await _userRepository.Save();
-
-            var client =await  _auth0Factory.CreateManagementApi();
-            await UpdateAuth0User(user, client);
-
-            return Ok($"{user.Id} user with this Id was updated success");
+            var serviceResponse = await _userService.Update(id,editedUser.AsDto());
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult)?errorResult: Ok();
         }
 
 
         [HttpPost()]
-      //  [Authorize(Policy =Policy.Admin)]
+        //  [Authorize(Policy =Policy.Admin)]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestModel createUserRequest)
         {
-            var existingUser = await _userRepository.Get(createUserRequest.Email);
-            if (existingUser != null)
-            {
-                ModelState.AddModelError(createUserRequest.Email, "User with the same email is already exists");
-                return Conflict(ModelState);
-            }
-
-
-            await ValidateUser(createUserRequest);
-            if (ModelState.IsValid == false)
-            {
-                return BadRequest(ModelState);
-            }
-
-
-            var userRoleMaps = createUserRequest.RoleIds.Select(s => new UserRoleMap { RoleId = s }).ToList();
-            var user = new User()
-            {
-                Email = createUserRequest.Email,
-                EnglishLevelId = createUserRequest.EnglishLevelId,
-                FirstDayInCompany = createUserRequest.FirstDayInCompany,
-                FirstDayInIndustry = createUserRequest.FirstDayInIndustry,
-                FirstName = createUserRequest.FirstName,
-                LastName = createUserRequest.LastName,
-                StateId = ActiveState,
-                TeamId = createUserRequest.TeamId,
-                TechnicalLevelId = createUserRequest.TechnicalLevelId,
-                SystemRoleId=createUserRequest.SystemRoleId,
-                Roles = userRoleMaps
-            };
-            await _userRepository.Create(user);
-            await _userRepository.Save();
-
-            var client = await _auth0Factory.CreateManagementApi();
-            await CreateAuth0User(user, client);
-
-            if (!_host.IsDevelopment()) { 
-            var authclient = _auth0Factory.CreateAuthenticationApi();
-            await SendMessageToChangeEmail(authclient, user);
-            }
-
-
-            var absoluteUri = string.Concat(HttpContext.Request.Scheme, "://", HttpContext.Request.Host.ToUriComponent());
-            string baseUri = string.Concat(absoluteUri, "/users/{id}").Replace("{id}", user.Id.ToString());
-            return Created(new Uri(baseUri), $"{user.FirstName} - was created success!!");
+            var serviceReponse = await _userService.Create(createUserRequest.AsDto(),_host.IsDevelopment());
+            return TryGetErrorResult(serviceReponse, out IActionResult errorResult) ? errorResult : Ok();
         }
 
         [HttpPut("{id:int}/activate")]
-       // [Authorize(Policy = Policy.Admin)]
+        // [Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> ActivateUser(int id)
         {
-            var user = await _userRepository.Get(id);
-
-            if(user is null)
-            {
-                return NotFound();
-            }
-
-            if(user.StateId == ActiveState)
-            {
-                return Ok("User is already with active state");
-            }
-            user.StateId = ActiveState;
-            await _userRepository.Save();
-            return Ok("User successfully change his state, now its active!");
+            var serviceResponse = await _userService.Activate(id);
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult) ? errorResult : Ok();
         }
         [HttpPut("{id:int}/suspend")]
         //[Authorize(Policy = Policy.Admin)]
         public async Task<IActionResult> SuspendUser(int id)
         {
-            var user = await _userRepository.Get(id);
-
-            if (user is null)
-            {
-                return NotFound();
-            }
-
-            if (user.StateId == SuspendState)
-            {
-                return Ok("User is already with suspend state");
-            }
-            user.StateId = SuspendState;
-            await _userRepository.Save();
-            return Ok("User successfully change his state, now its Suspend");
-        }
-        
-
-        private async Task SendMessageToChangeEmail(AuthenticationApiClient client,User user)
-        {
-            await client.ChangePasswordAsync(new ChangePasswordRequest() 
-            {
-                ClientId = _config.ClientId,
-                Connection = connection,
-                Email = user.Email
-            });
-        }
-        private async Task CreateAuth0User(User user,ManagementApiClient client)
-        {
-            await client.Users.CreateAsync(new Auth0.ManagementApi.Models.UserCreateRequest()
-            {
-                Email = user.Email,
-                Blocked = false,
-                EmailVerified = true,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                NickName = user.FirstName,
-                UserId = user.Id.ToString(),
-                Connection = connection,
-                Password = _host.IsDevelopment()? _config.DefaultPassword: Guid.NewGuid().ToString(),
-                VerifyEmail = false
-            });
-           await  client.Roles.AssignUsersAsync(user.SystemRoleId,new Auth0.ManagementApi.Models.AssignUsersRequest() 
-            {
-                Users =new string[] { $"auth0|{user.Id}" }
-            });
+            var serviceResponse = await _userService.Suspend(id);
+            return TryGetErrorResult(serviceResponse, out IActionResult errorResult) ? errorResult : Ok();
         }
 
-        private async Task UpdateAuth0User(User user, ManagementApiClient client)
-        {
-            await client.Users.UpdateAsync($"auth0|{user.Id}", new Auth0.ManagementApi.Models.UserUpdateRequest()
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                NickName = user.FirstName,
-                FullName = $"{user.FirstName} {user.LastName}",
-                UserName = user.FirstName
-                
-            });
-        }
 
-        private async Task ValidateUser(IUserRequest userRequest)
-        {
-            List<int> notValidUserRoles = new List<int>();
-            foreach (var item in userRequest.RoleIds)
-            {
-                var role = await _roleRepository.Get(item);
-                if (role == null)
-                {
-                    notValidUserRoles.Add(item);
-                }
-            }
-            if (notValidUserRoles.Any())
-            {
-                foreach (var item in notValidUserRoles)
-                {
-                    ModelState.AddModelError(item.ToString(), "Role with this Id doesn't exists");
-                }
-            }
-
-            var userTeam = await _teamRepository.Get(userRequest.TeamId);
-            if (userTeam is null)
-            {
-                ModelState.AddModelError(userRequest.TeamId.ToString(), "Team with this Id doesn't exists");
-            }
-
-            var systemRole = await _userRepository.GetSystemRole(userRequest.SystemRoleId);
-            if (systemRole is null)
-            {
-                ModelState.AddModelError(userRequest.TechnicalLevelId.ToString(), "System Role with this Id doesn't exists");
-            }
-
-            var userTechnicalLevel = await _surveysRepository.GetLevel(userRequest.TechnicalLevelId);
-            if (userTechnicalLevel is null)
-            {
-                ModelState.AddModelError(userRequest.TechnicalLevelId.ToString(), "Level with this Id doesn't exists");
-            }
-            var userEnglishLevel = await _surveysRepository.GetLevel(userRequest.EnglishLevelId);
-            if (userEnglishLevel is null)
-            {
-                ModelState.AddModelError(userRequest.EnglishLevelId.ToString(), "Level with this Id doesn't exists");
-            }
-
-            if (userRequest.FirstDayInCompany < userRequest.FirstDayInIndustry)
-            {
-                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), "User couldn't worked In company before he  was in industry");
-            }
-
-            var yearInCompany = DateTime.Now.Year - userRequest.FirstDayInCompany.Year;
-            if (yearInCompany > 60)
-            {
-                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), $"User haven't could work In company for {yearInCompany} years");
-            }
-            var yearInIndustry = DateTime.Now.Year - userRequest.FirstDayInIndustry.Year;
-            if (yearInIndustry > 60)
-            {
-                ModelState.AddModelError(userRequest.FirstDayInCompany.ToString(), $"User haven't could be In Industry for {yearInIndustry} years");
-            }
-        }
-        private void UpdateUser(User user, EditUserRequestModel editedUser)
-        {
-            user.Email = editedUser.Email;
-            user.EnglishLevelId = editedUser.EnglishLevelId;
-            user.FirstDayInCompany = editedUser.FirstDayInCompany;
-            user.FirstDayInIndustry = editedUser.FirstDayInIndustry;
-            user.FirstName = editedUser.FirstName;
-            user.LastName = editedUser.LastName;
-            user.TeamId = editedUser.TeamId;
-            user.TechnicalLevelId = editedUser.TechnicalLevelId;
-            user.SystemRoleId = editedUser.SystemRoleId;
-            _userRepository.Update(editedUser.RoleIds, user.Id);
-        }
 
     }
 }

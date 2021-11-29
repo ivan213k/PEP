@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PerformanceEvaluationPlatform.Domain.Users
+namespace PerformanceEvaluationPlatform.Application.Model.Users
 {
-    public class UserState
+    public class UserStateListItemDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

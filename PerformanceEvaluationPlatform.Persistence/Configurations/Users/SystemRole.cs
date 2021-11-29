@@ -7,14 +7,14 @@ using System.Text;
 
 namespace PerformanceEvaluationPlatform.Persistence.Configurations.Users
 {
-    public class UserRoleMapConfiguration:IEntityTypeConfiguration<UserRoleMap>
+    public class SystemRoleConfiguration: IEntityTypeConfiguration<SystemRole>
     {
-        public void Configure(EntityTypeBuilder<UserRoleMap> builder)
+        public void Configure(EntityTypeBuilder<SystemRole> builder)
         {
-            builder.ToTable("UserRoleMap");
-
+            builder.ToTable("SystemRole");
             builder.HasKey(s => s.Id);
-
+            builder.Property(s => s.Id).HasMaxLength(40);
+            builder.Property(s => s.Name).IsRequired().HasMaxLength(40);
         }
     }
 }
