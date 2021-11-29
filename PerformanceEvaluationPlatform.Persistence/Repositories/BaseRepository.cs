@@ -48,7 +48,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories
                 return result.AsList();
             }
         }
-        protected async Task<ListItemsDto<TItem>> ExecuteMultiResultSetSp<TItem>(string spName, object parameters) 
+        protected async Task<ListItemsDto<TItem>> ExecuteGetListItemsSp<TItem>(string spName, object parameters) 
         {
             using (IDbConnection dbConnection = new SqlConnection(_databaseOptions.SqlConnectionString))
             {

@@ -82,11 +82,33 @@ BEGIN
 		@Skip INT,
 		@Take INT
 	';
- 
+	CREATE TABLE #Temp
+	(
+		[Id] INT,
+		[Title] NVARCHAR(MAX),
+		[StartDate] DATETIME2,
+		[FirstName] NVARCHAR(MAX),
+		[LastName] NVARCHAR(MAX),
+		[CoordinatorId] INT
+	)
+
+	INSERT INTO #Temp
 	EXECUTE sp_executesql @Sql, @Params,
 		@SearchClause,
 		@CoordinatorIds,
 		@StartDateSortOrder,
 		@Skip,
 		@Take
+
+	SELECT  [Id],
+			[Title],
+			[StartDate],
+			[FirstName] AS [CoordinatorFirstName],
+			[LastName] AS [CoordinatorLastName],
+			[CoordinatorId]
+	FROM #Temp
+	
+	SELECT COUNT(*) AS [TotalItemsCount] FROM #Temp
+
+	DROP TABLE #Temp
 END

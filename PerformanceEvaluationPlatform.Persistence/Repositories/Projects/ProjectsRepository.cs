@@ -29,7 +29,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Projects
                 CoordinatorSortOrder = filter.CoordinatorSortOrder
             };
      
-            return ExecuteMultiResultSetSp<ProjectListItemDto>("[dbo].[spGetProjectListItems]", parameters);
+            return ExecuteGetListItemsSp<ProjectListItemDto>("[dbo].[spGetProjectListItems]", parameters);
         }
 
         public Task<Project> GetById(int id)
