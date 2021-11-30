@@ -70,7 +70,11 @@ BEGIN
 	ORDER BY ' + @OrderClause + '
 	OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
 		';
- 
+	
+	SET @Sql = @Sql + ' SELECT COUNT(*) AS [TotalItemsCount] FROM [dbo].[Project] [P]
+	'+ @JoinClause + '
+	'+ @WhereClause ;
+
 	 DECLARE @Params NVARCHAR(MAX) = '
 		@SearchClause NVARCHAR(258),
 		@CoordinatorIds [dbo].[IntList] READONLY,
@@ -78,17 +82,7 @@ BEGIN
 		@Skip INT,
 		@Take INT
 	';
-	CREATE TABLE #Temp
-	(
-		[Id] INT,
-		[Title] NVARCHAR(MAX),
-		[StartDate] DATETIME2,
-		[FirstName] NVARCHAR(MAX),
-		[LastName] NVARCHAR(MAX),
-		[CoordinatorId] INT
-	)
 
-	INSERT INTO #Temp
 	EXECUTE sp_executesql @Sql, @Params,
 		@SearchClause,
 		@CoordinatorIds,
@@ -96,15 +90,4 @@ BEGIN
 		@Skip,
 		@Take
 
-	SELECT  [Id],
-			[Title],
-			[StartDate],
-			[FirstName] AS [CoordinatorFirstName],
-			[LastName] AS [CoordinatorLastName],
-			[CoordinatorId]
-	FROM #Temp
-	
-	SELECT COUNT(*) AS [TotalItemsCount] FROM #Temp
-
-	DROP TABLE #Temp
 END
