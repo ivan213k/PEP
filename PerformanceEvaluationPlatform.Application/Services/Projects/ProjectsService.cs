@@ -45,9 +45,10 @@ namespace PerformanceEvaluationPlatform.Application.Services.Projects
             }
             var detailsDto = new ProjectDetailsDto
             {
+                Id = project.Id,
                 StartDate = project.StartDate,
                 Title = project.Title,
-                CoordinatorId = project.Id, 
+                CoordinatorId = project.CoordinatorId, 
             };
             return ServiceResponse<ProjectDetailsDto>.Success(detailsDto);
         }

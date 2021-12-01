@@ -28,7 +28,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Configurations.Surveys
                 .IsRequired();
 
             builder.HasMany(t => t.DeepLinks)
-                .WithOne()
+                .WithOne(t=> t.Survey)
                 .HasForeignKey(t => t.SurveyId)
                 .IsRequired();
 

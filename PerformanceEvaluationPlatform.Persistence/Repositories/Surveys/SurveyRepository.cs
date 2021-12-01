@@ -79,10 +79,10 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Surveys
             var survey = await DbContext.Set<Survey>()
                 .Include(r => r.SurveyState)
                 .Include(r => r.RecomendedLevel)
-                //.Include(r => r.FormTemplate)
-                //.Include(r => r.Asignee)
-                //.Include(r => r.Supervisor)
-                .Include(r => r.DeepLinks)/*.ThenInclude(t => t.User)*/
+                .Include(r => r.FormTemplate)
+                .Include(r => r.Asignee)
+                .Include(r => r.Supervisor)
+                .Include(r => r.DeepLinks).ThenInclude(t => t.User)
                 .Include(r => r.FormData).ThenInclude(f => f.FormDataState)
                 .SingleOrDefaultAsync(r => r.Id == id);
 
@@ -99,16 +99,16 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Surveys
                 RecommendedLevel = survey.RecomendedLevel.Name,
                 RecommendedLevelId = survey.RecommendedLevelId,
                 Summary = survey.Summary,
-                //Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
+                Assignee = $"{survey.Asignee.FirstName} {survey.Asignee.LastName}",
                 AssigneeId = survey.AssigneeId,
-                //Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
+                Supervisor = $"{survey.Supervisor.FirstName} {survey.Supervisor.LastName}",
                 SupervisorId = survey.SupervisorId,
-                //FormName = survey.FormTemplate.Name,
+                FormName = survey.FormTemplate.Name,
                 FormId = survey.FormTemplateId,
                 AssignedUsers = survey.DeepLinks.Select(d => new SurveyDetailsAssignedUserDto
                 {
                     Id = d.UserId,
-                    //Name = $"{d.User.FirstName} {d.User.LastName}"
+                    Name = $"{d.User.FirstName} {d.User.LastName}"
                 }).ToList(),
                 FormData = survey.FormData.Select(fd => new SurveyFormDataDto
                 {

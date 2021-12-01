@@ -5,6 +5,7 @@ namespace PerformanceEvaluationPlatform.Models.Project.ViewModels
 {
     public class ProjectDetailsViewModel
     {
+        public int Id { get; set; }
         public string Title { get; set; }
         public DateTime StartDate { set; get; }
         public int CoordinatorId { get; set; }
@@ -15,6 +16,7 @@ namespace PerformanceEvaluationPlatform.Models.Project.ViewModels
         {
             return new ProjectDetailsViewModel
             {
+                Id = dto.Id,
                 Title = dto.Title,
                 StartDate = dto.StartDate,
                 CoordinatorId = dto.CoordinatorId,

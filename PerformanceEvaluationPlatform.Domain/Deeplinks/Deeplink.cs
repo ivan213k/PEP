@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PerformanceEvaluationPlatform.Domain.Surveys;
+using PerformanceEvaluationPlatform.Domain.Users;
+using System;
 
 
 namespace PerformanceEvaluationPlatform.Domain.Deeplinks
@@ -15,10 +17,9 @@ namespace PerformanceEvaluationPlatform.Domain.Deeplinks
         //public User SentBy { get; set; }
         public DateTime? SentAt { get; set; }
         public DeeplinkState DeeplinkState { get; set; }
-       // public User User { get; set; }
+        public User User { get; set; }
         public int SurveyId { get; set; }
-       // public Survey Survey { get; set; }
-
+        public Survey Survey { get; set; }
     }
 }
     

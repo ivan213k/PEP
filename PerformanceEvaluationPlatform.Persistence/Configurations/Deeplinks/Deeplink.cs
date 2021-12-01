@@ -22,21 +22,21 @@ namespace PerformanceEvaluationPlatform.Persistence.Configurations.Deeplinks
                 .WithMany(t => t.Deeplinks)
                 .HasForeignKey(t => t.StateId)
                 .IsRequired();
-            // wait User and Survey
-           /* deeplinkBuilder.HasOne(t => t.User)
+
+            deeplinkBuilder.HasOne(t => t.User)
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
                 .IsRequired();
 
-            deeplinkBuilder.HasOne(t => t.SentBy)
-                .WithMany()
-                .HasForeignKey(t => t.SentById)
-                .IsRequired();
+            //deeplinkBuilder.HasOne(t => t.SentBy)
+            //    .WithMany()
+            //    .HasForeignKey(t => t.SentById)
+            //    .IsRequired();
 
             deeplinkBuilder.HasOne(t => t.Survey)
                .WithMany(t => t.DeepLinks)
                 .HasForeignKey(t => t.SurveyId)
-                .IsRequired();*/
+                .IsRequired();
         }
 
     }

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\PerformanceEvaluationPlatform.Application\PerformanceEvaluationPlatform.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Teams\" />
+  </ItemGroup>
+
 </Project>
