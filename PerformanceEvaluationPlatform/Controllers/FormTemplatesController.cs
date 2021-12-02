@@ -3,6 +3,7 @@ using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,12 +30,20 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("formtemplates")]
         public async Task<IActionResult> Get([FromQuery] FormTemplateListFilterOrderRequestModel filter)
         {
-            var itemsResponse = await _formTemplatesService.GetListItems(filter.AsDto());
-            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+            var response = await _formTemplatesService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(response, out IActionResult errorResult))
                 return errorResult;
 
-            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
-            return Ok(itemsVm);
+            var formTemplatesDto = response.Payload;
+            var listItemsDto = response.Payload;
+
+            var listItemsViewModel = new ListItemsViewModel<FormTemplateListItemViewModel>
+            {
+                TotalItemsCount = listItemsDto.TotalItemsCount,
+                Items = listItemsDto.Items?.Select(t => t.AsViewModel()).ToList()
+            };
+
+            return Ok(listItemsViewModel);
         }
 
         [HttpGet("formtemplates/statuses")]
@@ -43,7 +52,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             var itemsResponse = await _formTemplatesService.GetStatusListItems();
             if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
                 return errorResult;
-            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var itemsVm = itemsResponse.Payload.Select(t => t.AsFilterDropDownItemViewModel());
 
             return Ok(itemsVm);
         }
@@ -66,14 +75,16 @@ namespace PerformanceEvaluationPlatform.Controllers
         {
             var response = await _formTemplatesService.Create(requestModel.AsDto());
 
-            return TryGetErrorResult(response, out IActionResult errorResult)
-                ? errorResult
-                : Redirect("/formtemplates/" + response.Payload);
+            if (TryGetErrorResult(response, out IActionResult errorResult))
+            {
+                return errorResult;
+            }
+            return CreatedAtAction(nameof(Details), new { id = response.Payload }, new IdViewModel { Id = response.Payload });
         }
 
         //[HttpPut("formtemplates/{id:int}")]
         //public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFormTemplateRequestModel requestModel)
-        //{ 
+        //{
         //    var formTemplate = await _formTemplatesRepository.Get(id);
         //    if (formTemplate == null)
         //        return NotFound();
@@ -85,7 +96,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         //    if (formTemplate.StatusId == ArchivedStatusId)
         //    {
         //        var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
-        //        if(existDraft)
+        //        if (existDraft)
         //            return Forbid();
         //        var idNew = await Copy(formTemplate.Name, requestModel);
         //        return Redirect("/formtemplates/" + idNew);
@@ -94,7 +105,7 @@ namespace PerformanceEvaluationPlatform.Controllers
         //    if (formTemplate.StatusId == ActiveStatusId)
         //    {
         //        var existSurveys = await _surveysRepository.ExistByFormTemplateId(formTemplate.Id);
-        //        if(existSurveys)
+        //        if (existSurveys)
         //        {
         //            var existDraft = await _formTemplatesRepository.ExistDraftFormTemplate(formTemplate.Name);
         //            if (existDraft)

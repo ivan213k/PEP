@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Domain.FormTemplates;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates
 {
     public interface IFormTemplatesRepository: IBaseRepository
     {
-        Task<IList<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter);
+        Task<ListItemsDto<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter);
         Task<IList<FormTemplateStatusListItemDto>> GetStatusList();
         Task<FormTemplateDetailsDto> GetDetails(int id);
         Task<FormTemplate> Get(int id);

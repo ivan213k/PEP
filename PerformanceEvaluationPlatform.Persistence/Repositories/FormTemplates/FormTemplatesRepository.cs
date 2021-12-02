@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates;
 using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Domain.FormTemplates;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates
 
         }
 
-        public Task<IList<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter)
+        public Task<ListItemsDto<FormTemplateListItemDto>> GetList(FormTemplateListFilterOrderDto filter)
         {
             var parameters = new
             {
@@ -72,7 +73,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.FormTemplates
                 Skip = filter.Skip,
                 Take = filter.Take
             };
-            return ExecuteSp<FormTemplateListItemDto>("[dbo].[spGetFormTemplatesListItems]", parameters);
+            return ExecuteGetListItemsSp<FormTemplateListItemDto>("[dbo].[spGetFormTemplatesListItems]", parameters);
         }
 
         public async Task<IList<FormTemplateStatusListItemDto>> GetStatusList()

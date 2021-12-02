@@ -57,6 +57,10 @@ BEGIN
 		OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
 	';
 
+	SET @Sql = @Sql + ' SELECT COUNT(*) AS [TotalItemsCount] FROM [dbo].[FormTemplate] [FT]
+	'+ @JoinClause + '
+	'+ @WhereClause ;
+
 	DECLARE @Params NVARCHAR(MAX) = '
 		@Search NVARCHAR(256),
 		@StatusIds [dbo].[IntList] READONLY,

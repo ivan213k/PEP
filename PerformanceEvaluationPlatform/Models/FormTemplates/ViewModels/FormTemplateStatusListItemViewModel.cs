@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
 {
@@ -16,6 +17,14 @@ namespace PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels
             {
                 Id = dto.Id,
                 Name = dto.Name
+            };
+        }
+        public static FilterDropDownItemViewModel AsFilterDropDownItemViewModel(this FormTemplateStatusListItemDto dto)
+        {
+            return new FilterDropDownItemViewModel
+            {
+                Id = dto.Id,
+                Value = dto.Name
             };
         }
     }

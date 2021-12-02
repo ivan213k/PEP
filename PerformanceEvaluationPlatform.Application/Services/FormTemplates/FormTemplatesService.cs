@@ -3,6 +3,7 @@ using PerformanceEvaluationPlatform.Application.Interfaces.Fields;
 using PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates;
 using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Dto;
 using PerformanceEvaluationPlatform.Application.Model.FormTemplates.Interfaces;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Domain.FormTemplates;
 using System;
@@ -37,7 +38,7 @@ namespace PerformanceEvaluationPlatform.Application.Services.FormTemplates
                 return ServiceResponse<int>.Conflict<CreateFormTemplateDto>(t => t.Name, $"Name = {model.Name} exists!");
 
             var errors = await ValidateFormTemplate(model);
-            if (errors != null)
+            if (errors != null && errors.Count > 0)
                 return ServiceResponse<int>.BadRequest(errors);
 
             var formTemplate = new FormTemplate
@@ -66,10 +67,10 @@ namespace PerformanceEvaluationPlatform.Application.Services.FormTemplates
                 : ServiceResponse<FormTemplateDetailsDto>.Success(item);
         }
 
-        public async Task<ServiceResponse<IList<FormTemplateListItemDto>>> GetListItems(FormTemplateListFilterOrderDto filter)
+        public async Task<ServiceResponse<ListItemsDto<FormTemplateListItemDto>>> GetListItems(FormTemplateListFilterOrderDto filter)
         {
             var items = await _formTemplatesRepository.GetList(filter);
-            return ServiceResponse<IList<FormTemplateListItemDto>>.Success(items);
+            return ServiceResponse<ListItemsDto<FormTemplateListItemDto>>.Success(items);
         }
 
         public async Task<ServiceResponse<IList<FormTemplateStatusListItemDto>>> GetStatusListItems()
