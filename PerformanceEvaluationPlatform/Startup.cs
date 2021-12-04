@@ -81,6 +81,7 @@ namespace PerformanceEvaluationPlatform
             services.AddTransient<IUserService, UserService>();
 
             services.AddTransient<IRolesRepository, RolesRepository>();
+            services.AddTransient<IRolesService, RolesService>();
             services.AddTransient<IFieldsRepository, FieldsRepository>();
 
             services.AddTransient<ISurveysRepository, SurveysRepository>();

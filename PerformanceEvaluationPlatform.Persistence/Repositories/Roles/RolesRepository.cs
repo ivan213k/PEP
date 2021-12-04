@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Application.Interfaces.Roles;
 using PerformanceEvaluationPlatform.Application.Model.Roles;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Domain.Roles;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Roles
         {
         }
 
-        public Task<IList<RoleListItemDto>> GetList(RoleListFilterDto filter)
+        public Task<ListItemsDto<RoleListItemDto>> GetList(RoleListFilterDto filter)
         {
             var parameters = new
             {
@@ -32,7 +33,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Roles
                 IsPrimarySortOrder = filter.IsPrimarySortOrder
             };
 
-            return ExecuteSp<RoleListItemDto>("[dbo].[spGetRoleListItems]", parameters);
+            return ExecuteGetListItemsSp<RoleListItemDto>("[dbo].[spGetRoleListItems]", parameters);
         }
 
         public async Task<RoleDetailsDto> GetDetails(int id)

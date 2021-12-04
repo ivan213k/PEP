@@ -6,6 +6,7 @@ using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Application.Services.Role;
 using PerformanceEvaluationPlatform.Models.Role.RequestModels;
 using PerformanceEvaluationPlatform.Models.Role.ViewModels;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -29,7 +30,12 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
 
-            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var itemsVm = new ListItemsViewModel<RoleListItemViewModel>
+            {
+                Items = itemsResponse.Payload.Items?.Select(t => t.AsViewModel()).ToList(),
+                TotalItemsCount = itemsResponse.Payload.TotalItemsCount
+            };
+
             return Ok(itemsVm);
         }
 
@@ -50,7 +56,7 @@ namespace PerformanceEvaluationPlatform.Controllers
 
         [Route("roles/{id:int}")]
         [HttpPut]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateRoleRequestModel requestModel)
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody] UpdateRoleRequestModel requestModel)
         {
             ServiceResponse serviceResponse = await _rolesService.Update(id, requestModel.AsDto());
             return TryGetErrorResult(serviceResponse, out IActionResult errorResult)

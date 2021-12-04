@@ -1,5 +1,6 @@
 ﻿using PerformanceEvaluationPlatform.Application.Interfaces.Roles;
 using PerformanceEvaluationPlatform.Application.Model.Roles;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Packages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,10 +16,10 @@ namespace PerformanceEvaluationPlatform.Application.Services.Role
             _rolesRepository = rolesRepository;
         }
 
-        public async Task<ServiceResponse<IList<RoleListItemDto>>> GetListItems(RoleListFilterDto filter)
+        public async Task<ServiceResponse<ListItemsDto<RoleListItemDto>>> GetListItems(RoleListFilterDto filter)
         {
-            IList<RoleListItemDto> items = await _rolesRepository.GetList(filter);
-            return ServiceResponse<IList<RoleListItemDto>>.Success(items);
+            ListItemsDto<RoleListItemDto> items = await _rolesRepository.GetList(filter);
+            return ServiceResponse<ListItemsDto<RoleListItemDto>>.Success(items);
         }
 
         public async Task<ServiceResponse<RoleDetailsDto>> GetDetails(int id)
