@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.Surveys;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
 {
@@ -16,6 +17,14 @@ namespace PerformanceEvaluationPlatform.Models.Survey.ViewModels
             {
                 Id = dto.Id,
                 Name = dto.Name
+            };
+        }
+        public static FilterDropDownItemViewModel AsFilterDropDownItemViewModel(this SurveyStateListItemDto dto)
+        {
+            return new FilterDropDownItemViewModel
+            {
+                Id = dto.Id,
+                Value = dto.Name
             };
         }
     }

@@ -1,4 +1,7 @@
-﻿using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+﻿using PerformanceEvaluationPlatform.Application.Interfaces.FormTemplates;
+using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+using PerformanceEvaluationPlatform.Application.Interfaces.Users;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Model.Surveys;
 using PerformanceEvaluationPlatform.Application.Model.Surveys.Enums;
 using PerformanceEvaluationPlatform.Application.Packages;
@@ -23,10 +26,15 @@ namespace PerformanceEvaluationPlatform.Application.Services.Surveys
         private const int DeepLinkStateDraftId = 1;
 
         private readonly ISurveysRepository _surveysRepository;
+        private readonly IFormTemplatesRepository _formTemplatesRepository;
+        private readonly IUserRepository _userRepository;
 
-        public SurveyService(ISurveysRepository surveysRepository)
+
+        public SurveyService(ISurveysRepository surveysRepository, IFormTemplatesRepository formTemplatesRepository, IUserRepository userRepository)
         {
             _surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
+            _formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         public async Task<ServiceResponse> ChangeStateToArchived(int id)
@@ -131,21 +139,21 @@ namespace PerformanceEvaluationPlatform.Application.Services.Surveys
             {
                 return ServiceResponse<int>.BadRequest();
             }
-            //var formTemplate = await _formTemplatesRepository.Get(createSurveyDto.FormId);
-            //if (formTemplate is null)
-            //{
-            //    return ServiceResponse<int>.BadRequest("Form template does not exist.");
-            //}
-            //var assignee = await _userRepository.Get(createSurveyDto.AssigneeId);
-            //if (assignee is null)
-            //{
-            //    return ServiceResponse<int>.BadRequest("Assignee does not exist.");
-            //}
-            //var supervisor = await _userRepository.Get(createSurveyDto.SupervisorId);
-            //if (supervisor is null)
-            //{
-            //    return ServiceResponse<int>.BadRequest("Supervisor does not exist.");
-            //}
+            var formTemplate = await _formTemplatesRepository.Get(createSurveyDto.FormId);
+            if (formTemplate is null)
+            {
+                return ServiceResponse<int>.BadRequest("Form template does not exist.");
+            }
+            var assignee = await _userRepository.Get(createSurveyDto.AssigneeId);
+            if (assignee is null)
+            {
+                return ServiceResponse<int>.BadRequest("Assignee does not exist.");
+            }
+            var supervisor = await _userRepository.Get(createSurveyDto.SupervisorId);
+            if (supervisor is null)
+            {
+                return ServiceResponse<int>.BadRequest("Supervisor does not exist.");
+            }
             var level = await _surveysRepository.GetLevel(createSurveyDto.RecommendedLevelId);
             if (level is null)
             {
@@ -155,15 +163,15 @@ namespace PerformanceEvaluationPlatform.Application.Services.Surveys
             {
                 return ServiceResponse<int>.BadRequest($"{nameof(createSurveyDto.AssignedUserIds)} contains same user id");
             }
-            //var assignedUsers = await _userRepository.GetList(createSurveyDto.AssignedUserIds);
-            //foreach (var assignedUserId in createSurveyDto.AssignedUserIds)
-            //{
-            //    var assignedUser = assignedUsers.Find(r => r.Id == assignedUserId);
-            //    if (assignedUser is null)
-            //    {
-            //        return ServiceResponse<int>.BadRequest($"Assigned user with id = {assignedUserId}, does not exist.");
-            //    }
-            //}
+            var assignedUsers = await _userRepository.GetList(createSurveyDto.AssignedUserIds);
+            foreach (var assignedUserId in createSurveyDto.AssignedUserIds)
+            {
+                var assignedUser = assignedUsers.Find(r => r.Id == assignedUserId);
+                if (assignedUser is null)
+                {
+                    return ServiceResponse<int>.BadRequest($"Assigned user with id = {assignedUserId}, does not exist.");
+                }
+            }
             var survey = new Survey
             {
                 FormTemplateId = createSurveyDto.FormId,
@@ -228,11 +236,11 @@ namespace PerformanceEvaluationPlatform.Application.Services.Surveys
             return ServiceResponse<SurveyDetailsDto>.Success(sureveyDetailsDto);
         }
 
-        public async Task<ServiceResponse<IList<SurveyListItemDto>>> GetListItems(SurveyListFilterDto filter)
+        public async Task<ServiceResponse<ListItemsDto<SurveyListItemDto>>> GetListItems(SurveyListFilterDto filter)
         {
-            var surveys = await _surveysRepository.GetList(filter);
-            FillSurveysProgress(surveys);
-            return ServiceResponse<IList<SurveyListItemDto>>.Success(surveys);
+            var surveysListItemsDto = await _surveysRepository.GetList(filter);
+            FillSurveysProgress(surveysListItemsDto.Items);
+            return ServiceResponse<ListItemsDto<SurveyListItemDto>>.Success(surveysListItemsDto);
         }
 
         public async Task<ServiceResponse<IList<SurveyStateListItemDto>>> GetStateListItems()

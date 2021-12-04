@@ -39,6 +39,16 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories
             }
         }
 
+        protected async Task<TResult> ExecuteSingleResultSp<TResult>(string spName, object parameters)
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_databaseOptions.SqlConnectionString))
+            {
+                var mappedParameters = MapParameters(parameters);
+                var result = await dbConnection.QuerySingleAsync<TResult>(spName, mappedParameters, commandType: CommandType.StoredProcedure);
+                return result;
+            }
+        }
+
         protected async Task<IList<TResult>> ExecuteSp<TFirst, TSecond, TThird, TResult>(string spName, object parameters, Func<TFirst, TSecond, TThird, TResult> resultMappingFunc, string splitOn)
         {
             using (IDbConnection dbConnection = new SqlConnection(_databaseOptions.SqlConnectionString))

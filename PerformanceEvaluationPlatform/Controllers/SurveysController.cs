@@ -28,8 +28,13 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
 
-            var surveys = response.Payload.Select(s => s.AsViewModel());
-            return Ok(surveys);
+            var surveyListItemsViewModel = new ListItemsViewModel<SurveyListItemViewModel>
+            {
+                Items = response.Payload?.Items?.Select(t => t.AsViewModel()).ToList(),
+                TotalItemsCount = response.Payload.TotalItemsCount
+            };
+   
+            return Ok(surveyListItemsViewModel);
         }
 
         [HttpGet("surveys/{id}")]
@@ -123,7 +128,7 @@ namespace PerformanceEvaluationPlatform.Controllers
             {
                 return errorResult;
             }
-            var items = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var items = itemsResponse.Payload.Select(t => t.AsFilterDropDownItemViewModel());
 
             return Ok(items);
         }

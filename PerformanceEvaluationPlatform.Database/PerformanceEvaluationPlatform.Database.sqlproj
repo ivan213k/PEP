@@ -160,6 +160,7 @@
     <Build Include="Team\StoredProcedures\spGetTeamListItems.sql" />
     <Build Include="Project\StoredProcedures\spGetProjectListItems.sql" />
     <Build Include="Users\Tablse\SystemRole.sql" />
+    <Build Include="Survey\StoredProcedures\spGetSurveysTotalCount.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PerformanceEvaluationPlatform.Database.Dev.publish.xml" />

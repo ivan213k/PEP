@@ -1,4 +1,5 @@
-﻿using PerformanceEvaluationPlatform.Application.Model.Surveys;
+﻿using PerformanceEvaluationPlatform.Application.Model.Shared;
+using PerformanceEvaluationPlatform.Application.Model.Surveys;
 using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Domain.Surveys;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ namespace PerformanceEvaluationPlatform.Application.Services.Surveys
 {
     public interface ISurveyService
     {
-        Task<ServiceResponse<IList<SurveyListItemDto>>> GetListItems(SurveyListFilterDto filter);
+        Task<ServiceResponse<ListItemsDto<SurveyListItemDto>>> GetListItems(SurveyListFilterDto filter);
         Task<ServiceResponse<IList<SurveyStateListItemDto>>> GetStateListItems();
         Task<ServiceResponse<SurveyDetailsDto>> GetDetails(int id);
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Model.Surveys;
 using PerformanceEvaluationPlatform.Domain.Surveys;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
@@ -18,7 +19,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Surveys
 
         }
 
-        public async Task<IList<SurveyListItemDto>> GetList(SurveyListFilterDto filter)
+        public async Task<ListItemsDto<SurveyListItemDto>> GetList(SurveyListFilterDto filter)
         {
             var parameters = new
             {
@@ -33,11 +34,27 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Surveys
                 Skip = filter.Skip,
                 Take = filter.Take,
             };
+            var totalItemsCountParameters = new
+            {
+                Search = filter.Search,
+                StateIds = filter.StateIds,
+                AssigneeIds = filter.AssigneeIds,
+                SupervisorIds = filter.SupervisorIds,
+                AppointmentDateFrom = filter.AppointmentDateFrom,
+                AppointmentDateTo = filter.AppointmentDateTo
+            };
 
             var splitOn = $"{nameof(SurveyListItemAssignedUserDto.AssignedUserId)}, {nameof(SurveyListItemFormDataDto.FormDataAssignedUserId)}";
             var rawSurveys = await ExecuteSp<SurveyListItemDto, SurveyListItemAssignedUserDto, SurveyListItemFormDataDto, SurveyListItemDto>("[dbo].spGetSurveyListItems", parameters, MapResultFunc, splitOn: splitOn);
             var groupedSurveys = GroupSurveys(rawSurveys);
-            return groupedSurveys;
+
+            int totalItemsCount = await ExecuteSingleResultSp<int>("[dbo].[spGetSurveysTotalCount]", totalItemsCountParameters);
+            var listItemsDto = new ListItemsDto<SurveyListItemDto>
+            {
+                Items = groupedSurveys,
+                TotalItemsCount = totalItemsCount
+            };
+            return listItemsDto;
         }
 
         private IList<SurveyListItemDto> GroupSurveys(ICollection<SurveyListItemDto> surveys)
