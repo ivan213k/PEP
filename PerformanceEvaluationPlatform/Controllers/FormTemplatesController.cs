@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceEvaluationPlatform.Application.Model.Fields;
 using PerformanceEvaluationPlatform.Application.Services.Field;
 using PerformanceEvaluationPlatform.Application.Services.FormTemplates;
+using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 using PerformanceEvaluationPlatform.Models.FormTemplates.RequestModel;
 using PerformanceEvaluationPlatform.Models.FormTemplates.ViewModels;
 using PerformanceEvaluationPlatform.Models.Shared;
@@ -53,6 +55,24 @@ namespace PerformanceEvaluationPlatform.Controllers
             if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
                 return errorResult;
             var itemsVm = itemsResponse.Payload.Select(t => t.AsFilterDropDownItemViewModel());
+
+            return Ok(itemsVm);
+        }
+
+        [HttpGet("formtemplates/fields")]
+        public async Task<IActionResult> GetFields()
+        {
+            FieldListFilterDto fieldListFilterDto = new FieldListFilterDto
+            {
+                Skip = 0,
+                Take = int.MaxValue
+            };
+            var itemsResponse = await _fieldsService.GetListItems(fieldListFilterDto);
+
+            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+                return errorResult;
+            
+            var itemsVm = itemsResponse.Payload.Items.Select(t => t.AsDropDownItemViewModel());
 
             return Ok(itemsVm);
         }

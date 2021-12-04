@@ -10,6 +10,7 @@ using PerformanceEvaluationPlatform.Models.Field.ViewModels;
 using PerformanceEvaluationPlatform.Application.Packages;
 using System.IO;
 using PerformanceEvaluationPlatform.Application.Model.Excel;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -63,13 +64,17 @@ namespace PerformanceEvaluationPlatform.Controllers
         [HttpGet("fields")]
         public async Task<IActionResult> Get([FromQuery] FieldListFilterRequestModel filter)
         {
-            var itemsResponse = await _fieldService.GetListItems(filter.AsDto());
-            if (TryGetErrorResult(itemsResponse, out IActionResult errorResult))
+            var response = await _fieldService.GetListItems(filter.AsDto());
+            if (TryGetErrorResult(response, out IActionResult errorResult))
             {
                 return errorResult;
             }
 
-            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var itemsVm = new ListItemsViewModel<FieldListItemViewModel>
+            {
+                Items = response.Payload?.Items.Select(t => t.AsViewModel()).ToList(),
+                TotalItemsCount = response.Payload.TotalItemsCount
+            }; 
             return Ok(itemsVm);
         }
 

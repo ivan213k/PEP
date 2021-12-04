@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Application.Model.Fields;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Domain.Fields;
 
 namespace PerformanceEvaluationPlatform.Application.Interfaces.Fields
 {
     public interface IFieldsRepository : IBaseRepository
     {
-        Task<IList<FieldListItemDto>> GetList(FieldListFilterDto filter);
+        Task<ListItemsDto<FieldListItemDto>> GetList(FieldListFilterDto filter);
         Task<IList<FieldTypeListItemDto>> GetTypesList();
         Task<IList<FieldAssesmentGroupListItemDto>> GetFieldAssesmentGroupList();
         Task<FieldDetailsDto> GetDetails(int id);

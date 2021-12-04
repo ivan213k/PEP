@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PerformanceEvaluationPlatform.Application.Interfaces.Fields;
 using PerformanceEvaluationPlatform.Application.Model.Fields;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Domain.Fields;
 using PerformanceEvaluationPlatform.Domain.FormTemplates;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
@@ -18,7 +19,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
         {
         }
 
-        public async Task<IList<FieldListItemDto>> GetList(FieldListFilterDto filter)
+        public async Task<ListItemsDto<FieldListItemDto>> GetList(FieldListFilterDto filter)
         {
             var parameters = new
             {
@@ -30,7 +31,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Fields
                 TitleSortOrder = filter.TitleSortOrder
             };
 
-            return await ExecuteSp<FieldListItemDto>("[dbo].[spGetFieldListItems]", parameters);
+            return await ExecuteGetListItemsSp<FieldListItemDto>("[dbo].[spGetFieldListItems]", parameters);
         }
         public async Task<IList<FieldTypeListItemDto>> GetTypesList()
         {

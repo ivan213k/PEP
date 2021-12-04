@@ -3,6 +3,7 @@ using PerformanceEvaluationPlatform.Application.Model.Fields;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Application.Packages;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 
 namespace PerformanceEvaluationPlatform.Application.Services.Field
 {
@@ -15,10 +16,10 @@ namespace PerformanceEvaluationPlatform.Application.Services.Field
             _fieldsRepository = fieldsRepository;
         }
 
-        public async Task<ServiceResponse<IList<FieldListItemDto>>> GetListItems(FieldListFilterDto filter)
+        public async Task<ServiceResponse<ListItemsDto<FieldListItemDto>>> GetListItems(FieldListFilterDto filter)
         {
-            IList<FieldListItemDto> items = await _fieldsRepository.GetList(filter);
-            return ServiceResponse<IList<FieldListItemDto>>.Success(items);
+            ListItemsDto<FieldListItemDto> items = await _fieldsRepository.GetList(filter);
+            return ServiceResponse<ListItemsDto<FieldListItemDto>>.Success(items);
         }
 
         public async Task<ServiceResponse<IList<FieldTypeListItemDto>>> GetTypeListItems()

@@ -7,12 +7,10 @@
 @Take INT
 AS
 BEGIN
-	-- local variables
 	DECLARE @SearchClause NVARCHAR(258) = ''
 	DECLARE @WhereClause NVARCHAR(MAX) = ''
 	DECLARE @OrderClause NVARCHAR(MAX) = ''
  
-	 -- query builder
 	IF (@Search IS NOT NULL)
 	BEGIN
 		SET @SearchClause = '%' + @Search + '%';
@@ -60,10 +58,11 @@ BEGIN
 	SELECT 
 		[F].[Id],
 		[F].[Name],
+		[F].[IsRequired],
 		[FT].[Name] AS [Type],
+		[FT].[Id] AS [TypeId],
 		[AG].[Name] AS [AssesmentGroup],
-		[F].[IsRequired] AS [IsRequired]
-
+		[AG].[Id] AS [AssesmentGroupId]
 	FROM [dbo].[Field] [F]
 		INNER JOIN [dbo].[AssesmentGroup] [AG] ON [AG].[Id] = [F].[AssesmentGroupId]
 		INNER JOIN [dbo].[FieldType] [FT] ON [FT].[Id] = [F].[FieldTypeId]
@@ -72,7 +71,10 @@ BEGIN
 	ORDER BY ' + @OrderClause + '
 	OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
 	';
- 
+
+	SET @Sql = @Sql + ' SELECT COUNT(*) AS [TotalItemsCount] FROM [dbo].[Field] [F]
+	'+ @WhereClause ;
+
 	 DECLARE @Params NVARCHAR(MAX) = '
 		@SearchClause NVARCHAR(256),
 		@AssesmentGroupIds[dbo].[IntList] READONLY,

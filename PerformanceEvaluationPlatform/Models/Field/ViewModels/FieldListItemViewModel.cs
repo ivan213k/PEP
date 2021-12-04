@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.Fields;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.Field.ViewModels
 {
@@ -22,8 +23,18 @@ namespace PerformanceEvaluationPlatform.Models.Field.ViewModels
                 Id = dto.Id,
                 Name = dto.Name,
                 AssesmentGroupName = dto.AssesmentGroup,
+                AssesmentGroupId = dto.AssesmentGroupId,
                 Type = dto.Type,
+                TypeId = dto.TypeId,
                 IsRequired = dto.IsRequired
+            };
+        }
+        public static DropDownItemViewModel AsDropDownItemViewModel(this FieldListItemDto dto)
+        {
+            return new DropDownItemViewModel
+            {
+                Id = dto.Id,
+                Value = dto.Name,
             };
         }
     }
