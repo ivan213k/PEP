@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PerformanceEvaluationPlatform.Application.Services.Deeplinks;
-//using Microsoft.AspNetCore.Authorization;
 using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Models.Deeplink.RequestModels;
 using PerformanceEvaluationPlatform.Models.Deeplink.ViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Controllers
 {
@@ -14,18 +14,10 @@ namespace PerformanceEvaluationPlatform.Controllers
     public class DeeplinksController : BaseController
     {
         private readonly IDeeplinksService _deeplinksService;
-        // will be users and survey services
-       // private readonly IUserRepository _usersRepository;
-       // private readonly ISurveysRepository _surveysRepository;
-       // private readonly IFormTemplatesRepository _formTemplatesRepository;
 
         public DeeplinksController(IDeeplinksService deeplinksService)
         {
             _deeplinksService = deeplinksService ?? throw new ArgumentNullException(nameof(deeplinksService));
-            // will be users and survey services
-            //_usersRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            //_surveysRepository = surveysRepository ?? throw new ArgumentNullException(nameof(surveysRepository));
-            //_formTemplatesRepository = formTemplatesRepository ?? throw new ArgumentNullException(nameof(formTemplatesRepository));
         }
 
         [HttpGet("deeplinks")]
@@ -37,7 +29,11 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
 
-            var itemsVm = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var itemsVm = new ListItemsViewModel<DeeplinkListItemViewModel>
+            {
+                Items = itemsResponse.Payload.Items?.Select(t=> t.AsViewModel()).ToList(),
+                TotalItemsCount =  itemsResponse.Payload.TotalItemsCount
+            };
             return Ok(itemsVm);
         }
 
@@ -50,7 +46,7 @@ namespace PerformanceEvaluationPlatform.Controllers
                 return errorResult;
             }
 
-            var items = itemsResponse.Payload.Select(t => t.AsViewModel());
+            var items = itemsResponse.Payload.Select(t => t.AsDropDownViewModel());
             return Ok(items);
         }
 

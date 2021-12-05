@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using PerformanceEvaluationPlatform.Application.Interfaces.Deeplinks;
+using PerformanceEvaluationPlatform.Application.Interfaces.Surveys;
+using PerformanceEvaluationPlatform.Application.Interfaces.Users;
 using PerformanceEvaluationPlatform.Application.Model.Deeplinks;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 using PerformanceEvaluationPlatform.Application.Packages;
 using PerformanceEvaluationPlatform.Domain.Deeplinks;
 
@@ -12,15 +14,19 @@ namespace PerformanceEvaluationPlatform.Application.Services.Deeplinks
     public class DeeplinksService : IDeeplinksService
     {
         private readonly IDeeplinksRepository _deeplinkRepository;
-        public DeeplinksService(IDeeplinksRepository deeplinkRepository)
+        private readonly IUserRepository _userRepository;
+        private readonly ISurveysRepository _surveysRepository;
+        public DeeplinksService(IDeeplinksRepository deeplinkRepository, IUserRepository userRepository, ISurveysRepository surveysRepository)
         {
             _deeplinkRepository = deeplinkRepository;
+            _userRepository = userRepository;
+            _surveysRepository = surveysRepository;
         }
 
-        public async Task<ServiceResponse<IList<DeeplinkListItemDto>>> GetList(DeeplinkListFilterDto filter)
+        public async Task<ServiceResponse<ListItemsDto<DeeplinkListItemDto>>> GetList(DeeplinkListFilterDto filter)
         {
-            IList<DeeplinkListItemDto> items = await _deeplinkRepository.GetList(filter);
-            return ServiceResponse<IList<DeeplinkListItemDto>>.Success(items);
+            ListItemsDto<DeeplinkListItemDto> items = await _deeplinkRepository.GetList(filter);
+            return ServiceResponse<ListItemsDto<DeeplinkListItemDto>>.Success(items);
         }
 
 
@@ -39,52 +45,43 @@ namespace PerformanceEvaluationPlatform.Application.Services.Deeplinks
 
         }
 
-       // public Task<ServiceResponse<DeeplinkState>> GetState(int id)
-      //  {
-          //  var item = _deeplinkRepository.GetState(id);
-          //  return ServiceResponse<DeeplinkState>.Success(item);
-
-       // }
-
-        public async Task<ServiceResponse<int>> Create(CreateDeeplinkDto model)
+        public async Task<ServiceResponse<int>> Create(CreateDeeplinkDto createDeeplinkDto)
         {            
-            if (model == null)
+            if (createDeeplinkDto == null)
             {
                 ServiceResponse.BadRequest();
             }
-            //Exist?
-            // User To
-           /* var userTo = await _usersRepository.Get(model.UserId);
-            if (userTo == null)
+
+            var sentToUser = await _userRepository.Get(createDeeplinkDto.UserId);
+            if (sentToUser is null)
             {
                 ServiceResponse.Failure<CreateDeeplinkDto>(m => m.UserId, "User does not exists.");
             }
-            // User by
-            var userBy = await _usersRepository.Get(model.SentById);
-            if (userBy == null)
+            
+            var sentByUser = await _userRepository.Get(createDeeplinkDto.SentById);
+            if (sentByUser == null)
             {
-                ServiceResponse.Failure<CreateDeeplinkDto>(m => m.SentById, "UserSentBy does not exists.");
+                ServiceResponse.Failure<CreateDeeplinkDto>(m => m.SentById, "Sent by user does not exists.");
             }
 
-            //  Survey
-            var survey = await _surveysRepository.Get(model.SurveyId);
+            var survey = await _surveysRepository.Get(createDeeplinkDto.SurveyId);
             if (survey == null)
             {
                 ServiceResponse.Failure<CreateDeeplinkDto>(m => m.SurveyId, "Survey does not exists.");
-            }*/
-            // ID Users
-            if (ContainsSameUserIds(model.UserId, model.SentById))
+            }
+            
+            if (createDeeplinkDto.UserId == createDeeplinkDto.SentById)
             {
-                ServiceResponse.BadRequest("Contains same user id");
+                ServiceResponse.BadRequest("Sent by and sent to users are same");
             }
 
             var deeplink = new Deeplink
             {
                 StateId = GetNewStateId(),
-                UserId = model.UserId,
-                SentById = model.SentById,
-                ExpireDate = model.ExpiresDate,
-                SurveyId = model.SurveyId,
+                UserId = createDeeplinkDto.UserId,
+                SentById = createDeeplinkDto.SentById,
+                ExpireDate = createDeeplinkDto.ExpiresDate,
+                SurveyId = createDeeplinkDto.SurveyId,
                 Code = Guid.NewGuid(),
                 SentAt = DateTime.Today
 
@@ -115,10 +112,6 @@ namespace PerformanceEvaluationPlatform.Application.Services.Deeplinks
             await _deeplinkRepository.SaveChanges();
             return ServiceResponse.Success();
 
-        }
-        private bool ContainsSameUserIds(int SentToId, int SentById)
-        {
-            return (SentToId == SentById);
         }
         private int GetNewStateId()
         {

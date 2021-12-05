@@ -1,16 +1,13 @@
-﻿using System;                                           // wait survey and user 
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using PerformanceEvaluationPlatform.Persistence.Repositories;
-using PerformanceEvaluationPlatform.Persistence;
 using PerformanceEvaluationPlatform.Persistence.DatabaseContext;
 using PerformanceEvaluationPlatform.Application.Model.Deeplinks;
 using PerformanceEvaluationPlatform.Application.Interfaces.Deeplinks;
 using PerformanceEvaluationPlatform.Domain.Deeplinks;
+using PerformanceEvaluationPlatform.Application.Model.Shared;
 
 namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
 {
@@ -22,7 +19,7 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
         {
         }
 
-        public Task<IList<DeeplinkListItemDto>> GetList(DeeplinkListFilterDto filter)
+        public Task<ListItemsDto<DeeplinkListItemDto>> GetList(DeeplinkListFilterDto filter)
         {
             var parameters = new
             {
@@ -35,13 +32,10 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
                 filter.ExpiresAtOrder,
                 filter.Skip,
                 filter.Take
-
-
             };
 
-            return ExecuteSp<DeeplinkListItemDto>("[dbo].[spGetDeeplinkListItems]", parameters);
+            return ExecuteGetListItemsSp<DeeplinkListItemDto>("[dbo].[spGetDeeplinkListItems]", parameters);
         }
-
 
         public async Task<IList<DeeplinkStateListItemDto>> GetStatesList()
         {
@@ -58,11 +52,10 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
         {
             var deeplink = await DbContext.Set<Deeplink>()
                 .Include(t => t.DeeplinkState)
-                //.Include(t=>t.SentBy)                                  /// wait User And Survey
-                // .Include(t=>t.User)
-                //  .Include(t=>t.Survey).ThenInclude(t=>t.FormTemplate)
+                .Include(t => t.SentBy)                                  
+                .Include(t => t.User)
+                .Include(t => t.Survey).ThenInclude(t => t.FormTemplate)
                 .SingleOrDefaultAsync(t => t.Id == id);
-
 
             if (deeplink == null)
             {
@@ -76,26 +69,24 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
                 SentAt = deeplink.SentAt.GetValueOrDefault(),
                 ExpiresAt = deeplink.ExpireDate,
                 SurveyId = deeplink.SurveyId,
-                /* FormTemplateName = deeplink.Survey.FormTemplate.Name,
-                 SentTo = new DeeplinkUserRefDto
-                     {
-                         Id = deeplink.UserId,
-                         FirstName = deeplink.User.FirstName,
-                         LastName = deeplink.User.LastName,
-                         Email = deeplink.User.Email,
-                     },
-                 SentBy = new DeeplinkUserRefDto
-                     {
-                         Id = deeplink.SentBy.Id,
-                         FirstName = deeplink.SentBy.FirstName,
-                         LastName = deeplink.SentBy.LastName,
-                         Email = deeplink.SentBy.Email
-                     }
-                */
+                FormTemplateName = deeplink.Survey.FormTemplate.Name,
+                SentTo = new DeeplinkUserRefDto
+                {
+                    Id = deeplink.UserId,
+                    FirstName = deeplink.User.FirstName,
+                    LastName = deeplink.User.LastName,
+                    Email = deeplink.User.Email,
+                },
+                SentBy = new DeeplinkUserRefDto
+                {
+                    Id = deeplink.SentBy.Id,
+                    FirstName = deeplink.SentBy.FirstName,
+                    LastName = deeplink.SentBy.LastName,
+                    Email = deeplink.SentBy.Email
+                }
             };
 
             return details;
-
         }
 
         public Task<DeeplinkState> GetState(int id)
@@ -108,11 +99,9 @@ namespace PerformanceEvaluationPlatform.Persistence.Repositories.Deeplinks
             return Create<Deeplink>(deeplink);
         }
 
-
         public Task<Deeplink> Get(int id)
         {
             return Get<Deeplink>(id);
         }
-
     }
 }

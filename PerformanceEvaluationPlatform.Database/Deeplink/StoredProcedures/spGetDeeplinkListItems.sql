@@ -94,11 +94,13 @@ BEGIN
 	DECLARE @Sql NVARCHAR(MAX) = '
 	SELECT 
 		[D].[Id],
-		[U].[FirstName] AS SentToFirstName,
-		[U].[LastName] AS SentToLastName,
+		[U].[FirstName] AS [SentToFirstName],
+		[U].[LastName] AS [SentToLastName],
+		[U].[Id] AS [SentToId],
 		[D].[ExpireDate],
-		[DS].[Name] AS State,
-		[FT].[Name] AS FormTemplate
+		[DS].[Name] AS [State],
+		[FT].[Name] AS [FormTemplate],
+		[FT].[Id] AS [FormTemplateId]
 
 	FROM [dbo].[Deeplink] [D]
 	INNER JOIN [dbo].[User] [U] ON [D].[UserId] = [U].[Id]
@@ -110,6 +112,10 @@ BEGIN
 	' '+ @WhereClause + ''
 	+ ' ORDER BY ' + @OrderClause  +
 	' OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY' ;
+
+	SET @Sql = @Sql + ' SELECT COUNT(*) AS [TotalItemsCount] FROM [dbo].[Deeplink] [D]
+	'+ @JoinClause + '
+	'+ @WhereClause ;
  
 	DECLARE @Params NVARCHAR(MAX) = '
 		@SearchClause NVARCHAR(256),

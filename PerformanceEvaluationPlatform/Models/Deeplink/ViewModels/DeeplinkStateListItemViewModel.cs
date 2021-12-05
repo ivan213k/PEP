@@ -1,4 +1,5 @@
 ﻿using PerformanceEvaluationPlatform.Application.Model.Deeplinks;
+using PerformanceEvaluationPlatform.Models.Shared;
 
 namespace PerformanceEvaluationPlatform.Models.Deeplink.ViewModels
 {
@@ -16,6 +17,14 @@ namespace PerformanceEvaluationPlatform.Models.Deeplink.ViewModels
                 Id = dto.Id,
                 Name = dto.Title
 
+            };
+        }
+        public static DropDownItemViewModel AsDropDownViewModel(this DeeplinkStateListItemDto dto)
+        {
+            return new DropDownItemViewModel
+            {
+                Id = dto.Id,
+                Value = dto.Title
             };
         }
     }
